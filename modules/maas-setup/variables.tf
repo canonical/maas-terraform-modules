@@ -138,3 +138,59 @@ variable "admin_ssh_import" {
   type        = string
   default     = ""
 }
+
+###
+## Backup configuration
+###
+
+variable "enable_backup" {
+  description = "Whether to enable backup for MAAS and PostgreSQL"
+  type        = bool
+  default     = false
+}
+
+variable "charm_s3_integrator_channel" {
+  description = "Operator channel for S3 Integrator deployment"
+  type        = string
+  default     = "1/stable"
+}
+
+variable "charm_s3_integrator_revision" {
+  description = "Operator channel revision for S3 Integrator deployment"
+  type        = number
+  default     = null
+}
+
+variable "s3_access_key" {
+  description = "Access key used to access the S3 backup bucket"
+  type        = string
+}
+
+variable "s3_secret_key" {
+  description = "Secret key used to access the S3 backup bucket"
+  type        = string
+  sensitive   = true
+}
+
+variable "s3_endpoint" {
+  description = "Endpoint the S3 backup exists at. Leave empty to derive endpoint from region: `https://s3.{var.s3_region}.amazonaws.com`"
+  type        = string
+  default     = ""
+}
+
+variable "s3_bucket_postgresql" {
+  description = "Bucket name to store PostgreSQL backups in"
+  type        = string
+  default     = "postgresql"
+}
+
+variable "s3_bucket_maas" {
+  description = "Bucket name to store MAAS backups in"
+  type        = string
+  default     = "maas"
+}
+
+variable "s3_region" {
+  description = "The AWS region the S3 bucket is in"
+  type        = string
+}

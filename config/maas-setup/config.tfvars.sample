@@ -69,3 +69,26 @@ admin_email = "admin@maas.io"
 # The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub.
 # E.g. 'lp:my_launchpad_username'.
 admin_ssh_import = ""
+
+###
+## Backup configuration
+###
+
+# Whether to enable backup for MAAS and PostgreSQL
+enable_backup = false
+# Operator channel for S3 Integrator deployment
+charm_s3_integrator_channel = "1/stable"
+# Operator channel revision for S3 Integrator deployment
+charm_s3_integrator_revision = null
+# Access key used to access the S3 backup bucket
+s3_access_key = "admin"
+# Secret key used to access the S3 backup bucket
+s3_secret_key = "password"
+# Endpoint the S3 backup exists at. Leave empty to derive endpoint from region: `https://s3.{var.s3_region}.amazonaws.com`
+s3_endpoint = "https://127.0.0.1:9000"
+# Bucket name to store PostgreSQL backups in
+s3_bucket_postgresql = "postgresql"
+# Bucket name to store MAAS backups in
+s3_bucket_maas = "maas"
+# The AWS region the S3 bucket is in. Leave empty for Minio
+s3_region = ""
