@@ -26,6 +26,7 @@ resource "juju_application" "s3_integrator" {
     path         = "/postgresql"
     region       = var.s3_region
     tls-ca-chain = length(var.s3_ca_chain_file_path) > 0 ? base64encode(file(var.s3_ca_chain_file_path)) : ""
+    s3-uri-style = var.s3_uri_style
   }
 
   provisioner "local-exec" {

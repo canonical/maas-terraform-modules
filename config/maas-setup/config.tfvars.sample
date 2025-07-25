@@ -94,3 +94,5 @@ s3_bucket_maas = "maas"
 s3_region = ""
 # The file path of the S3 CA chain, used for HTTPS validation
 s3_ca_chain_file_path = ""
+# The S3 protocol specific bucket path lookup type.
+s3_uri_style = ""

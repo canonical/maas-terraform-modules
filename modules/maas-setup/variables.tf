@@ -200,3 +200,9 @@ variable "s3_ca_chain_file_path" {
   type        = string
   default     = ""
 }
+
+variable "s3_uri_style" {
+  description = "The S3 protocol specific bucket path lookup type."
+  type        = string
+  default     = ""
+}
