@@ -194,3 +194,9 @@ variable "s3_region" {
   description = "The AWS region the S3 bucket is in"
   type        = string
 }
+
+variable "s3_ca_chain_file_path" {
+  description = "The file path of the S3 CA chain, used for HTTPS validation"
+  type        = string
+  default     = ""
+}

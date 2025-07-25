@@ -21,10 +21,11 @@ resource "juju_application" "s3_integrator" {
   }
 
   config = {
-    endpoint = coalesce(var.s3_endpoint, "https://s3.${var.s3_region}.amazonaws.com")
-    bucket   = each.value == "maas" ? var.s3_bucket_maas : var.s3_bucket_postgresql
-    path     = "/postgresql"
-    region   = var.s3_region
+    endpoint     = coalesce(var.s3_endpoint, "https://s3.${var.s3_region}.amazonaws.com")
+    bucket       = each.value == "maas" ? var.s3_bucket_maas : var.s3_bucket_postgresql
+    path         = "/postgresql"
+    region       = var.s3_region
+    tls-ca-chain = length(var.s3_ca_chain_file_path) > 0 ? base64encode(file(var.s3_ca_chain_file_path)) : ""
   }
 
   provisioner "local-exec" {
