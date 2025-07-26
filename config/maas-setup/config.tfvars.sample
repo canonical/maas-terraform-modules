@@ -80,19 +80,24 @@ enable_backup = false
 charm_s3_integrator_channel = "1/stable"
 # Operator channel revision for S3 Integrator deployment
 charm_s3_integrator_revision = null
+# Operator config for S3 Integrator deployment. Configuration for `bucket` and `tls-ca-chain` is
+# skipped even if set, since it is handled by different Terraform variables.
+charm_s3_integrator_config = {
+  # Endpoint the S3 backup exists at
+  endpoint = "https://127.0.0.1:9000"
+  # The AWS region the S3 bucket is in. Leave empty for Minio
+  region = ""
+  # The S3 protocol specific bucket path lookup type. Leave `path` for Minio
+  s3-uri-style = "path"
+}
+# The file path of the S3 CA chain, used for HTTPS validation. Use only with Minio, otherwise set
+# it to empty string
+s3_ca_chain_file_path = "/home/ubuntu/cert.pem"
 # Access key used to access the S3 backup bucket
 s3_access_key = "admin"
 # Secret key used to access the S3 backup bucket
 s3_secret_key = "password"
-# Endpoint the S3 backup exists at. Leave empty to derive endpoint from region: `https://s3.{var.s3_region}.amazonaws.com`
-s3_endpoint = "https://127.0.0.1:9000"
 # Bucket name to store PostgreSQL backups in
 s3_bucket_postgresql = "postgresql"
 # Bucket name to store MAAS backups in
 s3_bucket_maas = "maas"
-# The AWS region the S3 bucket is in. Leave empty for Minio
-s3_region = ""
-# The file path of the S3 CA chain, used for HTTPS validation
-s3_ca_chain_file_path = ""
-# The S3 protocol specific bucket path lookup type.
-s3_uri_style = ""

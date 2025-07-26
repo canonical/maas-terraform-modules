@@ -20,14 +20,10 @@ resource "juju_application" "s3_integrator" {
     base     = startswith(var.charm_s3_integrator_channel, "1/") ? "ubuntu@22.04" : "ubuntu@24.04"
   }
 
-  config = {
-    endpoint     = coalesce(var.s3_endpoint, "https://s3.${var.s3_region}.amazonaws.com")
+  config = merge(var.charm_s3_integrator_config, {
     bucket       = each.value == "maas" ? var.s3_bucket_maas : var.s3_bucket_postgresql
-    path         = "/postgresql"
-    region       = var.s3_region
     tls-ca-chain = length(var.s3_ca_chain_file_path) > 0 ? base64encode(file(var.s3_ca_chain_file_path)) : ""
-    s3-uri-style = var.s3_uri_style
-  }
+  })
 
   provisioner "local-exec" {
     # There's currently no way to wait for the charm to be idle, hence the sleep
