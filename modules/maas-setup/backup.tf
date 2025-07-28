@@ -21,21 +21,17 @@ resource "juju_secret" "s3_credentials" {
 
 locals {
   s3_credentials = (
-    startswith(var.charm_s3_integrator_channel, "2/") ?
+    var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ?
     { "credentials" = "secret:${juju_secret.s3_credentials[0].secret_id}" } :
     {}
   )
 }
 
 resource "juju_access_secret" "s3_credentials" {
-  for_each = (
-    var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ?
-    juju_application.s3_integrator :
-    {}
-  )
+  count = var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ? 1 : 0
 
   model        = juju_model.maas_model.name
-  applications = [each.value.name]
+  applications = [for a in juju_application.s3_integrator : a.name]
   secret_id    = juju_secret.s3_credentials[0].secret_id
 }
 
