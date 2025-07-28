@@ -31,7 +31,7 @@ resource "juju_access_secret" "s3_credentials" {
   for_each = (
     var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ?
     juju_application.s3_integrator :
-    toset([])
+    {}
   )
 
   model        = juju_model.maas_model.name
@@ -55,6 +55,7 @@ resource "juju_application" "s3_integrator" {
 
   config = merge(var.charm_s3_integrator_config, local.s3_credentials, {
     bucket = each.value == "maas" ? var.s3_bucket_maas : var.s3_bucket_postgresql
+    path   = each.value == "maas" ? "/${var.s3_bucket_maas}" : "/${var.s3_bucket_postgresql}"
     tls-ca-chain = (
       length(var.s3_ca_chain_file_path) > 0 ? base64encode(file(var.s3_ca_chain_file_path)) : ""
     )
@@ -65,10 +66,10 @@ resource "juju_application" "s3_integrator" {
     # set with a Juju secret. Currently the Juju provider does not either support wait-for
     # application or running Juju actions.
     command = (startswith(var.charm_s3_integrator_channel, "2/") ? "/bin/true" : <<-EOT
-      juju wait-for application ${self.name} --timeout 3600s \
+      juju wait-for application -m ${self.model} ${self.name} --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "blocked" && unit.agent-status=="idle")'
 
-      juju run ${self.name}/leader sync-s3-credentials \
+      juju run -m ${self.model} ${self.name}/leader sync-s3-credentials \
         access-key=${var.s3_access_key} \
         secret-key=${var.s3_secret_key}
     EOT

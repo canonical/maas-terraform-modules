@@ -11,7 +11,7 @@ eval "$(jq -r '@sh "MODEL=\(.model) MACHINE_IDS=\(.machine_ids)"')"
 
 hostnames=""
 for i in $MACHINE_IDS; do
-    hostname=$(juju machines --quiet --format=json | jq -r --argjson i $i '.machines | to_entries[$i].value.hostname')
+    hostname=$(juju machines -m $MODEL --quiet --format=json | jq -r --argjson i $i '.machines | to_entries[$i].value.hostname')
     if [ -z "$hostnames" ]; then
         hostnames="$hostname"
     else
