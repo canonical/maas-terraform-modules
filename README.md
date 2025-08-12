@@ -9,7 +9,7 @@ This repository is created for conducting a charmed MAAS training during Berlin 
 The full deployment consists of 3 individual Terraform modules that should be run in order:
 
 - [juju-bootstrap](./modules/juju-bootstrap) - Bootstraps Juju at an LXD server or cluster
-- [maas-deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the Juju controller of `juju-bootstrap`
+- [maas-setup](./modules/maas-setup) - Deploys charmed MAAS at a Juju model of the Juju controller of `juju-bootstrap`
 - [maas-config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`
 
 ## Instructions
@@ -30,8 +30,12 @@ lxc project create anvil-training
 # Copy at least the default profile of default project and modify accordingly, if needed
 lxc profile copy default default --target-project anvil-training --refresh
 
-# copy sample config and modify the contents as needed
+# copy sample config
 cp config/juju-bootstrap/config.tfvars.sample config/juju-bootstrap/config.tfvars
+
+# NOTE: you will need to modify at least the following values:
+# lxd_address = "..."
+# lxd_trust_token = "..."
 
 cd modules/juju-bootstrap
 terraform init
@@ -52,7 +56,7 @@ terraform output -raw juju_cloud
 # NOTE: at least set the juju_cloud from the output of the previous module
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 
-cd modules/maas-deploy
+cd modules/maas-setup
 terraform init
 
 # Get a Terraform plan for sanity check
@@ -66,7 +70,7 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 # if enable_rack_mode is selected, then this is needed.
 terraform output -raw maas_api_url
 terraform output -raw maas_api_key
-terraform output -raw maas_machines
+terraform output -json maas_machines
 ```
 
 #### Enable HA and region+rack mode
