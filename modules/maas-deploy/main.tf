@@ -20,11 +20,12 @@ resource "juju_machine" "postgres_machines" {
 }
 
 resource "juju_machine" "maas_machines" {
-  count       = var.enable_maas_ha ? 3 : 1
-  model       = juju_model.maas_model.name
-  base        = "ubuntu@${var.ubuntu_version}"
-  name        = "maas-${count.index}"
-  constraints = var.maas_constraints
+  count             = var.enable_maas_ha ? 3 : 1
+  model             = juju_model.maas_model.name
+  base              = "ubuntu@${var.ubuntu_version}"
+  name              = "maas-${count.index}"
+  constraints       = var.maas_constraints
+  wait_for_hostname = true
 }
 
 resource "juju_application" "postgresql" {
@@ -160,14 +161,5 @@ data "external" "maas_get_api_url" {
 
   query = {
     model = terraform_data.create_admin.output.model
-  }
-}
-
-data "external" "maas_get_rack_controllers" {
-  program = ["bash", "${path.module}/scripts/get-maas-machines.sh"]
-
-  query = {
-    machine_ids = "${join(" ", juju_application.maas_region.machines)}"
-    model       = terraform_data.create_admin.output.model
   }
 }

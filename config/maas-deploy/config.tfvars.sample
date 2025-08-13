@@ -8,11 +8,9 @@ enable_postgres_ha = false
 enable_maas_ha = false
 # The LXD project to deploy Juju machines
 lxd_project = "default"
-
 # The constraints used for VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-
 
 ###
 ## PostgreSQL configuration

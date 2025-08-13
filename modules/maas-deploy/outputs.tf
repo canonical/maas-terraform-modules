@@ -7,5 +7,5 @@ output "maas_api_key" {
 }
 
 output "maas_machines" {
-  value = split(",", data.external.maas_get_rack_controllers.result.machines)
+  value = var.enable_rack_mode ? [for m in juju_machine.maas_machines : m.hostname] : []
 }
