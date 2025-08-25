@@ -131,7 +131,17 @@ backups: |-
 
 ```
 ## Restore
-This restore process assumes a starting point of a fresh deploy of the `maas-deploy` Terraform module, detailed in [README.md](./README.md), and a backup created as described above.
+This is a guide on how to restore from an existing charmed MAAS backup.
+
+#### Prerequisites
+This restoration guide assumes the following:
+
+- The backup steps outlined above were followed for both `maas-region` and `postgresql`.
+- A starting point of a fresh deploy of the `maas-deploy` Terraform module, detailed in [README.md](./README.md), with the following conditions:
+   - The deployment region units matches the number of controller ids in the selected backup. For example, if the backup has 3x controller ids, you will need to deploy `maas-region` in HA mode (3x region units).
+   - PostgreSQL is scaled down to a single unit, i.e. `enable_postgres_ha=false`.
+   - **Note** when deploying for a restore, the backup infrastructure must be deployed as the final step of the setup. To do this, run your `terraform apply` steps of the `maas-deploy` module with the `-var enable_backup=false` var until all units are fully deployed and active i.e. `maas-region` in HA, any agent units are deployed, postgresql deployed. Finally, remove the `-var enable_backup=false` var to deploy and integrate the s3 integrators. This final step should complete but leave the single postgresl unit in a blocked state, with the expected message "the s3 repository has backups from another cluster".
+- You have the passwords for postgres for the desired backup as outlined in the backup steps.
 
 It includes the following steps:
    1. Remove the integration between `maas-region` and `postgresql` applications.
@@ -153,7 +163,7 @@ It includes the following steps:
    ```bash
    juju grant-secret mypostgresqlsecret postgresql
    ```
-1. Restore PostgreSQL with the relevant backup id:
+1. Restore PostgreSQL with the relevant backup id. Wait for this to complete:
    ```bash
    juju run postgresql/leader restore backup-id=yyyy-mm-ddThh:mm:ssZ
    ```
