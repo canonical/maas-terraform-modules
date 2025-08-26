@@ -153,7 +153,7 @@ The number of controller IDs in your target backup determines if you need MAAS i
 The restore is always performed with postgresql not in ha mode (`enable_postgres_ha=false`), and scaled up to HA after the restore process if desired.
 
 ### Step 2: Staged deployment of a fresh environment
-Deploy the `maas-deploy` module following the instructions in [README.md](./README.md), but using a staged approach as outlined below.
+Deploy the `maas-deploy` module, but using a staged approach as outlined below.
 
 Always start with `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
 
