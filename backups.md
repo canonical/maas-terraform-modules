@@ -7,16 +7,15 @@ This guide includes the backup and restore instructions for both the PostgreSQL 
 ### Prerequisites
 - You need an [S3-compatible storage]((https://aws.amazon.com/s3/)) solution with credentials and two empty buckets.
 - The `maas-deploy` module must be run with backup enabled. In your config.tfvars file, set `enable_backup=true` and provide your S3 credentials. This module will deploy the following:
-  - An optional HA (High Availability) setup for `maas-region` (3 units) and `postgresql` (3 units).
-  - Two `s3-integrator` units, one integrated with `maas-region` and the other with `postgresql`.
+  - For HA deployments: 3 units each of `maas-region` and `postgresql`.
+  - For non-HA deployments: 1 unit each of `maas-region` and `postgresql`.
+  - In both HA and non-HA deployments, two `s3-integrator` units, one integrated with `maas-region` and the other with `postgresql`.
 
   For detailed instructions on how to do this, refer to [README.md](./README.md).
 - You should have basic knowledge about Juju and charms, including:
   - Running actions.
   - Viewing your juju status and debug-log.
   - Understanding relations.
-
-
 
 ### Before you begin
 It's important to understand the following:
@@ -140,9 +139,9 @@ This restoration guide assumes the following:
 - You have the postgres passwords for the chosen backup that were securely stored during the backup process.
 - You have identified the backups IDs for `maas-region` and `postgresql`, using the `list-backups` commands if needed.
 
-The restore process required deploying a fresh MAAS environment that matches your backup configuration, then restoring postgresql and each region separately.
+The restore process requires deploying a fresh MAAS environment that matches your backup configuration, then restoring postgresql and each region separately.
 
-### 1: Determine your target configuration
+### Step 1: Determine your target configuration
 Check your MAAS backup for controller count:
 ```bash
 juju run maas-region/leader list-backups
@@ -153,10 +152,14 @@ The number of controller IDs in your target backup determines if you need MAAS i
 
 The restore is always performed with postgresql not in ha mode (`enable_postgres_ha=false`), and scaled up to HA after the restore process if desired.
 
-### 2: Staged deployment of a fresh environment
-Deploy the `maas-deploy` module following the instructions in [README.md](./README.md), but using a staged approach as outlined below:
+### Step 2: Staged deployment of a fresh environment
+Deploy the `maas-deploy` module following the instructions in [README.md](./README.md), but using a staged approach as outlined below.
 
-Always start with `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration. `-var` overrides config values, so these are not required if you set the desired values in `config.tfvars`.
+Always start with `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
+
+> [!Note]
+> `-var` overrides config values, so these additional variables are not required if you change the desired values in `config.tfvars` instead.
+
 #### For non-HA region deployments (1 controller ID in backup)
 ```bash
 # Stage 1: Deploy basic MAAS (single region, no rack, single postgres, no backup)
@@ -173,7 +176,7 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars \
   -var enable_postgres_ha=false \
   -var enable_backup=false
 
-# Stage 3: Enable backup infrastructure (this will leave postgresql in blocked state - this is expected)
+# Stage 3: Enable backup infrastructure (this will leave postgresql in an expected blocked state)
 terraform apply -var-file ../../config/maas-deploy/config.tfvars \
   -var enable_maas_ha=false \
   -var enable_rack_mode=true \  # or false if not needed
@@ -203,7 +206,7 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars \
   -var enable_postgres_ha=false \
   -var enable_backup=false
 
-# Stage 4: Enable backup infrastructure (this will leave postgresql in blocked state - this is expected)
+# Stage 4: Enable backup infrastructure (this will leave postgresql in an expected blocked state)
 terraform apply -var-file ../../config/maas-deploy/config.tfvars \
   -var enable_maas_ha=true \
   -var enable_rack_mode=true \  # or false if not needed
@@ -214,7 +217,7 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars \
 After the final stage, terraform should complete and your postgresql unit should be in a blocked state with the message "the s3 repository has backups from another cluster". This is expected and you can proceeed with the restore.
 
 
-### 3: Perform the restore
+### Step 3: Perform the restore
 Restore your backup data:
 1. Remove the `maas-region`-`postgresql` relation:
    ```bash
@@ -243,7 +246,7 @@ Restore your backup data:
    juju run maas-region/2 restore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=7sq6bm --wait 10m
    ```
 
-### 4: Complete the deployment
+### Step 4: Complete the deployment
 1. If you would like to run postgresql in HA mode (a total of 3 postgresql units), re-run the final deployment command you ran during the staged deployment of a fresh environment, but with `-var enable_postgres_ha=true`, and wait for its completion:
    - For a restore with the region in HA:
       ```bash
@@ -277,7 +280,7 @@ Restore your backup data:
    ```
 1. Re-run the `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md). You should now have a restored MAAS deployment.
 
-### 5: Verify restore
+### Step 5: Verify restore
 1. Once MAAS has finished re-initialisation, get the new endpoint using:
    ```bash
    juju run maas-region/leader get-api-endpoint
