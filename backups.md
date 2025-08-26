@@ -170,13 +170,13 @@ It includes the following steps:
 
 1. To restore each region, the following command needs to be executed on each region with a different controller-id for each, obtained from the maas-region `list-backups` action:
    ```bash
-   juju run maas-region/${i} restore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=${id}
+   juju run maas-region/${i} restore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=${id} --wait 5m
    ```
    For example:
    ```bash
-   juju run maas-region/0 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=8ppr6w
-   juju run maas-region/1 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=0eq9qa
-   juju run maas-region/2 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=7sq6bm
+   juju run maas-region/0 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=8ppr6w --wait 5m
+   juju run maas-region/1 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=0eq9qa --wait 5m
+   juju run maas-region/2 retstore-backup backup-id=yyyy-mm-ddThh:mm:ssZ controller-id=7sq6bm --wait
    ```
 1. Re-run the `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md).
 1. Once MAAS has finished re-initialisation, get the new endpoint using:
