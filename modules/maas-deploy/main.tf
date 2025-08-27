@@ -3,7 +3,7 @@ resource "juju_model" "maas_model" {
 
   cloud {
     name   = var.juju_cloud_name
-    region = "default"
+    region = var.juju_cloud_region
   }
 
   config = {

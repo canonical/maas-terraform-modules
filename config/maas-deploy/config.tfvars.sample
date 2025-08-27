@@ -2,6 +2,8 @@
 ubuntu_version = "24.04"
 # The Juju cloud name to deploy charmed MAAS model
 juju_cloud_name = "foobar"
+# The Juju cloud region to deploy charmed MAAS model
+juju_cloud_region = "default"
 # Whether to enable PostgreSQL HA
 enable_postgres_ha = false
 # Whether to enable MAAS HA

@@ -76,7 +76,7 @@ resource "juju_application" "s3_integrator" {
 resource "juju_integration" "s3_integration" {
   for_each = var.enable_backup ? toset(["postgresql", "maas"]) : toset([])
 
-  model = juju_model.maas_model.name
+  model = terraform_data.juju_wait_for_maas.output.model
 
   application {
     name     = juju_application.s3_integrator[each.value].name

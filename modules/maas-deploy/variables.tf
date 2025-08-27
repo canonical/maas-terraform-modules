@@ -9,6 +9,12 @@ variable "juju_cloud_name" {
   type        = string
 }
 
+variable "juju_cloud_region" {
+  description = "The Juju cloud region to deploy charmed MAAS model"
+  type        = string
+  default     = "default"
+}
+
 variable "maas_constraints" {
   description = "The constraints for the MAAS virtual machines"
   type        = string
