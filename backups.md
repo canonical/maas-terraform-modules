@@ -247,23 +247,6 @@ Restore your backup data:
    ```
 
 ### Step 4: Complete the deployment
-1. If you would like to run postgresql in HA mode (a total of 3 postgresql units), re-run the final deployment command you ran during the staged deployment of a fresh environment, but with `-var enable_postgres_ha=true`, and wait for its completion:
-   - For a restore with the region in HA:
-      ```bash
-      terraform apply -var-file ../../config/maas-deploy/config.tfvars \
-         -var enable_maas`_ha=true \
-         -var enable_rack_mode=true \  # or false if not needed
-         -var enable_postgres_ha=true \
-         -var enable_backup=true`
-      ```
-   - For a restore with the region in non-HA
-      ```bash
-      terraform apply -var-file ../../config/maas-deploy/config.tfvars \
-         -var enable_maas_ha=false \
-         -var enable_rack_mode=true \  # or false if not needed
-         -var enable_postgres_ha=true \
-         -var enable_backup=true
-      ```
 1. Obtain the new model uuid with:
    ```bash
    juju show-model maas | grep model-uuid
@@ -278,7 +261,43 @@ Restore your backup data:
    ```bash
    juju integrate postgresql maas-region
    ```
-1. Re-run the `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md). You should now have a restored MAAS deployment.
+1. If you would like to run postgresql in HA mode (a total of 3 postgresql units), re-run the final deployment command you ran during the staged deployment of a fresh environment, but with `-var enable_postgres_ha=true`, and wait for its completion:
+   - For a restore with the region in HA:
+      ```bash
+      terraform apply -var-file ../../config/maas-deploy/config.tfvars \
+         -var enable_maas_ha=true \
+         -var enable_rack_mode=true \  # or false if not needed
+         -var enable_postgres_ha=true \
+         -var enable_backup=true
+      ```
+   - For a restore with the region in non-HA
+      ```bash
+      terraform apply -var-file ../../config/maas-deploy/config.tfvars \
+         -var enable_maas_ha=false \
+         -var enable_rack_mode=true \  # or false if not needed
+         -var enable_postgres_ha=true \
+         -var enable_backup=true
+      ```
+1. Ensuring your `config.tfvars` describes the same configuration as your restored MAAS, re-run the `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md). You should only be observing modifications to the output:
+   ```bash
+   ❯ terraform apply -var-file ../../config/maas-setup/config.tfvars
+   juju_model.maas_model: Refreshing state... [id=cada3a8b-9e2d-482f-81d7-9381bbc5e3ae]
+   ...
+
+   Changes to Outputs:
+      ~ maas_api_key  = "old-api-key" -> "new-api-key"
+
+   You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
+
+   Do you want to perform these actions?
+      Terraform will perform the actions described above.
+      Only 'yes' will be accepted to approve.
+
+      Enter a value:
+   ```
+
+
+You should now have a restored MAAS deployment, managed by terraform.
 
 ### Step 5: Verify restore
 1. Once MAAS has finished re-initialisation, get the new endpoint using:
@@ -299,5 +318,6 @@ Waiting for task 64...
 juju cancel-task <task-id>
 ```
 
+#### Image
 ### Resources
 - [Charmed PostgreSQL documentation version 16](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
