@@ -73,10 +73,13 @@ The entities outside the database that are backed up are:
            replication-password: <password-to-copy>
            rewind-password: <password-to-copy>
        ```
-1. Run a backup on postgresql. If running PostgreSQL in HA, run it on a unit that is not the leader:
+1. Create a full backup of postgresql. If running PostgreSQL in HA, run it on a unit that is not the leader:
     ```bash
     juju run postgresql/1 create-backup --wait 5m
     ```
+
+   > [!Note]
+   > This creates a full PostgreSQL backup. Differential and incremental types are not supported as part of this guide.
 
 ### Backup MAAS
 Backup up relevant files on MAAS region controllers outside of the database.
