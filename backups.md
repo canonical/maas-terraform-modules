@@ -247,15 +247,9 @@ Restore your backup data:
    ```
 
 ### Step 4: Complete the deployment
-1. Obtain the new model uuid with:
+1. Change your `s3-integrator-postgresql` path to a new path:
    ```bash
-   juju show-model maas | grep model-uuid
-   ```
-1. In your PostgreSQL S3 location, update the file `mybucket/mypath/model-uuid.txt` and replace the old UUID with the new.
-1. Re-integrate `postgresql` and `s3-integrator-postgresql`:
-   ```bash
-   juju remove-relation s3-integrator-postgresql postgresql
-   juju integrate s3-integrator-postgresql postgresql
+   jj config s3-integrator-postgresql path=postgresql-restore-1
    ```
 1. Integrate `postgresql` and `maas-region`:
    ```bash
