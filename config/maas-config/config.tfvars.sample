@@ -1,3 +1,7 @@
+###
+## MAAS connection settings
+###
+#
 # The MAAS URL
 maas_url = "http://127.0.0.1:5240/MAAS"
 # The MAAS API key
@@ -8,15 +12,18 @@ maas_key = "TA34jaREV6GZewNsfz:kz6PgpXbkjUzmsmnCV:n77nHsMQmTbmj5ssvYvMg7muAPnpxy
 ###
 
 # Whether to enable DHCP for a given subnet on a specified rack controller
+# If you enable this you also need to specify pxe_subnet below
 enable_dhp = false
-# The hostname of the MAAS rack controller to enable DHCP
+# The hostname of the MAAS rack controller to enable DHCP on
 rack_controller = "foo-bar"
 # The subnet to serve DHCP from the MAAS rack controller
 pxe_subnet = "10.10.10.0/24"
-# The URL of the boot source to synchronize OS images
+# The URL of the boot source to synchronize OS images from
+# This needs to be a simple streams server
 image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
-# An Ubuntu image selection map where each key is the release name and the
-# value is a map of arches set and, optionally, subarches set
+# Configure MAAS to download these images immediately.
+# Each key is the release name and the value is a map of
+# architectures and - optionally - sub-architectures
 boot_selections = {
   jammy = {
     arches    = ["amd64"]

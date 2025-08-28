@@ -1,16 +1,28 @@
-# The OS version to install on the VMs
+###
+## Juju, LXD and Virtual Machine configurations
+###
+#
+# The Ubuntu operating system version to install on the virtual machines (VMs)
 ubuntu_version = "24.04"
-# The Juju cloud name to deploy charmed MAAS model
+# The Juju cloud name to deploy the charmed MAAS model on
 juju_cloud_name = "foobar"
-# The Juju cloud region to deploy charmed MAAS model
+# The Juju cloud region to deploy charmed MAAS model on
 juju_cloud_region = "default"
-# Whether to enable PostgreSQL HA
+# Set this to true to run PostgreSQL in high availability (HA)
+# Setting this to true will create three PostgreSQL instances
 enable_postgres_ha = false
-# Whether to enable MAAS HA
+# Set this to true to run MAAS in high availability (HA)
+# Setting this to true will create three region controller instances
 enable_maas_ha = false
-# The LXD project to deploy Juju machines
+# The LXD project in which to create the VMs for Juju
 lxd_project = "default"
-# The constraints used for VMs
+# Use the following constraints for the machines
+# Increase cores and mem for larger MAAS installations
+# You can change remove virt-type=virtual-machine if your
+# Juju controller works with physical machines and you
+# want to install MAAS on those
+# NOTE: if you set up the project with juju-bootstrap your
+#       controller will work with VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
 
@@ -22,7 +34,7 @@ postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
 charm_postgresql_channel = "16/stable"
 # Operator channel revision for PostgreSQL deployment
 charm_postgresql_revision = null
-# Operator config for PostgreSQL deployment
+# Operator configuration for PostgreSQL deployment
 charm_postgresql_config = {
   # Maximum number of concurrent connections to allow to the database server
   experimental_max_connections = 100
@@ -38,7 +50,7 @@ charm_postgresql_config = {
 charm_maas_region_channel = "latest/edge"
 # Operator channel revision for MAAS Region Controller deployment
 charm_maas_region_revision = null
-# Operator config for MAAS Region Controller deployment
+# Operator configuration for MAAS Region Controller deployment
 charm_maas_region_config = {}
 
 ###
@@ -47,8 +59,9 @@ charm_maas_region_config = {}
 
 # Whether to enable MAAS running in region+rack mode
 # NOTE:
-#   Until maas-agent charm is put EOL, this is installing it at the same machines as maas-region
-#   units to achieve region+rack mode
+#   This installs the maas-rack charm at the same machines as 
+#   maas-region charm to achieve region+rack mode.
+#   This behavior will change once the maas-rack charm is EOL.
 enable_rack_mode = false
 # Operator channel for MAAS Agent Controller deployment
 charm_maas_agent_channel = "latest/edge"
