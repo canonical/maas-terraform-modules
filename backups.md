@@ -20,7 +20,7 @@ This guide includes the backup and restore instructions for both the PostgreSQL 
 ### Before you begin
 It's important to understand the following:
 - The restore process outlined in this document is for a fresh install of MAAS and PostgreSQL.
-- When restoring, deploy the same MAAS and PostgreSQL channel versions that were used to create the backup.
+- When restoring, deploy the same MAAS and PostgreSQL channel versions that were used to create the backup. You can see the version of the maas-region charm used for a particular backup in `mybucket/mypath/backup/<backup-id>/backup_metadata.json`, and the version of PostgreSQL used in `mybucket/mypath/backup/<stanza-name>/backup.info`.
 
 > [!Note]
 > This backup and restore functionality is in an early release phase. We recommend testing this workflow in a non-production environment first to verify it meets your specific requirements before implementing in production.
