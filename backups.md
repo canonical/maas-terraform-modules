@@ -282,8 +282,7 @@ This is due to custom images not being fully backed up on regions, but they were
 
    COMMIT;
    ```
-
-2. On your Juju client, re-integrate `maas-region` and `postgresql` to re-initialize `maas-region`:
+1. On your Juju client, re-integrate `maas-region` and `postgresql` to re-initialize `maas-region`:
    ```bash
    juju remove-relation maas-region postgresql
    juju integrate maas-region postgresql
