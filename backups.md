@@ -232,6 +232,65 @@ Waiting for task 64...
 juju cancel-task <task-id>
 ```
 
-#### Image
+#### Stuck initializing maas database/ unable to delete custom image upon restore
+When restoring, you may run into MAAS being stuck initialising. If you are restoring MAAS in non-HA, you will not be able to access MAAS, or with MAAS in HA you might be able to access some regions that are not stuck initializing.
+
+This is due to custom images not being fully backed up on regions, but they were backed up in the database, due to images not being synced across all regions at the time of backup. To resolve this disparity, you need to remove the problematic custom image entry from the database before forcing MAAS to re-intialise, as outlined below.
+
+1. Obtain the operator password of the database as outlined in the backup steps.
+1. Ssh into the postgresql node, for example if postgresql is on machine 1:
+   ```bash
+   juju ssh 1
+   ```
+1. Find the database ipv4 address of the database from the output of:
+   ```bash
+   ip a
+   ```
+1. Access the PostgreSQL terminal by running the following, ensuring to specify the IP address of the PostgreSQL:
+   ```bash
+   sudo psql -U operator -h 10.237.137.164 -d maas_region_db
+   ```
+1. Enter the operator password you obtained from step 1. Note this is may not be the same as the operator password used to restore.
+1. Identify the problematic custom image database id(s). If you have no access to any working regions, this will require to you look back at recently uploaded images in the `maasserver_bootresource` table:
+   ```bash
+   SELECT * FROM maasserver_bootresource ORDER BY updated DESC;
+   ```
+1. Run the following statement for each problematic image, replacing the `BAD_RESOURCE_ID` with the image id:
+   ```sql
+   BEGIN;
+
+   DELETE FROM maasserver_bootresourcefilesync
+   WHERE file_id IN (
+      SELECT brf.id
+      FROM maasserver_bootresourcefile brf
+      JOIN maasserver_bootresourceset brs ON brf.resource_set_id = brs.id
+      WHERE brs.resource_id = BAD_RESOURCE_ID
+   );
+
+   DELETE FROM maasserver_bootresourcefile
+   WHERE resource_set_id IN (
+      SELECT id
+      FROM maasserver_bootresourceset
+      WHERE resource_id = BAD_RESOURCE_ID
+   );
+
+   DELETE FROM maasserver_bootresourceset
+   WHERE resource_id = BAD_RESOURCE_ID;
+
+   DELETE FROM maasserver_bootresource
+   WHERE id = BAD_RESOURCE_ID;
+
+   COMMIT;
+   ```
+
+2. On your Juju client, re-integrate `maas-region` and `postgresql` to re-initialize `maas-region`:
+   ```bash
+   juju remove-relation maas-region postgresql
+   juju integrate maas-region postgresql
+   ```
+You should now be able to access MAAS.
+
+
+
 ### Resources
 - [Charmed PostgreSQL documentation version 16](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
