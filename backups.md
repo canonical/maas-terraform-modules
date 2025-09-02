@@ -64,7 +64,7 @@ The entities outside the database that are backed up are:
            replication-password: <password-to-copy>
            rewind-password: <password-to-copy>
        ```
-1. Create a full backup of `postgresql`. If running PostgreSQL in HA, run it on a unit that is not the leader:
+1. Create a full backup of `postgresql`. When TLS is enabled, run this on a replica unit (non-primary), but when TLS is not enabled this can only be run on the primary (see the [docs](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/how-to/back-up-and-restore/create-a-backup/#create-a-backup)):
     ```bash
     juju run postgresql/1 create-backup --wait 5m
     ```
@@ -82,7 +82,7 @@ Backup up relevant files on MAAS region controllers outside of the database.
 juju run maas-region/leader create-backup --wait 5m
 ```
 > [!Note]
-> With a large number of images, you may have to increase the wait time to avoid the action timing out.
+> With a large number of images, you may have to increase the wait time to avoid juju timing out waiting for the action to complete.
 
 ## List backups
 List existing MAAS backups present S3. Your MAAS backups and PostgreSQL backups are stored and listed independently.
@@ -99,13 +99,13 @@ Running operation 63 with 1 task
 Waiting for task 64...
 backups: |-
   Storage bucket name: mybucket
-  Backups base path: /mybucket/backup/
+  Backups base path: /maas/backup/
 
   backup-id            | action      | status   | maas     | size       | controllers            | backup-path
   ------------------------------------------------------------------------------------------------------------
-  2025-08-21T10:09:38Z | full backup | failed   | 3.6.1    | 158.0B     | yhtqst, ke83wd, 4y4qyw | /mybucket/backup/2025-08-21T10:09:38Z
-  2025-08-21T10:12:12Z | full backup | failed   | 3.6.1    | 158.0B     | ke83wd, 4y4qyw, yhtqst | /mybucket/backup/2025-08-21T10:12:12Z
-  2025-08-21T16:05:06Z | full backup | finished | 3.6.1    | 1.9GiB     | gcfqmg, rs48sw, dnfcmd | /mybucket/backup/2025-08-21T16:05:06Z
+  2025-09-01T14:13:31Z | full backup | finished | 3.6.1    | 1.8GiB     | pfmyqs, ym6cse, yy6ny6 | /maas/backup/2025-09-01T14:13:31Z
+  2025-09-01T16:37:46Z | full backup | finished | 3.6.1    | 766.7MiB   | 7rtx4b, 7wstba, be7mkk | /maas/backup/2025-09-01T16:37:46Z
+
 
 ```
 
@@ -183,17 +183,18 @@ Restore your backup data:
    ```
 
 ### Step 4: Complete the deployment
-1. You cannot backup the new database to the same location as your previous cluster by design. Change your `s3-integrator-postgresql` path or bucket to store future backups of PostgreSQL and :
+1. You cannot backup the new database to the same location as your previous cluster by design. Change your `s3-integrator-postgresql` path or bucket to store future backups of PostgreSQL using the path below:
    ```bash
    juju config s3-integrator-postgresql path=postgresql-restore-1
    ```
+1. Update the relevant variable in your `config.tfvars` to the path set in the previous step.
 1. Integrate `postgresql` and `maas-region`:
    ```bash
    juju integrate postgresql maas-region
    ```
 1. If you would like to run PostgreSQL in HA mode (a total of 3 PostgreSQL units), now you can re-run your `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md) with `enable_postgres_ha=true`, and wait for its completion.
 
-   Otherwise, simply re-run the `terraform apply` step for the `maas-deploy` module to ensure your configuration is now managed by terraform. You should only observe a plan with modifications to the output:
+   Otherwise, simply re-run the `terraform apply` step for the `maas-deploy` module to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
    ```bash
    ❯ terraform apply -var-file ../../config/maas-setup/config.tfvars
    juju_model.maas_model: Refreshing state... [id=cada3a8b-9e2d-482f-81d7-9381bbc5e3ae]
@@ -214,7 +215,7 @@ Restore your backup data:
 You should now have a restored MAAS deployment, managed by Terraform.
 
 ### Step 5: Verify restore
-1. Once MAAS has finished re-initialisation, get the new endpoint using:
+1. Once MAAS has finished re-initialization, get the new endpoint using:
    ```bash
    juju run maas-region/leader get-api-endpoint
    ```
@@ -233,16 +234,16 @@ juju cancel-task <task-id>
 ```
 
 #### Stuck initializing maas database/ unable to delete custom image upon restore
-When restoring, you may run into MAAS being stuck initialising. If you are restoring MAAS in non-HA, you will not be able to access MAAS, or with MAAS in HA you might be able to access some regions that are not stuck initializing.
+When restoring, you may run into MAAS being stuck initializing. If you are restoring MAAS in non-HA, you will not be able to access MAAS, or with MAAS in HA you might be able to access some regions that are not stuck initializing.
 
-This is due to custom images not being fully backed up on regions, but they were backed up in the database, due to images not being synced across all regions at the time of backup. To resolve this disparity, you need to remove the problematic custom image entry from the database before forcing MAAS to re-intialise, as outlined below.
+This is due to custom images not being fully backed up on regions, but they were backed up in the database, due to images not being synced across all regions at the time of backup. To resolve this difference, you need to remove the problematic custom image entry from the database before forcing MAAS to re-initialize, as outlined below.
 
 1. Obtain the operator password of the database as outlined in the backup steps.
-1. Ssh into the postgresql node, for example if postgresql is on machine 1:
+1. SSH into the `postgresql` node:
    ```bash
-   juju ssh 1
+   juju ssh postgresql/leader
    ```
-1. Find the database ipv4 address of the database from the output of:
+1. Find the database IPv4 address of the database from the output of:
    ```bash
    ip a
    ```
