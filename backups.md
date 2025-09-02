@@ -64,7 +64,7 @@ The entities outside the database that are backed up are:
            replication-password: <password-to-copy>
            rewind-password: <password-to-copy>
        ```
-1. Create a full backup of `postgresql`. When TLS is enabled, run this on a replica unit (non-primary), but when TLS is not enabled this can only be run on the primary (see the [docs](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/how-to/back-up-and-restore/create-a-backup/#create-a-backup)):
+1. Create a full backup of `postgresql`. When PostgreSQL TLS is enabled, run this on a replica unit (non-primary), but when PostgreSQL TLS is not enabled this can only be run on the primary (see the [docs](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/how-to/back-up-and-restore/create-a-backup/#create-a-backup)):
     ```bash
     juju run postgresql/1 create-backup --wait 5m
     ```
