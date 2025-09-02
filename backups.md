@@ -287,8 +287,7 @@ This is due to custom images not being fully backed up on regions, but they were
    juju remove-relation maas-region postgresql
    juju integrate maas-region postgresql
    ```
-You should now be able to access MAAS.
-
+You should now be able to access MAAS. Re-upload the custom image, if required.
 
 
 ### Resources
