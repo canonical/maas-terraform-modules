@@ -103,7 +103,7 @@ backups: |-
 
   backup-id            | action      | status   | maas     | size       | controllers            | backup-path
   ------------------------------------------------------------------------------------------------------------
-  2025-09-01T14:13:31Z | full backup | finished | 3.6.1    | 1.8GiB     | pfmyqs, ym6cse, yy6ny6 | /maas/backup/2025-09-01T14:13:31Z
+  2025-09-01T14:13:31Z | full backup | finished | 3.6.1    | 1.8GiB     | 7rtx4b, 7wstba, be7mkk | /maas/backup/2025-09-01T14:13:31Z
   2025-09-01T16:37:46Z | full backup | finished | 3.6.1    | 766.7MiB   | 7rtx4b, 7wstba, be7mkk | /maas/backup/2025-09-01T16:37:46Z
 
 
