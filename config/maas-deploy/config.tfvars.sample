@@ -8,11 +8,9 @@ ubuntu_version = "24.04"
 juju_cloud_name = "foobar"
 # The Juju cloud region to deploy charmed MAAS model on
 juju_cloud_region = "default"
-# Set this to true to run PostgreSQL in high availability (HA)
-# Setting this to true will create three PostgreSQL instances
+# Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units
 enable_postgres_ha = false
-# Set this to true to run MAAS in high availability (HA)
-# Setting this to true will create three region controller instances
+# Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
 enable_maas_ha = false
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"
@@ -59,7 +57,7 @@ charm_maas_region_config = {}
 
 # Whether to enable MAAS running in region+rack mode
 # NOTE:
-#   This installs the maas-rack charm at the same machines as 
+#   This installs the maas-agent charm at the same machines as 
 #   maas-region charm to achieve region+rack mode.
 #   This behavior will change once the maas-rack charm is EOL.
 enable_rack_mode = false
