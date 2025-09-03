@@ -221,3 +221,15 @@ variable "s3_bucket_maas" {
   type        = string
   default     = "maas"
 }
+
+variable "s3_path_postgresql" {
+  description = "Path in the S3 bucket to store PostgreSQL backups in"
+  type        = string
+  default     = "/postgresql"
+}
+
+variable "s3_path_maas" {
+  description = "Path in the S3 bucket to store MAAS backups in"
+  type        = string
+  default     = "/maas"
+}

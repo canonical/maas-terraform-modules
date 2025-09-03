@@ -51,7 +51,7 @@ resource "juju_application" "s3_integrator" {
 
   config = merge(var.charm_s3_integrator_config, local.s3_credentials, {
     bucket = each.value == "maas" ? var.s3_bucket_maas : var.s3_bucket_postgresql
-    path   = each.value == "maas" ? "/maas" : "/postgresql"
+    path   = each.value == "maas" ? var.s3_path_maas : var.s3_path_postgresql
     tls-ca-chain = (
       length(var.s3_ca_chain_file_path) > 0 ? base64encode(file(var.s3_ca_chain_file_path)) : ""
     )
