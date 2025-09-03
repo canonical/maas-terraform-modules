@@ -6,19 +6,18 @@ This guide includes the backup instructions for both the PostgreSQL database, wh
 
 ### Prerequisites
 - You need an S3-compatible storage solution with credentials.
-- The `maas-deploy` module must be run with backup enabled. In your config.tfvars file, set `enable_backup=true` and provide your S3 parameters. This module will deploy the following:
+- The `maas-deploy` module must be run with backup enabled as the final stage of the staged deployment detailed in [README.md](./README.md). To achieve this, in your config.tfvars file, set `enable_backup=true`,  provide your S3 parameters, before re-running the terraform apply step. This module will deploy the following:
   - For HA deployments: 3 units each of `maas-region` and `postgresql`.
   - For non-HA deployments: 1 unit each of `maas-region` and `postgresql`.
   - In both HA and non-HA deployments, two `s3-integrator` units, one integrated with `maas-region` and the other with `postgresql`.
 
-  For detailed instructions on how to do this, refer to [README.md](./README.md).
 - You should have basic knowledge about Juju and charms, including:
   - Running actions.
   - Viewing your juju status and debug-log.
   - Understanding relations.
 
 > [!Note]
-> This backup and restore functionality is in an early release phase. We recommend testing this workflow in a non-production environment first to verify it meets your specific requirements before implementing in production.
+> This backup and restore functionality is in an early release phase. We recommend testing these workflows in a non-production environment first to verify they meet your specific requirements before implementing in production.
 
 ## Create backup
 Creating a backup of charmed MAAS requires two separate backups: the backup of maas-region cluster, and the backup of the PostgreSQL database.

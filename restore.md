@@ -1,6 +1,9 @@
 # How to restore charmed MAAS
-This is a guide on how to restore from an existing charmed MAAS backup.
+This is a guide on how to restore from an existing charmed MAAS backup as defailed in [backup.md](backup.md).
 
+> [!Note]
+> This backup and restore functionality is in an early release phase. We recommend testing these workflows in a non-production environment first to verify they meet your specific requirements before implementing in production.
+>
 ### Before you begin
 It's important to understand the following:
 - The restore process outlined in this document is for a fresh install of MAAS and PostgreSQL.
@@ -8,14 +11,14 @@ It's important to understand the following:
 
 ### Prerequisites
 This restoration guide assumes the following:
-j
-- The backup steps outlined above were followed for both `maas-region` and `postgresql`.
+
+- The backup steps outlined in [backup.md](backup.md) were followed for both `maas-region` and `postgresql`.
 - You have the PostgreSQL passwords for the chosen backup that were securely stored during the backup process.
 - You have identified the backups IDs for `maas-region` and `postgresql`, using the `list-backups` commands if needed.
 
+## Restore from a backup
 The restore process requires deploying a fresh MAAS environment that matches your backup configuration, then restoring PostgreSQL and each region separately.
 
-## Restore from a backup
 ### Step 1: Determine your target configuration
 Check your MAAS backup for controller count:
 ```bash
