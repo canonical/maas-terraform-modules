@@ -16,7 +16,7 @@ This restoration guide assumes the following:
 - You have the PostgreSQL passwords for the chosen backup that were securely stored during the backup process.
 - You have identified the backups IDs for `maas-region` and `postgresql`, using the `list-backups` commands if needed.
 
-## Restore from a backup
+## Restore from backup
 The restore process requires deploying a fresh MAAS environment that matches your backup configuration, then restoring PostgreSQL and each region separately.
 
 ### Step 1: Determine your target configuration
