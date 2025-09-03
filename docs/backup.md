@@ -3,10 +3,10 @@
 This document describes how to backup charmed MAAS to an S3 compatible storage bucket for HA deployments (3x `maas-region` and 3x `postgresql` units) and non-HA deployments (1x `maas-region` and 1x `postgresql` units).
 
 This guide includes the backup instructions for both the PostgreSQL database, which stores the majority of the MAAS state, and also additional files stored on disk in the regions. Running backups for both these two applications are required to backup charmed MAAS.
-
+f
 ### Prerequisites
 - You need an S3-compatible storage solution with credentials.
-- The `maas-deploy` module must be run with backup enabled as the final stage of the staged deployment detailed in [README.md](./README.md). To achieve this, in your config.tfvars file, set `enable_backup=true`,  provide your S3 parameters, before re-running the terraform apply step. This module will deploy the following:
+- The `maas-deploy` module must be run with backup enabled as the final stage of the staged deployment detailed in [README.md](../README.md). To achieve this, in your config.tfvars file, set `enable_backup=true`,  provide your S3 parameters, before re-running the terraform apply step. This module will deploy the following:
   - For HA deployments: 3 units each of `maas-region` and `postgresql`.
   - For non-HA deployments: 1 unit each of `maas-region` and `postgresql`.
   - In both HA and non-HA deployments, two `s3-integrator` units, one integrated with `maas-region` and the other with `postgresql`.

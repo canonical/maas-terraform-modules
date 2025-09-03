@@ -31,7 +31,7 @@ The number of controller IDs in your target backup determines if you need MAAS i
 The restore is always performed with PostgreSQL not in HA mode (`enable_postgres_ha=false`), and scaled up to HA after the restore process if desired.
 
 ### Step 2: Staged deployment of a fresh environment
-Deploy the `maas-deploy` as outlined in [README.md](./README.md) to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
+Deploy the `maas-deploy` as outlined in [README.md](../README.md) to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
 
 When you've deployed your target configuration, re-run your `terraform apply` with `enable_backup=true` to deploy the necessary backup configuration.
 
@@ -76,7 +76,7 @@ Restore your backup data:
    ```bash
    juju integrate postgresql maas-region
    ```
-1. If you would like to run PostgreSQL in HA mode (a total of 3 PostgreSQL units), now you can re-run your `terraform apply` step for the `maas-deploy` module as detailed in [README.md](./README.md) with `enable_postgres_ha=true`, and wait for its completion.
+1. If you would like to run PostgreSQL in HA mode (a total of 3 PostgreSQL units), now you can re-run your `terraform apply` step for the `maas-deploy` module as detailed in [README.md](../README.md) with `enable_postgres_ha=true`, and wait for its completion.
 
    Otherwise, simply re-run the `terraform apply` step for the `maas-deploy` module to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
    ```bash
