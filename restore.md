@@ -8,7 +8,7 @@ It's important to understand the following:
 
 ### Prerequisites
 This restoration guide assumes the following:
-
+j
 - The backup steps outlined above were followed for both `maas-region` and `postgresql`.
 - You have the PostgreSQL passwords for the chosen backup that were securely stored during the backup process.
 - You have identified the backups IDs for `maas-region` and `postgresql`, using the `list-backups` commands if needed.
