@@ -186,7 +186,7 @@ variable "charm_s3_integrator_revision" {
 
 variable "charm_s3_integrator_config" {
   description = <<EOF
-    Operator config for S3 Integrator deployment. Configuration for `bucket` and `tls-ca-chain` is
+    Operator config for S3 Integrator deployment. Configuration for `bucket`, `path` and `tls-ca-chain` is
     skipped even if set, since it is handled by different Terraform variables.
   EOF
   type        = map(string)
@@ -216,16 +216,16 @@ variable "s3_bucket_postgresql" {
   default     = "postgresql"
 }
 
-variable "s3_bucket_maas" {
-  description = "Bucket name to store MAAS backups in"
-  type        = string
-  default     = "maas"
-}
-
 variable "s3_path_postgresql" {
   description = "Path in the S3 bucket to store PostgreSQL backups in"
   type        = string
   default     = "/postgresql"
+}
+
+variable "s3_bucket_maas" {
+  description = "Bucket name to store MAAS backups in"
+  type        = string
+  default     = "maas"
 }
 
 variable "s3_path_maas" {
