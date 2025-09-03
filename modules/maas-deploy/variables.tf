@@ -186,7 +186,7 @@ variable "charm_s3_integrator_revision" {
 
 variable "charm_s3_integrator_config" {
   description = <<EOF
-    Operator config for S3 Integrator deployment. Configuration for `bucket`, `path` and `tls-ca-chain` is
+    Operator config for both S3 Integrator deployments. Configuration for `bucket`, `path`, and `tls-ca-chain` is
     skipped even if set, since it is handled by different Terraform variables.
   EOF
   type        = map(string)
