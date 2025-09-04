@@ -15,6 +15,7 @@ variable "maas_key" {
 variable "enable_dhp" {
   description = <<EOF
     Whether to enable DHCP for a given subnet on a specified rack controller
+    If you enable this you also need to specify pxe_subnet below
   EOF
   type        = bool
 
@@ -22,7 +23,7 @@ variable "enable_dhp" {
 }
 
 variable "rack_controller" {
-  description = "The hostname of the MAAS rack controller to enable DHCP"
+  description = "The hostname of the MAAS rack controller to enable DHCP on"
   type        = string
 }
 
@@ -32,15 +33,19 @@ variable "pxe_subnet" {
 }
 
 variable "image_server_url" {
-  description = "The URL of the boot source to synchronize OS images"
+  description = <<EOF
+    The URL of the boot source to synchronize OS images from
+    This needs to be a simple streams server
+  EOF
   type        = string
   default     = "http://images.maas.io/ephemeral-v3/stable/"
 }
 
 variable "boot_selections" {
   description = <<EOF
-    An Ubuntu image selection map where each key is the release name and the
-    value is a map of arches set and, optionally, subarches set"
+    Configure MAAS to download these images immediately.
+    Each key is the release name and the value is a map of
+    architectures and - optionally - sub-architectures
   EOF
   type = map(object({
     arches    = set(string)

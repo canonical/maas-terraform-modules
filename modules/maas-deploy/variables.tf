@@ -1,46 +1,53 @@
 variable "ubuntu_version" {
-  description = "The OS version to install on the VMs"
+  description = "The Ubuntu operating system version to install on the virtual machines (VMs)"
   type        = string
   default     = "24.04"
 }
 
 variable "juju_cloud_name" {
-  description = "The Juju cloud name to deploy charmed MAAS model"
+  description = "The Juju cloud name to deploy the charmed MAAS model on"
   type        = string
 }
 
 variable "juju_cloud_region" {
-  description = "The Juju cloud region to deploy charmed MAAS model"
+  description = "The Juju cloud region to deploy charmed MAAS model on"
   type        = string
   default     = "default"
 }
 
 variable "maas_constraints" {
-  description = "The constraints for the MAAS virtual machines"
+  description = <<EOF
+    Use the following constraints for the machines
+    Increase cores and mem for larger MAAS installations
+    You can change remove virt-type=virtual-machine if your
+    Juju controller works with physical machines and you
+    want to install MAAS on those
+    NOTE: if you set up the project with juju-bootstrap your
+          controller will work with VMs
   type        = string
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
 variable "postgres_constraints" {
-  description = "The constraints for the Postgres virtual machines"
+  description = "Constraints for the Postgres virtual machines"
   type        = string
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
 variable "enable_postgres_ha" {
-  description = "Whether to enable PostgreSQL HA"
+  description = "Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units"
   type        = bool
   default     = false
 }
 
 variable "enable_maas_ha" {
-  description = "Whether to enable MAAS HA"
+  description = "Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units"
   type        = bool
   default     = false
 }
 
 variable "lxd_project" {
-  description = "The LXD project to deploy Juju machines"
+  description = "The LXD project in which to create the VMs for Juju"
   type        = string
   default     = "default"
 }
@@ -61,7 +68,7 @@ variable "charm_postgresql_revision" {
 }
 
 variable "charm_postgresql_config" {
-  description = "Operator config for PostgreSQL deployment"
+  description = "Operator configuration for PostgreSQL deployment"
   type        = map(string)
   default     = {}
 }
@@ -97,7 +104,7 @@ variable "charm_maas_region_revision" {
 }
 
 variable "charm_maas_region_config" {
-  description = "Operator config for MAAS Region Controller deployment"
+  description = "Operator configuration for MAAS Region Controller deployment"
   type        = map(string)
   default     = {}
 }
@@ -125,7 +132,7 @@ variable "charm_maas_agent_revision" {
 }
 
 variable "charm_maas_agent_config" {
-  description = "Operator config for MAAS Agent Controller deployment"
+  description = "Operator configuration for MAAS Agent Controller deployment"
   type        = map(string)
   default     = {}
 }
@@ -186,7 +193,7 @@ variable "charm_s3_integrator_revision" {
 
 variable "charm_s3_integrator_config" {
   description = <<EOF
-    Operator config for S3 Integrator deployment. Configuration for `bucket` and `tls-ca-chain` is
+    Operator configuration for S3 Integrator deployment. Configuration for `bucket` and `tls-ca-chain` is
     skipped even if set, since it is handled by different Terraform variables.
   EOF
   type        = map(string)

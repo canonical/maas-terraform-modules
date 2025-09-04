@@ -1,5 +1,5 @@
 variable "cloud_name" {
-  description = "The cloud name that Juju should use to refer to the LXD in use"
+  description = "The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating"
   type        = string
   default     = "maascloud"
 }
@@ -10,7 +10,7 @@ variable "lxd_address" {
 }
 
 variable "lxd_project" {
-  description = "The LXD project that Juju should use to place the controller resources"
+  description = "The LXD project that Juju should use for the controller resources"
   type        = string
   default     = "default"
 }
