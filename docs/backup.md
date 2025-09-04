@@ -23,7 +23,7 @@ f
 Creating a backup of charmed MAAS requires two separate backups: the backup of maas-region cluster, and the backup of the PostgreSQL database.
 
 The entities outside the database that are backed up are:
-- MAAS OS Images.
+- MAAS OS Images, on the leader region unit.
 - [Curtin preseeds](https://canonical.com/maas/docs/about-machine-customization#p-17465-pre-seeding), on the leader region unit.
 - Region controller system ids.
 
