@@ -79,7 +79,7 @@ juju run maas-region/leader create-backup --wait 5m
 > With a large number of OS images, you may have to increase the wait time to avoid Juju timing out waiting for the action to complete.
 
 ## List backups
-List existing MAAS backups present S3. Your MAAS backups and PostgreSQL backups are stored and listed independently.
+List existing MAAS backups present in S3. Your MAAS backups and PostgreSQL backups are stored and listed independently.
 
 To view existing backups for `maas-regions` in the specified bucket:
 ```bash
