@@ -1,5 +1,5 @@
 # How to restore charmed MAAS
-This is a guide on how to restore from an existing charmed MAAS backup as detailed in [backup.md](backup.md).
+This is a guide on how to restore from an existing charmed MAAS backup as detailed in [how_to_backup.md](how_to_backup.md).
 
 > [!Note]
 > This backup and restore functionality is in an early release phase. We recommend testing these workflows in a non-production environment first to verify they meet your specific requirements before implementing in production.
@@ -12,7 +12,7 @@ It's important to understand the following:
 ### Prerequisites
 This restoration guide assumes the following:
 
-- The backup steps outlined in [backup.md](backup.md) were followed for both `maas-region` and `postgresql`.
+- The backup steps outlined in [how_to_backup.md](how_to_backup.md) were followed for both `maas-region` and `postgresql`.
 - You have the PostgreSQL passwords for the chosen backup that were securely stored during the backup process.
 - You have identified the backups IDs for `maas-region` and `postgresql`, using the `list-backups` commands if needed.
 
