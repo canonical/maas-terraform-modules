@@ -81,7 +81,7 @@ juju run maas-region/leader create-backup --wait 5m
 ## List backups
 List existing MAAS backups present in S3. Your MAAS backups and PostgreSQL backups are stored and listed independently.
 
-To view existing backups for `maas-regions` in the specified bucket:
+To view existing backups for `maas-regions` in the specified S3 location:
 ```bash
 juju run maas-region/leader list-backups
 ```
