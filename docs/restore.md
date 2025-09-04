@@ -1,5 +1,5 @@
 # How to restore charmed MAAS
-This is a guide on how to restore from an existing charmed MAAS backup as defailed in [backup.md](backup.md).
+This is a guide on how to restore from an existing charmed MAAS backup as detailed in [backup.md](backup.md).
 
 > [!Note]
 > This backup and restore functionality is in an early release phase. We recommend testing these workflows in a non-production environment first to verify they meet your specific requirements before implementing in production.
