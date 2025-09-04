@@ -70,7 +70,7 @@ The entities outside the database that are backed up are:
 Backup up relevant files on MAAS region controllers outside of the database.
 
 
-1. (Recommended) Ensure all uploaded images have finished syncing across regions.
+1. (Recommended) Ensure all uploaded custom OS images have finished syncing across regions.
 1. Run the following to create a backup:
 ```bash
 juju run maas-region/leader create-backup --wait 5m
