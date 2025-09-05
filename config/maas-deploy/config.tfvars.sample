@@ -59,7 +59,7 @@ charm_maas_region_config = {}
 # NOTE:
 #   This installs the maas-agent charm at the same machines as 
 #   maas-region charm to achieve region+rack mode.
-#   This behavior will change once the maas-rack charm is EOL.
+#   This behavior will change once the maas-agent charm is EOL.
 enable_rack_mode = false
 # Operator channel for MAAS Agent Controller deployment
 charm_maas_agent_channel = "latest/edge"
