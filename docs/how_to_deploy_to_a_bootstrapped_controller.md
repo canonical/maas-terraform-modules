@@ -10,19 +10,35 @@ Based on the Juju Terraform provider [documentation](https://registry.terraform.
 
 ## Deploy on a pre-existing or external controller
 
-In this case, the Juju controller credentials must be provided by the user as environment variables during Terraform plan execution. The credentials can be found on **another system** where a Juju snap is already authenticated to the Juju controller. A slightly modified version of the provider [documentation](https://registry.terraform.io/providers/juju/juju/latest/docs#environment-variables) that is using `jq` is listed below.
+In this case, the Juju controller credentials must be provided by the user as environment variables during Terraform plan execution. The credentials can be found on **another system** where a Juju snap is already authenticated to the Juju controller.
 
-```bash
-CONTROLLER=$(juju whoami --format json | jq -r .controller)
-JUJU_CONTROLLER_ADDRESSES=$(juju show-controller --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].details.["api-endpoints"] | join(",")')
-JUJU_USERNAME="$(juju show-controller --show-password --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].account.user')"
-JUJU_PASSWORD="$(juju show-controller --show-password --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].account.password')"
-JUJU_CA_CERT="$(juju show-controller --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].details.["ca-cert"]')"
-```
+1. On the system with established local authentication to Juju, extract the credentials with the bellow snippet:
 
-After exporting the credential environment variables, the Terraform execution of the `maas-deploy` module remains the same.
+    ```bash
+    # Name of the Juju controller
+    CONTROLLER=$(juju whoami --format json | jq -r .controller)
+    # API endpoints to interact with the Juju controller API
+    JUJU_CONTROLLER_ADDRESSES=$(juju show-controller --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].details.["api-endpoints"] | join(",")')
+    # Username and password credentials for API authentication
+    JUJU_USERNAME="$(juju show-controller --show-password --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].account.user')"
+    JUJU_PASSWORD="$(juju show-controller --show-password --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].account.password')"
+    # The CA certificate used to sign the self-signed certificate of the Juju controller
+    JUJU_CA_CERT="$(juju show-controller --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].details.["ca-cert"]')"
+    ```
 
-```bash
-cd modules/maas-deploy
-terraform plan -var-file ../../config/maas-deploy/config.tfvars
-```
+1. On the system where `maas-deploy` Terraform module is executed, [export](https://registry.terraform.io/providers/juju/juju/latest/docs#environment-variables) the extracted credentials:
+
+    ```bash
+    export CONTROLLER="__extracted_values__"
+    export JUJU_CONTROLLER_ADDRESSES="__extracted_values__"
+    export JUJU_USERNAME="__extracted_values__"
+    export JUJU_PASSWORD="__extracted_values__"
+    export JUJU_CA_CERT=$(cat ./extracted-ca-cert)
+    ```
+
+1. After exporting the credential environment variables, the Terraform execution of the `maas-deploy` module remains the same:
+
+    ```bash
+    cd modules/maas-deploy
+    terraform plan -var-file ../../config/maas-deploy/config.tfvars
+    ```
