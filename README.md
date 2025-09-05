@@ -1,10 +1,12 @@
 # Terraform driven Charmed MAAS deployment
 
-This repository exists as a one-click (well, three-typing) deployment and configuration solution for a Charmed MAAS cluster with various topologies. This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of it's Terraform modules improved upon and incorporated into those found in this repository.
+This repository exists as a one-click (well, three-typing) deployment and configuration solution for a Charmed MAAS cluster with various topologies. This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of its Terraform modules improved upon and incorporated into those found in this repository. Unlike Anvil, which requires configuring and connecting each node seperately, this repo streamlines that into a single Terraform module to deploy all nodes simultaneously.
 
->**NOTE:** This repository has been tested on LXD cloud, and the documentation wording reflects that. Any machine cloud should be a valid deployment target, though manual cloud is unsupported.
+>**NOTE:**
+> This repository has been tested on LXD cloud, and the documentation wording reflects that. Any machine cloud should be a valid deployment target, though manual cloud is unsupported.
 
->**NOTE:** The contents of this repo are not yet a product and should not be treated as such. Use at your own risk and have fun responsibly.
+>**NOTE:**
+> The contents of this repo are not yet a product and should not be treated as such. Use at your own risk and have fun responsibly.
 
 ## Contents
 
@@ -39,6 +41,7 @@ Charmed deployment of the MAAS Snap, provides the API, UI, DNS, and Proxy.
 
 #### MAAS Agents ??
 Soon to be removed as a charm, connects to MAAS Region to provide MAAS PXE/DHCP, Image caching, and machine management.
+For a MAAS Region+Rack deployment, the Agent charm is deployed alongside the Region charm on the same node, and the MAAS snap is configured in Region+Rack mode.
 
 #### PostgreSQL
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database.
@@ -81,7 +84,7 @@ Copy the created token, you will need this for the configuration option later
 lxc config trust list-tokens
 ```
 
-Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is reccomended to copy the default profile, and modify if needed.
+Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is recommended to copy the default profile, and modify if needed.
 
 ```bash
 lxc project create anvil-training
@@ -125,7 +128,7 @@ Apply the Terraform plan if the above sanity check passed
 terraform apply -var-file ../../config/juju-bootstrap/config.tfvars -auto-approve
 ```
 
-Finally, record the `juju_cloud` value from the Terraform output, this will be neccesary for node deployment/configuration later.
+Finally, record the `juju_cloud` value from the Terraform output, this will be necessary for node deployment/configuration later.
 
 ```bash
 terraform output -raw juju_cloud
@@ -139,7 +142,7 @@ This topology will install a single MAAS Region node, and single PostgreSQL node
 XXX: Add a diagram for single node deployment here.
 
 Copy the MAAS deployment configuration sample, modifying the entries as required.
-It is reccomended to pay attention to the following configuration options and supply their values as required:
+It is recommended to pay attention to the following configuration options and supply their values as required:
 
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
@@ -161,9 +164,9 @@ charm_maas_region_revision = "..."
 # Additionally modify other variables if desired
 ```
 >**NOTE:**
-> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is reccomended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
+> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is recommended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
 
->**NOTE:** To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` and `charm_maas_agent_revision` if you are not deploying defaults, and set `enable_rack_mode = true`.
+>**NOTE:** To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` and `charm_maas_agent_revision` if you are not deploying defaults, and set `enable_rack_mode = true`. This will install the MAAS Agent charm on the same node as MAAS Region, and set the snap to Region+Rack.
 
 Initialise the Terraform environment with the required modules and configuration
 
@@ -184,7 +187,7 @@ Apply the Terraform plan if the above sanity check passed
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
 
-Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be neccesary for MAAS configuration later.
+Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary for MAAS configuration later.
 
 ```bash
 terraform output -raw maas_api_url
@@ -212,7 +215,7 @@ This topology will install three MAAS Region nodes, and three PostgreSQL nodes.
 XXX: Add a diagram for multi-node deployment here.
 
 The first steps are very similar to single node; copy the MAAS deployment configuration sample, modifying the entries as required.
-It is reccomended to pay attention to the following configuration options and supply their values as required:
+It is recommended to pay attention to the following configuration options and supply their values as required:
 
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
@@ -246,7 +249,7 @@ charm_maas_region_revision = "..."
 > If you don't increase `experimental_max_connections`, you will run into the [MAAS connection slots reserved](#maas-connections-slots-reserved) error.
 
 >**NOTE:**
-> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is reccomended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
+> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is recommended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
 
 >**NOTE:**
 > To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` and `charm_maas_agent_revision` if you are not deploying defaults. For a multi-node deployment, set `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
@@ -285,7 +288,7 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maa
 > ```
 > This will install the MAAS-agent charm unit on each machine with a MAAS region, and set the snap to Region+Rack.
 
-Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be neccesary for MAAS configuration later.
+Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary for MAAS configuration later.
 
 ```bash
 terraform output -raw maas_api_url
@@ -306,7 +309,7 @@ All of the charms for the MAAS cluster should now be deployed, which you can ver
 
 ### MAAS Configuration
 
-Copy the MAAS config configuration sample, and modify as neccesary. It is required to modify the `maas_url` and `maas_key` at bare minimum.
+Copy the MAAS config configuration sample, and modify as necessary. It is required to modify the `maas_url` and `maas_key` at bare minimum.
 
 ```bash
 cp config/maas-config/config.tfvars.sample config/maas-config/config.tfvars
@@ -364,7 +367,7 @@ You should now access the charmed MAAS UI [from your browser](https://canonical.
 
 There exist two suplementary documents for instructions on [How to Backup](./docs/how_to_backup.md) and [How to Restore](./docs/how_to_restore.md) your MAAS Cluster.
 
-It is reccomended to take a backup of your cluster after initial setup.
+It is recommended to take a backup of your cluster after initial setup.
 
 
 ## Appendix - Prerequisites
@@ -434,7 +437,7 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 > maas_constraints     = "cores=1 mem=2G virt-type=virtual-machine"
 > postgres_constraints = "cores=1 mem=2G virt-type=virtual-machine"
 > ```
-> Would limit VMs to 1 core and 2GB of RAM. It is reccomended to modify and test these values to suit your exact setup, ensuring adequate resources are still provided to meet minimum required overhead.
+> Would limit VMs to 1 core and 2GB of RAM. It is recommended to modify and test these values to suit your exact setup, ensuring adequate resources are still provided to meet minimum required overhead.
 
 
 ### Troubleshooting HA mode
