@@ -19,9 +19,9 @@ variable "maas_constraints" {
   description = <<EOF
     Use the following constraints for the machines
     Increase cores and mem for larger MAAS installations
-    You can change remove virt-type=virtual-machine if your
-    Juju controller works with physical machines and you
-    want to install MAAS on those
+    We recommend using virtual machines. If you are curious
+    you can change the constraints to use containers or physical
+    hosts but this is untested
     NOTE: if you set up the project with juju-bootstrap your
           controller will work with VMs
   type        = string
@@ -193,8 +193,10 @@ variable "charm_s3_integrator_revision" {
 
 variable "charm_s3_integrator_config" {
   description = <<EOF
-    Operator configuration for both S3 Integrator deployments. Configuration for `bucket`, `path`,
-    and `tls-ca-chain` is skipped even if set, since it is handled by different Terraform variables.
+    Operator configuration for both S3 Integrator deployments.
+    Configuration for `bucket`, `path`, and `tls-ca-chain` is
+    skipped even if set, since it is handled by different
+    Terraform variables
   EOF
   type        = map(string)
   default     = {}
