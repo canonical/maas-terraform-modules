@@ -1,6 +1,6 @@
 # Terraform driven Charmed MAAS deployment
 
-This repository exists as a one-click (well, three-typing) deployment and configuration solution for a Charmed MAAS cluster with various topologies. This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of its Terraform modules improved upon and incorporated into those found in this repository. Unlike Anvil, which requires configuring and connecting each node seperately, this repo streamlines that into a single Terraform module to deploy all nodes simultaneously.
+This repository exists as a one-click (well, three-typing) deployment and configuration solution for a Charmed MAAS cluster with various topologies using Terraform. This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of its Terraform modules improved upon and incorporated into those found in this repository. Unlike Anvil, which requires configuring and connecting each node seperately, this repo streamlines that into a single Terraform module to deploy all nodes simultaneously.
 
 >**NOTE:**
 > This repository has been tested on LXD cloud, and the documentation wording reflects that. Any machine cloud should be a valid deployment target, though manual cloud is unsupported.
@@ -13,15 +13,15 @@ This repository exists as a one-click (well, three-typing) deployment and config
 This document outlines the following points, steps, and instructions:
 
 
-- [Architecture](#architecture) ...................................... What are the components, how do they relate to eachother
-- [Deployment Instructions](#deployment-instructions) ................ End-Result overview
-  - [Juju Bootstrap](#juju-bootstrap) ......................... (Optionally) Bootstrap a Juju Controller on a machine cloud
+- [Architecture](#architecture) ..................................... What are the components, how do they relate to eachother
+- [Deployment Instructions](#deployment-instructions) ............... End-Result overview
+  - [Juju Bootstrap](#juju-bootstrap) .......................... (Optionally) Bootstrap a Juju Controller on a machine cloud
   - [Single Node MAAS](#single-node) .................. Deploy machines and charms for one MAAS Region and one PostgreSQL
   - [Multi Node MAAS](#multi-node) .................... Deploy three MAAS and PostgreSQL units.
   - [Configuration](#maas-configuration) .......................... Finalise setup of the MAAS cluster, Agnostic to Node count
 - [Appendix - Backup and Restore](#appendix---backup-and-restore) ... Backup and Restoring your MAAS cluster
 - [Appendix - Prerequisites](#appendix---prerequisites) ............... Requirements to run the Terraform modules
-- [Appendix - Common Issues](#appendix---common-issues) ......... Known problems and helpful notes
+- [Appendix - Common Issues](#appendix---common-issues) .......... Known problems and helpful notes
 
 The full MAAS cluster deployment consists of one optional bootstrapping and two required Terraform modules that should be run in the following order:
 
@@ -71,12 +71,10 @@ All MAAS cluster deployments requires a running Juju controller. If you are usin
 
 Otherwise, we can use the `juju-bootstrap` Terraform module to get started:
 
-XXX: TODO: Rename anvil-training to something more appropriate later
-
 
 Create a trust token for your LXD server/cluster
 ```bash
-lxc config trust add --name anvil-training
+lxc config trust add --name maas-charms
 ```
 
 Copy the created token, you will need this for the configuration option later
@@ -89,8 +87,8 @@ lxc config trust list-tokens
 Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is recommended to copy the default profile, and modify if needed.
 
 ```bash
-lxc project create anvil-training
-lxc profile copy default default --target-project anvil-training --refresh
+lxc project create maas-charms
+lxc profile copy default default --target-project maas-charms --refresh
 ```
 
 Copy the sample configuration file, modifying the entries as required:
@@ -204,7 +202,7 @@ terraform output -json maas_machines
 
 All of the charms for the MAAS cluster should now be deployed, which you can verify with `juju status`.
 
-To continue configuring MAAS, jump to the [MAAS Configuration](#maas-configuration) steps below.
+To continue configuring MAAS, jump to the [MAAS Configuration](#maas-configuration) steps below.`snapcraft list-revisions maas | grep 3.5.6`
 
 
 ### Multi-Node
