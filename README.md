@@ -1,27 +1,24 @@
 # Terraform driven Charmed MAAS deployment
 
-This repository exists as a one-click (well, three-typing) deployment and configuration solution for a Charmed MAAS cluster with various topologies using Terraform. This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of its Terraform modules improved upon and incorporated into those found in this repository. Unlike Anvil, which requires configuring and connecting each node seperately, this repo streamlines that into a single Terraform module to deploy all nodes simultaneously.
+This repository exists as a deployment and configuration solution for a [Charmed](https://juju.is/docs) Highly Available[*](#multi-node) [MAAS](https://canonical.com/maas/docs) cluster with various topologies using [Terraform](https://developer.hashicorp.com/terraform/docs). This repository functions as a replacement for the [MAAS Anvil](https://github.com/canonical/maas-anvil) snap, with many of its Terraform modules improved upon and incorporated into those found in this repository. Unlike Anvil, which requires configuring and connecting each node seperately, this repo streamlines that into a single Terraform module to deploy all nodes simultaneously.
 
->**NOTE:**
+> [!NOTE]
 > This repository has been tested on LXD cloud, and the documentation wording reflects that. Any machine cloud should be a valid deployment target, though manual cloud is unsupported.
 
->**NOTE:**
-> The contents of this repo are not yet a product and should not be treated as such. Use at your own risk and have fun responsibly.
+> [!NOTE]
+> The contents of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before implementing in production.
 
 ## Contents
 
-This document outlines the following points, steps, and instructions:
-
-
-- [Architecture](#architecture) ..................................... What are the components, how do they relate to eachother
-- [Deployment Instructions](#deployment-instructions) ............... End-Result overview
-  - [Juju Bootstrap](#juju-bootstrap) .......................... (Optionally) Bootstrap a Juju Controller on a machine cloud
-  - [Single Node MAAS](#single-node) .................. Deploy machines and charms for one MAAS Region and one PostgreSQL
-  - [Multi Node MAAS](#multi-node) .................... Deploy three MAAS and PostgreSQL units.
-  - [Configuration](#maas-configuration) .......................... Finalise setup of the MAAS cluster, Agnostic to Node count
-- [Appendix - Backup and Restore](#appendix---backup-and-restore) ... Backup and Restoring your MAAS cluster
-- [Appendix - Prerequisites](#appendix---prerequisites) ............... Requirements to run the Terraform modules
-- [Appendix - Common Issues](#appendix---common-issues) .......... Known problems and helpful notes
+- [Architecture](#architecture)
+- [Deployment Instructions](#deployment-instructions)
+  - [Juju Bootstrap](#juju-bootstrap)
+  - [Single Node MAAS](#single-node)
+  - [Multi Node MAAS](#multi-node)
+  - [Configuration](#maas-configuration)
+- [Appendix - Backup and Restore](#appendix---backup-and-restore)
+- [Appendix - Prerequisites](#appendix---prerequisites)
+- [Appendix - Common Issues](#appendix---common-issues)
 
 The full MAAS cluster deployment consists of one optional bootstrapping and two required Terraform modules that should be run in the following order:
 
@@ -42,7 +39,7 @@ Charmed deployment of the MAAS Snap, provides the API, UI, DNS, and Proxy.
 #### MAAS Agents
 Agent charms connect to MAAS Regions to provide MAAS PXE/DHCP, Image caching, and machine management.
 For a MAAS Region+Rack deployment, the Agent charm is deployed alongside the Region charm on the same node, and the MAAS snap is configured in Region+Rack mode.
->**Note:**
+> [!NOTE]
 > MAAS Agent charm will be removed from deployment in the near future.
 
 #### PostgreSQL
@@ -61,8 +58,6 @@ LXD Containers are deployed as Juju machines, which Juju uses to deploy charms i
 Before beginning the deployment process, please make sure that [prerequisites](#appendix---prerequisites) are met.
 
 These instructions will take you from bare system to a running MAAS cluster with either [One](#single-node) or [Three](#multi-node) MAAS Regions, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
-
-Additionally, you will need to ensure you have SSH access to all Juju machines before running either the single or multi-node deployment steps, the instructions for which can be found under [How to SSH to Juju machines](./docs/how_to_ssh_to_juju_machines.md).
 
 
 ### Juju Bootstrap
@@ -96,17 +91,7 @@ Copy the sample configuration file, modifying the entries as required:
 ```bash
 cp config/juju-bootstrap/config.tfvars.sample config/juju-bootstrap/config.tfvars
 ```
-```bash
-# The API URL Juju should communicate with LXD via
-lxd_address = "..."
-# The trust token created earlier
-lxd_trust_token = "..."
-# The name Juju should refer to the LXD cloud as
-cloud_name = "..."
-# The LXD project that Juju should use
-lxd_project = "..."
-```
->**NOTE:**
+> [!NOTE]
 > At bare minimum you will need to supply the `lxd_trust_token` and `lxd_address` as configured in the `bootstrap-juju` steps, or your externally provided cloud.
 
 Initialise the Terraform environment with the required modules and configuration
@@ -134,6 +119,8 @@ Finally, record the `juju_cloud` value from the Terraform output, this will be n
 terraform output -raw juju_cloud
 ```
 
+You will need to ensure you have SSH access to all Juju machines before running further steps, the instructions for which can be found under [How to SSH to Juju machines](./docs/how_to_ssh_to_juju_machines.md).
+
 
 ### Single Node
 
@@ -147,26 +134,7 @@ It is recommended to pay attention to the following configuration options and su
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
-```bash
-# The Juju cloud name as provided from bootstrap, or your external cloud.
-juju_cloud_name = "..."
-# The LXD Project to deploy Juju nodes in
-lxd_project = "..."
-# Operator channel for PostgreSQL deployment
-charm_postgresql_channel = "..."
-# Operator channel revision for PostgreSQL deployment
-charm_postgresql_revision = "..."
-# Operator channel for MAAS Region Controller deployment
-charm_maas_region_channel = "..."
-# Operator channel revision for MAAS Region Controller deployment
-charm_maas_region_revision = "..."
-
-# Additionally modify other variables if desired
-```
->**NOTE:**
-> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is recommended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
-
->**NOTE:** To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` and `charm_maas_agent_revision` if you are not deploying defaults, and set `enable_rack_mode = true`. This will install the MAAS Agent charm on the same node as MAAS Region, and set the snap to Region+Rack.
+> [!NOTE] To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults. This will install the MAAS Agent charm on the same node as MAAS Region, and set the snap to Region+Rack.
 
 Initialise the Terraform environment with the required modules and configuration
 
@@ -186,6 +154,13 @@ Apply the Terraform plan if the above sanity check passed
 ```bash
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
+> [!NOTE]
+> If deploying Region+Rack, also supply `-var enable_rack_mode=false`. Only after you have done that, you should re-run the script with the value set to true to enable rack mode:
+>
+> ```bash
+> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_rack_mode=true -auto-approve
+> ```
+> This will install the MAAS-agent charm unit on each machine with a MAAS region, and set the snap to Region+Rack.
 
 Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary for MAAS configuration later.
 
@@ -208,51 +183,31 @@ To continue configuring MAAS, jump to the [MAAS Configuration](#maas-configurati
 ### Multi-Node
 
 This topology will install three MAAS Region nodes, and three PostgreSQL nodes.
+Deployment occurs in multiple stages, where first a single-node deployment is configured, then scaled out to the full HA complement of units.
 
->**NOTE:**
-> As deployed in these steps, this is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for truly HA.
+> [!NOTE]
+> As deployed in these steps, this is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.
+
+> [!NOTE]:
+> Running a Multi-Node MAAS and/or PostgreSQL by default requires the host to have 32GB of RAM. See [Out of Memory](#out-of-memory) for an explanation and fix.
 
 XXX: Add a diagram for multi-node deployment here.
-
-The first steps are very similar to single node; copy the MAAS deployment configuration sample, modifying the entries as required.
-It is recommended to pay attention to the following configuration options and supply their values as required:
 
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
-```bash
-# Set both to true to enable HA
-enable_postgres_ha = true
-enable_maas_ha = true
-# You *MUST* increase the PostgreSQL connections for a multi-node deployment
-charm_postgresql_config = {
-  experimental_max_connections = 300
-}
+> [!NOTE]
+> You *MUST* increase the PostgreSQL connections for a multi-node deployment
+> ```bash
+> charm_postgresql_config = {
+>   experimental_max_connections = 300
+> }
+> ```
+>
+> If the defaults remain, you will run into the [MAAS connection slots reserved](#maas-connections-slots-reserved) error.
 
-
-# The Juju cloud name as provided from bootstrap, or your external cloud.
-juju_cloud_name = "..."
-# The LXD Project to deploy Juju nodes in
-lxd_project = "..."
-# Operator channel for PostgreSQL deployment
-charm_postgresql_channel = "..."
-# Operator channel revision for PostgreSQL deployment
-charm_postgresql_revision = "..."
-# Operator channel for MAAS Region Controller deployment
-charm_maas_region_channel = "..."
-# Operator channel revision for MAAS Region Controller deployment
-charm_maas_region_revision = "..."
-
-# Additionally modify other variables if desired
-```
->**NOTE:**
-> If you don't increase `experimental_max_connections`, you will run into the [MAAS connection slots reserved](#maas-connections-slots-reserved) error.
-
->**NOTE:**
-> Unlike the MAAS region charm, a `null` value for the PostgreSQL revision will throw an exception when the plan is applied. It is recommended to find the revision at [Charmhub](https://charmhub.io/postgresql) for your desired PostgreSQL channel, and populate the configuration here.
-
->**NOTE:**
-> To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` and `charm_maas_agent_revision` if you are not deploying defaults. For a multi-node deployment, set `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
+> [!NOTE]
+> To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults. For a multi-node deployment, set `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
 
 Initialise the Terraform environment with the required modules and configuration
 
@@ -272,16 +227,25 @@ We first apply the Terraform plan in single-node mode if the sanity check passed
 ```bash
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=false -var enable_postgres_ha=false -auto-approve
 ```
->**NOTE:**
-> If deploying Region+Rack, also supply `-var enable_rack_mode=false`.
+> [!NOTE]
+> If deploying Region+Rack, also supply `enable_rack_mode=false`:
+>
+> ```bash
+> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=false -var enable_postgres_ha=false -var enable_rack_mode=false -auto-approve
+> ```
 
 Then apply the Terraform plan again, either with the configuration values set in the configuration file, or explicitly defining them here, to expand the MAAS and PostgreSQL units to 3.
 
 ```bash
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -auto-approve
 ```
->**NOTE:**
-> If deploying Region+Rack, also supply `-var enable_rack_mode=false`. Only after you have done that, you should re-run the script with the value set to true to enable rack mode:
+> [!NOTE]
+> If deploying Region+Rack, also supply `enable_rack_mode=false`.
+>
+> ```bash
+> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -var enable_rack_mode=false -auto-approve
+> ```
+> Only after you that, should you re-run the script with the rack mode enabled:
 >
 > ```bash
 > terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -var enable_rack_mode=true -auto-approve
@@ -303,9 +267,6 @@ terraform output -json maas_machines
 
 All of the charms for the MAAS cluster should now be deployed, which you can verify with `juju status`.
 
->**NOTE:**:
-> Running MAAS and/or PstgreSQL in HA mode by default requires the host to have 32GB of RAM. See [Out of Memory](#out-of-memory) for an explanation and fix.
-
 
 ### MAAS Configuration
 
@@ -322,7 +283,7 @@ maas_key = "..."
 
 # Additionally modify other variables if desired
 ```
->**NOTE:** If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller with the following configuration values
+> [!NOTE] If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller with the following configuration values
 > ```bash
 > # The name of a machine from `maas_machines` to use as a rack controller.
 > rack_controller = "..."
@@ -389,32 +350,9 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 ## Appendix - Common Issues
 
 
-### Timeout on Corporate Laptops
-
->**NOTE:**
-> If you are on a corporate laptop, you may encounter a timeout error when attempting to bootstrap the JuJu controller:
->
-> ```bash
-> ❯ juju bootstrap localhost another-cloud
-> Creating Juju controller "another-cloud" on localhost/localhost
-> Looking for packaged Juju agent version 3.6.8 for amd64
-> Located Juju agent version 3.6.8-ubuntu-amd64 at https://streams.canonical.com/juju/tools/agent/3.6.8/juju-3.6.8-linux-amd64.tgz
-> To configure your system to better support LXD containers, please see: https://documentation.ubuntu.com/lxd/en/latest/explanation/performance_tuning/
-> Launching controller instance(s) on localhost/localhost...
->  - juju-e91972-0 (arch=amd64)
-> Installing Juju agent on bootstrap instance
-> Waiting for address
-> Attempting to connect to 10.237.137.63:22
-> Attempting to connect to [fd42:9449:3029:99ca:216:3eff:fea4:f64d]:22
-> <will eventually timeout>
-> ```
->
-> For now, creating a new user and running the setup there fixes this issue. We are still investigating why this occurs.
-
-
 ### MAAS connections slots reserved
 
->**NOTE:**
+> [!NOTE]
 > If you are seeing log messages such as `remaining connection slots are reserved for roles with the SUPERUSER attribute`, then your PostgreSQL charm does not have enough outgoing connections configured to handle all of the MAAS traffic.
 >
 > This typically occurs on a Multi-node setup with default instructions, as MAAS saturates the 100 connection default.
@@ -430,8 +368,8 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 
 ### Out-Of-Memory
 
->**NOTE:**
-> To run MAAS and/or Postgres in HA mode, the default memory constraints require your host to have at least 32GB RAM. If you wish to reduce this, adjust the VM constraints variables in your `maas-deploy/config.tfvars` file:
+> [!NOTE]
+> To run a Multi-Node MAAS and/or PostgreSQL, the default memory constraints require your host to have at least 32GB RAM. If you wish to reduce this, adjust the VM constraints variables in your `maas-deploy/config.tfvars` file:
 >
 > ```bash
 > maas_constraints     = "cores=1 mem=2G virt-type=virtual-machine"
@@ -442,7 +380,7 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 
 ### Troubleshooting HA mode
 
->**NOTE:**
+> [!NOTE]
 > In case any of the MAAS snaps is unconfigured after first deployment, you can `juju ssh` to its machine and manually run the maas init command as a workaround.
 >
 > ```bash
