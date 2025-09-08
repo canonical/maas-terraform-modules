@@ -13,15 +13,15 @@ This repository exists as a one-click (well, three-typing) deployment and config
 This document outlines the following points, steps, and instructions:
 
 
-- [Architecture](#architecture) ..................................... What are the components, how do they relate to eachother
-- [Deployment Instructions](#deployment-instructions) ............... End-Result overview
-  - [Juju Bootstrap](#juju-bootstrap) ...................... (Optionally) Bootstrap a Juju Controller on a machine cloud
-  - [Single Node MAAS](#single-node) ............... Deploy machines and charms for one MAAS Region and one PostgreSQL
-  - [Multi Node MAAS](#multi-node) ................ Deploy three MAAS and PostgreSQL units.
-  - [Configuration](#maas-configuration) ........................ Finalise setup of the MAAS cluster, Agnostic to Node count
-- [Appendix - Backup and Restore](#appendix---backup-and-restore) .... Backup and Restoring your MAAS cluster
-- [Appendix - Prerequisites](#appendix---prerequisites) ................ Requirements to run the Terraform modules
-- [Appendix - Common Issues](#appendix---common-issues) ............ Known problems and helpful notes
+- [Architecture](#architecture) ...................................... What are the components, how do they relate to eachother
+- [Deployment Instructions](#deployment-instructions) ................ End-Result overview
+  - [Juju Bootstrap](#juju-bootstrap) ......................... (Optionally) Bootstrap a Juju Controller on a machine cloud
+  - [Single Node MAAS](#single-node) .................. Deploy machines and charms for one MAAS Region and one PostgreSQL
+  - [Multi Node MAAS](#multi-node) .................... Deploy three MAAS and PostgreSQL units.
+  - [Configuration](#maas-configuration) .......................... Finalise setup of the MAAS cluster, Agnostic to Node count
+- [Appendix - Backup and Restore](#appendix---backup-and-restore) ... Backup and Restoring your MAAS cluster
+- [Appendix - Prerequisites](#appendix---prerequisites) ............... Requirements to run the Terraform modules
+- [Appendix - Common Issues](#appendix---common-issues) ......... Known problems and helpful notes
 
 The full MAAS cluster deployment consists of one optional bootstrapping and two required Terraform modules that should be run in the following order:
 
@@ -39,9 +39,11 @@ XXX: Fill out with further details, this is a little bare.
 #### MAAS Regions
 Charmed deployment of the MAAS Snap, provides the API, UI, DNS, and Proxy.
 
-#### MAAS Agents ??
-Soon to be removed as a charm, connects to MAAS Region to provide MAAS PXE/DHCP, Image caching, and machine management.
+#### MAAS Agents
+Agent charms connect to MAAS Regions to provide MAAS PXE/DHCP, Image caching, and machine management.
 For a MAAS Region+Rack deployment, the Agent charm is deployed alongside the Region charm on the same node, and the MAAS snap is configured in Region+Rack mode.
+>**Note:**
+> MAAS Agent charm will be removed from deployment in the near future.
 
 #### PostgreSQL
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database.
@@ -323,14 +325,14 @@ maas_key = "..."
 # Additionally modify other variables if desired
 ```
 >**NOTE:** If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller with the following configuration values
-```bash
-# The name of a machine from `maas_machines` to use as a rack controller.
-rack_controller = "..."
-# Enable DHCP
-enable_dhp = true
-# The subnet on which to serve PXE
-pxe_subnet = "10.10.10.0/24"
-```
+> ```bash
+> # The name of a machine from `maas_machines` to use as a rack controller.
+> rack_controller = "..."
+> # Enable DHCP
+> enable_dhp = true
+> # The subnet on which to serve PXE
+> pxe_subnet = "a.b.c.d/24"
+> ```
 
 Initialise the Terraform environment with the required modules and configuration
 
