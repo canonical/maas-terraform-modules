@@ -134,7 +134,7 @@ It is recommended to pay attention to the following configuration options and su
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
-> [!NOTE] To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults. This will install the MAAS Agent charm on the same node as MAAS Region, and set the snap to Region+Rack.
+> [!NOTE] To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults. You should also initially set `enable_rack_mode=false`, as that will be handled afterwards. This will install the MAAS Agent charm on the same node as MAAS Region, and set the snap to Region+Rack.
 
 Initialise the Terraform environment with the required modules and configuration
 
@@ -155,10 +155,15 @@ Apply the Terraform plan if the above sanity check passed
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
 > [!NOTE]
-> If deploying Region+Rack, also supply `-var enable_rack_mode=false`. Only after you have done that, you should re-run the script with the value set to true to enable rack mode:
+> If deploying Region+Rack, your config should initially contain `enable_rack_mode=false` when you ran the above script. Afterwards, modify your config and re-run the apply as follows:
 >
 > ```bash
-> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_rack_mode=true -auto-approve
+> # Modify config/maas-deploy/config.tfvars to contain:
+> enable_rack_mode=true
+> ```
+> And then re-run the apply
+> ```bash
+> terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 > ```
 > This will install the MAAS-agent charm unit on each machine with a MAAS region, and set the snap to Region+Rack.
 
@@ -196,6 +201,9 @@ XXX: Add a diagram for multi-node deployment here.
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
+
+You should initially ensure the configuration contains `enable_maas_ha=false` and `enable_postgres_ha=false`, as we will set these during the appropriate parts of the following steps.
+
 > [!NOTE]
 > You *MUST* increase the PostgreSQL connections for a multi-node deployment
 > ```bash
@@ -207,7 +215,7 @@ cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 > If the defaults remain, you will run into the [MAAS connection slots reserved](#maas-connections-slots-reserved) error.
 
 > [!NOTE]
-> To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults. For a multi-node deployment, set `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
+> To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults, ensure `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
 
 Initialise the Terraform environment with the required modules and configuration
 
@@ -225,30 +233,26 @@ terraform plan -var-file ../../config/maas-deploy/config.tfvars
 We first apply the Terraform plan in single-node mode if the sanity check passed
 
 ```bash
-terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=false -var enable_postgres_ha=false -auto-approve
+terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
-> [!NOTE]
-> If deploying Region+Rack, also supply `enable_rack_mode=false`:
->
-> ```bash
-> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=false -var enable_postgres_ha=false -var enable_rack_mode=false -auto-approve
-> ```
 
-Then apply the Terraform plan again, either with the configuration values set in the configuration file, or explicitly defining them here, to expand the MAAS and PostgreSQL units to 3.
+Now modify your configuration such that it contains `enable_maas_ha=true` and `enable_postgres_ha=true`, then apply the Terraform plan again to expand the MAAS and PostgreSQL units to 3.
+> [!NOTE]
+> If deploying Region+Rack, your config should still contain `enable_rack_mode=false` as specified above, we will add Agent nodes after scaling
 
 ```bash
-terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -auto-approve
+terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
 > [!NOTE]
-> If deploying Region+Rack, also supply `enable_rack_mode=false`.
+> If deploying Region+Rack, your config should still contain `enable_rack_mode=false` as specified above
 >
+> Only after you scale the Region and PostgreSQL, should you re-run the script with the rack mode enabled:
 > ```bash
-> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -var enable_rack_mode=false -auto-approve
+> # Modify config/maas-deploy/config.tfvars to contain:
+> enable_rack_mode=true
 > ```
-> Only after you that, should you re-run the script with the rack mode enabled:
->
 > ```bash
-> terraform apply -var-file ../../config/maas-deploy/config.tfvars -var enable_maas_ha=true -var enable_postgres_ha=true -var enable_rack_mode=true -auto-approve
+> terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 > ```
 > This will install the MAAS-agent charm unit on each machine with a MAAS region, and set the snap to Region+Rack.
 
