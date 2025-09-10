@@ -19,18 +19,18 @@ This repository exists as a deployment and configuration solution for a [Charmed
 - [Appendix - Prerequisites](#appendix---prerequisites)
 - [Appendix - Troubleshooting](./docs/troubleshooting.md)
 
-The full MAAS cluster deployment consists of: one optional bootstrapping, one of two Deployment, and a reccomended (but optional), Terraform modules that should be run in the following order:
+The full MAAS cluster deployment consists of: one optional bootstrapping, one of two Deployment, and a recommended (but optional), Terraform modules that should be run in the following order:
 
 - [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; Optional if you already have an external Juju controller.
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the provided Juju controller (`juju-bootstrap` or external)
-- [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly reccomended. You *can* configure your MAAS manually, but automation is the reccomended pathway.
+- [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly recommended. You *can* configure your MAAS independently, but automation is the recommended pathway.
 
 
 ## Architecture
 
 A charmed MAAS deployment consists of the following atomic components:
 
-TODO: Fill out with further details, this is a little bare.
+<!-- TODO: Fill out with further details, this is a little bare. -->
 
 #### MAAS Regions
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
@@ -39,7 +39,7 @@ Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-
 Charmed deployment of the MAAS Snap as a rack controller
 For a MAAS Region+Rack deployment, the Agent charm is deployed with the Region charm on the same node, and the MAAS snap is configured in Region+Rack mode.
 > [!NOTE]
-> MAAS Agent charm will be removed from deployment and set to end-of-life in the near future.
+> MAAS Agent charm will be removed from deployment and set to end-of-life in the near future. Region+Rack will still be provided as an option in the Region charm however.
 
 #### PostgreSQL
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
@@ -49,7 +49,7 @@ Orchestrates the lifecycle of the deployed charmed applications, [learn more her
 
 #### LXD Cloud
 Provides the underlying virtual-machine infrastructure that Juju runs on.
-While the development of this repository occured on LXD clouds, juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
+While the development of this repository occured on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
 
 LXD Containers and Virtual machines are deployed as Juju machines, which Juju uses to deploy charms in.
 
@@ -58,7 +58,7 @@ LXD Containers and Virtual machines are deployed as Juju machines, which Juju us
 
 Before beginning the deployment process, please make sure that [prerequisites](#appendix---prerequisites) are met.
 
-These instructions will take you from bare system to a running MAAS cluster with either [One](./docs/how_to_deploy_single_node.md) or [Three](./docs/how_to_deploy_multi_node.md) MAAS Regions, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
+These instructions will take you from a bare system to a running MAAS cluster with either [One](./docs/how_to_deploy_single_node.md) or [Three](./docs/how_to_deploy_multi_node.md) MAAS Regions, one node PostgresSQL or three-node PostgreSQL, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
 
 1. [Connect to a Juju controller](./docs/how_to_deploy_to_a_bootstrapped_controller.md) or [Bootstrap a Juju controller](./docs/how_to_bootstrap_juju.md)
 2. Deploy a [multi-node](./docs/how_to_deploy_multi_node.md) or [single-node](./docs/how_to_deploy_single_node.md) MAAS cluster
@@ -86,4 +86,5 @@ The Terraform modules also expect that network connectivity is established from 
 - Deployed MAAS
 
 It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, git clone this repository, and apply the Terraform modules from there.
-The reason is that we expect at least connectivity with the LXD API address to bootstrap Juju but also, we want connectivity to the private addresses of the Juju machines, in case of troubleshooting. Finally, the maas-config module requires access to MAAS via the machine private address. The last one will not be a hard requirement when we introduce the load balancer as part of a solution, based on e.g., haproxy+hacluster charms
+Juju bootstrap expects connectivity with the LXD API, and we presume connectivity with private addresses of the Juju machines for troubleshooting.
+The `maas-config` module also requires access to MAAS via the same private machine addresses, until a time as to which a load balancer is introduced to these steps.

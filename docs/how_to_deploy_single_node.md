@@ -6,7 +6,7 @@ It is easier to create a single node cluster with the [MAAS and PostgreSQL snaps
 
 The benefit of following these instructions and configuring a charmed deployment is, however, that following the final steps in [how to deploy multi-node](./how_to_deploy_multi_node.md) deployment allows scaling the cluster with relative ease after initial setup.
 
-TODO: Add a diagram for single node deployment here.
+<!-- TODO: Add a diagram for single node deployment here. -->
 
 Copy the MAAS deployment configuration sample, modifying the entries as required.
 It is recommended to pay attention to the following configuration options and supply their values as required:
@@ -69,9 +69,9 @@ $ juju status
 Model  Controller           Cloud/Region         Version  SLA          Timestamp
 maas   maas-charms-default  maas-charms/default  3.6.8    unsupported  13:48:02+01:00
 
-App            Version  Status  Scale  Charm          Channel                   Rev  Exposed  Message
-maas-region    3.6.1    active      1  maas-region    latest/edge/restore-test  187  no
-postgresql     16.9     active      1  postgresql     16/stable                 843  no
+App            Version  Status  Scale  Charm          Channel      Rev  Exposed  Message
+maas-region    3.6.1    active      1  maas-region    latest/edge  187  no
+postgresql     16.9     active      1  postgresql     16/stable    843  no
 
 Unit              Workload  Agent      Machine  Public address                          Ports                                                                               Message
 maas-region/0     active    idle       0        fd42:3eef:9375:6168:216:3eff:fe25:542   53,3128,5239-5247,5250-5274,5280-5284,5443,8000/tcp 53,67,69,123,323,5241-5247/udp
@@ -82,4 +82,10 @@ Machine  State    Address                                 Inst id        Base   
 1        started  fd42:3eef:9375:6168:216:3eff:fe0a:a497  juju-43f429-1  ubuntu@24.04      Running
 ```
 
-Continue with the [MAAS Configuration](./how_to_configure_maas.md) steps to finalise your cluster.
+
+Previous steps:
+- [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
+
+Next steps:
+- Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
+- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.

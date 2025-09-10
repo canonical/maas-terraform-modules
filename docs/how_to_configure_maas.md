@@ -1,6 +1,6 @@
 # MAAS Configuration
 
-Copy the MAAS config configuration sample, and modify as necessary. It is required to modify the `maas_url` and `maas_key` at bare minimum.
+Copy the `maas-config` configuration sample, and modify as necessary. It is required to modify the `maas_url` and `maas_key` at bare minimum.
 
 ```bash
 cp config/maas-config/config.tfvars.sample config/maas-config/config.tfvars
@@ -49,6 +49,15 @@ All modules have been applied at this point, and a running MAAS instance should 
 
 - MAAS URL
 - MAAS Admin API Key
-- MAAS Admin Login Credentials.
+- MAAS Admin Login Credentials
+
 
 You should now access the charmed MAAS UI [from your browser](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-web-ui-setup), or configure the [MAAS CLI](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-cli-setup) to access the running Instance. Happy MAAS-ing!
+
+
+Previous steps:
+- [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
+- Continue with the [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) deployment instructions to add a MAAS cluster ontop of your Juju controller.
+
+Next steps:
+- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.

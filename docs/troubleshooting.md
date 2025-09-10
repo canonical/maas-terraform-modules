@@ -6,13 +6,13 @@ This document contains references to common issues found when using or developin
 > If you are seeing log messages such as `remaining connection slots are reserved for roles with the SUPERUSER attribute`, then your PostgreSQL charm does not have enough outgoing connections configured to handle all of the MAAS traffic.
 >
 > This typically occurs on a Multi-node setup with default instructions, as MAAS saturates the 100 connection default.
-> To increase the connections, simply modify the PostgreSQL `experimental_max_connections` value:
+> To increase the connections, simply modify the PostgreSQL `experimental_max_connections` value to something larger, for example:
 >
 > ```bash
 > ❯ juju config postgresql experimental_max_connections=300
 > ```
 >
-> We use a naive approximation of 100 connections per region in the example above. To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
+> To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
 
 ### Out-Of-Memory

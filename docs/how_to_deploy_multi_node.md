@@ -1,15 +1,15 @@
 # Multi-Node Deployment
 
 This topology will install three MAAS Region nodes, and three PostgreSQL nodes.
-Deployment occurs in multiple stages, where first a single-node deployment is configured, then scaled out to the full HA complement of units.
+Deployment occurs in multiple stages, where first a single-node deployment is configured, then scaled out to the full complement of units.
 
 > [!NOTE]
 > As deployed in these steps, this is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.
 
 > [!NOTE]
-> part of the reason for one unit -> three units is to avoid [this known issue]https://github.com/canonical/maas-charms/issues/315
+> part of the reason for one unit -> three units is to avoid [this known issue](https://github.com/canonical/maas-charms/issues/315)
 
-TODO: Add a diagram for multi-node deployment here.
+<!-- TODO: Add a diagram for multi-node deployment here. -->
 
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
@@ -18,14 +18,15 @@ cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 You should initially ensure the configuration contains `enable_maas_ha=false` and `enable_postgres_ha=false`, as we will set these during the appropriate parts of the following steps.
 
 > [!NOTE]
-> You *MUST* increase the PostgreSQL connections for a multi-node deployment
+> You *MUST* increase the PostgreSQL connections for a multi-node deployment to something larger, for example:
 > ```bash
 > charm_postgresql_config = {
 >   experimental_max_connections = 300
 > }
 > ```
 >
-> If the defaults remain, you will run into the [MAAS connection slots reserved](#maas-connections-slots-reserved) error.
+> If the defaults remain, you will run into the [MAAS connection slots reserved](./troubleshooting.md#maas-connections-slots-reserved) error.
+> To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
 > [!NOTE]
 > To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults, ensure `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
@@ -90,9 +91,9 @@ $ juju status
 Model  Controller           Cloud/Region         Version  SLA          Timestamp
 maas   maas-charms-default  maas-charms/default  3.6.8    unsupported  14:37:06+01:00
 
-App            Version  Status  Scale  Charm          Channel                   Rev  Exposed  Message
-maas-region    3.6.1    active      3  maas-region    latest/edge/restore-test  187  no
-postgresql     16.9     active      3  postgresql     16/stable                 843  no
+App            Version  Status  Scale  Charm          Channel      Rev  Exposed  Message
+maas-region    3.6.1    active      3  maas-region    latest/edge  187  no
+postgresql     16.9     active      3  postgresql     16/stable    843  no
 
 Unit              Workload  Agent  Machine  Public address                          Ports                                                                               Message
 maas-region/0     active    idle   0        fd42:3eef:9375:6168:216:3eff:fe25:542   53,3128,5239-5247,5250-5274,5280-5284,5443,8000/tcp 53,67,69,123,323,5241-5247/udp
@@ -111,4 +112,10 @@ Machine  State    Address                                 Inst id        Base   
 5        started  10.120.100.23                           juju-43f429-5  ubuntu@22.04      Running
 ```
 
-Continue with the [MAAS Configuration](./how_to_configure_maas.md) steps to finalise your cluster.
+
+Previous steps:
+- [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
+
+Next steps:
+- Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
+- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.
