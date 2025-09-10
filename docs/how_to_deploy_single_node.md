@@ -6,7 +6,7 @@ It is easier to create a single node cluster with the [MAAS and PostgreSQL snaps
 
 The benefit of following these instructions and configuring a charmed deployment is, however, that following the final steps in [how to deploy multi-node](./how_to_deploy_multi_node.md) deployment allows scaling the cluster with relative ease after initial setup.
 
-<!-- TODO: Add a diagram for single node deployment here. -->
+See the [architecture section](../README.md#architecture) of README.md for an overview that includes a description of single-node deployments.
 
 Copy the MAAS deployment configuration sample, modifying the entries as required.
 It is recommended to pay attention to the following configuration options and supply their values as required:
