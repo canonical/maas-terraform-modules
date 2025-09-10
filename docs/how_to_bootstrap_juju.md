@@ -1,3 +1,4 @@
+# How to bootstrap Juju
 
 All MAAS cluster deployments requires a running Juju controller. If you are using an external controller, documentation [here](./how_to_deploy_to_a_bootstrapped_controller.md), you can skip forward to the desired node deployment.
 

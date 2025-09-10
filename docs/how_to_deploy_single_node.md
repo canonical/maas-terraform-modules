@@ -1,4 +1,4 @@
-# Single Node Deployment
+# How to deploy a single-node MAAS cluster
 
 This topology will install a single MAAS Region node, and single PostgreSQL node.
 

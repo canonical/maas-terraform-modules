@@ -1,4 +1,4 @@
-# MAAS Configuration
+# How to configure MAAS
 
 Copy the `maas-config` configuration sample, and modify as necessary. It is required to modify the `maas_url` and `maas_key` at bare minimum.
 

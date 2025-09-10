@@ -1,4 +1,4 @@
-# Multi-Node Deployment
+# How to deploy a multi-node MAAS cluster
 
 This topology will install three MAAS Region nodes, and three PostgreSQL nodes.
 Deployment occurs in multiple stages, where first a single-node deployment is configured, then scaled out to the full complement of units.
