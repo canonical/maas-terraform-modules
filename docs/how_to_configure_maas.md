@@ -57,7 +57,7 @@ You should now access the charmed MAAS UI [from your browser](https://canonical.
 
 Previous steps:
 - [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
-- Continue with the [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) deployment instructions to add a MAAS cluster ontop of your Juju controller.
+- Deploy a [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) MAAS cluster atop your Juju controller.
 
 Next steps:
-- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.
+- Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.

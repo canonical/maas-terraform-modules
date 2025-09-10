@@ -118,4 +118,4 @@ Previous steps:
 
 Next steps:
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
-- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.
+- Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.

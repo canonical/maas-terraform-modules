@@ -45,6 +45,6 @@ In this case, the Juju controller credentials must be provided by the user as en
 
 
 Next steps:
-- Continue with the [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) deployment instructions to add a MAAS cluster ontop of your Juju controller.
+- Deploy a [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) MAAS cluster atop your Juju controller.
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
-- Take a [Backup](./how_to_backup.md) and [Restore](./how_to_restore.md) your cluster.
+- Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.
