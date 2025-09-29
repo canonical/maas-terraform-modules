@@ -51,7 +51,7 @@ charm_maas_region_revision = null
 # Operator configuration for MAAS Region Controller deployment
 charm_maas_region_config = {
     # Deploy region in Region+Rack mode
-    enable_rack_mode = true
+    enable_rack_mode = falase
 }
 
 ###

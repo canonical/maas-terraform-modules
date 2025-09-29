@@ -7,5 +7,8 @@ output "maas_api_key" {
 }
 
 output "maas_machines" {
-  value = var.enable_rack_mode ? [for m in juju_machine.maas_machines : m.hostname] : []
+  value = [
+    for m in juju_machine.maas_machines : m.hostname
+    if try(var.var.charm_maas_region_config.enable_rack_mode, false)
+  ]
 }
