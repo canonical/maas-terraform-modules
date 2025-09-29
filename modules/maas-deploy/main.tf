@@ -58,23 +58,6 @@ resource "juju_application" "maas_region" {
   config = merge(var.charm_maas_region_config, )
 }
 
-resource "juju_application" "maas_agent" {
-  count = var.enable_rack_mode ? 1 : 0
-
-  name     = "maas-agent"
-  model    = juju_model.maas_model.name
-  machines = [for m in juju_machine.maas_machines : m.machine_id]
-
-  charm {
-    name     = "maas-agent"
-    channel  = var.charm_maas_agent_channel
-    revision = var.charm_maas_agent_revision
-    base     = "ubuntu@${var.ubuntu_version}"
-  }
-
-  config = var.charm_maas_agent_config
-}
-
 resource "juju_integration" "maas_region_postgresql" {
   model = juju_model.maas_model.name
 
@@ -89,28 +72,12 @@ resource "juju_integration" "maas_region_postgresql" {
   }
 }
 
-resource "juju_integration" "maas_agent_region" {
-  count = var.enable_rack_mode ? 1 : 0
-
-  model = juju_integration.maas_region_postgresql.model
-
-  application {
-    name     = juju_application.maas_agent[0].name
-    endpoint = "maas-region"
-  }
-
-  application {
-    name     = juju_application.maas_region.name
-    endpoint = "maas-region"
-  }
-}
-
 
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
 resource "terraform_data" "juju_wait_for_maas" {
   input = {
     model = (
-      var.enable_rack_mode ? juju_integration.maas_agent_region[0].model : juju_integration.maas_region_postgresql.model
+      juju_integration.maas_region[0].model
     )
   }
 

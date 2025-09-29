@@ -14,7 +14,6 @@ This repository exists as a deployment and configuration solution for a [Charmed
   - [Contents](#contents)
   - [Architecture](#architecture)
       - [MAAS Regions](#maas-regions)
-      - [MAAS Agents](#maas-agents)
       - [PostgreSQL](#postgresql)
       - [Juju Controller](#juju-controller)
       - [LXD Cloud](#lxd-cloud)
@@ -63,18 +62,15 @@ flowchart TB
          subgraph MAAS_M0["VM-3"]
 
           R0["🟣 maas-region/0"]
-          A0["🟠 maas-agent/0"]
         end
          subgraph MAAS_MULTINODE["Multi-node deployment"]
           subgraph MAAS_M1["VM-4"]
 
             R1["🟣 maas-region/1"]
-            A1["🟠 maas-agent/1"]
           end
           subgraph MAAS_M2["VM-5"]
 
             R2["🟣 maas-region/2"]
-            A2["🟠 maas-agent/2"]
           end
          end
         %% Force horizontal layout
@@ -153,12 +149,6 @@ A charmed MAAS deployment consists of the following atomic components:
 
 #### MAAS Regions
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
-
-#### MAAS Agents
-Charmed deployment of the MAAS Snap as a rack controller
-For a MAAS Region+Rack deployment, the Agent charm is deployed with the Region charm on the same node, and the MAAS snap is configured in Region+Rack mode.
-> [!NOTE]
-> MAAS Agent charm will be removed from deployment and set to end-of-life in the near future. Region+Rack will still be provided as an option in the Region charm however.
 
 #### PostgreSQL
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)

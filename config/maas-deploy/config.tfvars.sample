@@ -49,24 +49,10 @@ charm_maas_region_channel = "latest/edge"
 # Operator channel revision for MAAS Region Controller deployment
 charm_maas_region_revision = null
 # Operator configuration for MAAS Region Controller deployment
-charm_maas_region_config = {}
-
-###
-## MAAS Agent configuration
-###
-
-# Whether to enable MAAS running in region+rack mode
-# NOTE:
-#   This installs the maas-agent charm at the same machines as 
-#   maas-region charm to achieve region+rack mode.
-#   This behavior will change once the maas-agent charm is EOL.
-enable_rack_mode = false
-# Operator channel for MAAS Agent Controller deployment
-charm_maas_agent_channel = "latest/edge"
-# Operator channel revision for MAAS Agent Controller deployment
-charm_maas_agent_revision = null
-# Operator config for MAAS Agent Controller deployment
-charm_maas_agent_config = {}
+charm_maas_region_config = {
+    # Deploy region in Region+Rack mode
+    enable_rack_mode = true
+}
 
 ###
 ## MAAS Admin configuration

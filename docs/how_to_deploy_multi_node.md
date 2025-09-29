@@ -30,8 +30,12 @@ You should initially ensure the configuration contains `enable_maas_ha=false` an
 > To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
 > [!NOTE]
-> To deploy in Region+Rack mode, you will also need to specify the `charm_maas_agent_channel` (and optionally `charm_maas_agent_revision`) if you are not deploying defaults, ensure `enable_rack_mode=false` initially, and follow the **NOTE** instructions later to configure.
-> This is due to a [known issue](https://github.com/canonical/maas-charms/issues/316) when deploying Region nodes to nodes with MAAS Agent already present, and will eventually be fixed.
+> To deploy in Region+Rack mode, you will need to provide the following change to the MAAS region config:
+> ```bash
+> charm_maas_region_config {
+>     enable_rack_mode = true
+> }
+> ```
 
 Initialize the Terraform environment with the required modules and configuration
 
@@ -53,24 +57,10 @@ terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
 
 Now modify your configuration such that it contains `enable_maas_ha=true` and `enable_postgres_ha=true`, then apply the Terraform plan again to expand the MAAS and PostgreSQL units to 3.
-> [!NOTE]
-> If deploying Region+Rack, your config should still contain `enable_rack_mode=false` as specified above, we will add Agent nodes after scaling
 
 ```bash
 terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
 ```
-> [!NOTE]
-> If deploying Region+Rack, your config should still contain `enable_rack_mode=false` as specified above
->
-> Only after you scale the Region and PostgreSQL, should you re-run the script with the rack mode enabled:
-> ```bash
-> # Modify config/maas-deploy/config.tfvars to contain:
-> enable_rack_mode=true
-> ```
-> ```bash
-> terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
-> ```
-> This will install the MAAS-agent charm unit on each machine with a MAAS region, and set the snap to Region+Rack.
 
 Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary for MAAS configuration later.
 

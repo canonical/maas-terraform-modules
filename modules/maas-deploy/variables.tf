@@ -111,34 +111,6 @@ variable "charm_maas_region_config" {
 }
 
 ###
-## MAAS Agent configuration
-###
-
-variable "enable_rack_mode" {
-  description = "Whether to enable MAAS running in region+rack mode"
-  type        = bool
-  default     = false
-}
-
-variable "charm_maas_agent_channel" {
-  description = "Operator channel for MAAS Agent Controller deployment"
-  type        = string
-  default     = "3.6/edge"
-}
-
-variable "charm_maas_agent_revision" {
-  description = "Operator channel revision for MAAS Agent Controller deployment"
-  type        = number
-  default     = null
-}
-
-variable "charm_maas_agent_config" {
-  description = "Operator configuration for MAAS Agent Controller deployment"
-  type        = map(string)
-  default     = {}
-}
-
-###
 ## MAAS Admin configuration
 ###
 
