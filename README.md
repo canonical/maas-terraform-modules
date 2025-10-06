@@ -150,6 +150,8 @@ A charmed MAAS deployment consists of the following atomic components:
 #### MAAS Regions
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
 
+[!Note]: If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left as an exercise to the user.
+
 #### PostgreSQL
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
 
