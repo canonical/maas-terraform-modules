@@ -77,7 +77,7 @@ resource "juju_integration" "maas_region_postgresql" {
 resource "terraform_data" "juju_wait_for_maas" {
   input = {
     model = (
-      juju_integration.maas_region[0].model
+      juju_integration.maas_region_postgresql.model
     )
   }
 
