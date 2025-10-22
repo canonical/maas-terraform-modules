@@ -129,5 +129,5 @@ resource "maas_dns_record" "test_txt" {
 resource "maas_node_script" "node_scripts" {
   for_each = var.node_scripts
 
-  file = base64encode(file("${var.node_scripts_location}/${each.value}"))
+  script = base64encode(file("${var.node_scripts_location}/${each.value}"))
 }
