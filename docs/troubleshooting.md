@@ -15,7 +15,6 @@ To increase the connections, simply modify the PostgreSQL `experimental_max_conn
 
 To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
-
 ## Out-Of-Memory
 
 To run a Multi-Node MAAS and/or PostgreSQL on a single machine, the default memory constraints require your host to have at least 32GB RAM. If you wish to reduce this, adjust the VM constraints variables in your `maas-deploy/config.tfvars` file:
@@ -24,8 +23,8 @@ To run a Multi-Node MAAS and/or PostgreSQL on a single machine, the default memo
 maas_constraints     = "cores=1 mem=2G virt-type=virtual-machine"
 postgres_constraints = "cores=1 mem=2G virt-type=virtual-machine"
 ```
-This would limit VMs to 1 core and 2GB of RAM. It is recommended to modify and test these values to suit your exact setup, ensuring adequate resources are still provided to meet minimum required overhead.
 
+This would limit VMs to 1 core and 2GB of RAM. It is recommended to modify and test these values to suit your exact setup, ensuring adequate resources are still provided to meet minimum required overhead.
 
 ## Troubleshooting HA mode
 

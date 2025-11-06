@@ -59,7 +59,7 @@ variable "lxd_project" {
 variable "charm_postgresql_channel" {
   description = "Operator channel for PostgreSQL deployment"
   type        = string
-  default     = "16/candidate"
+  default     = "16/stable"
 }
 
 variable "charm_postgresql_revision" {
@@ -72,20 +72,6 @@ variable "charm_postgresql_config" {
   description = "Operator configuration for PostgreSQL deployment"
   type        = map(string)
   default     = {}
-}
-
-variable "max_connections" {
-  description = "Maximum number of concurrent connections to allow to the database server"
-  type        = string
-  default     = "default"
-}
-
-variable "max_connections_per_region" {
-  description = <<EOF
-    Maximum number of concurrent connections to allow to the database server per region
-  EOF
-  type        = number
-  default     = 50
 }
 
 ###

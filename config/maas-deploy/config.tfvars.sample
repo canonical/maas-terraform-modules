@@ -50,8 +50,8 @@ charm_maas_region_channel = "latest/edge"
 charm_maas_region_revision = null
 # Operator configuration for MAAS Region Controller deployment
 charm_maas_region_config = {
-    # Deploy region in Region+Rack mode
-    enable_rack_mode = false
+  # Deploy region in Region+Rack mode
+  enable_rack_mode = false
 }
 
 ###

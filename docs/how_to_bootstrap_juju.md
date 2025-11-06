@@ -4,8 +4,8 @@ All MAAS cluster deployments requires a running Juju controller. If you are usin
 
 Otherwise, we can use the `juju-bootstrap` Terraform module to get started:
 
-
 Create a trust token for your LXD server/cluster
+
 ```bash
 lxc config trust add --name maas-charms
 ```
@@ -29,6 +29,7 @@ Copy the sample configuration file, modifying the entries as required:
 ```bash
 cp config/juju-bootstrap/config.tfvars.sample config/juju-bootstrap/config.tfvars
 ```
+
 > [!NOTE]
 > At bare minimum you will need to supply the `lxd_trust_token` and `lxd_address` as configured in the `bootstrap-juju` steps, or your externally provided cloud.
 
@@ -57,8 +58,8 @@ Finally, record the `juju_cloud` value from the Terraform output, this will be n
 terraform output -raw juju_cloud
 ```
 
-
 Next steps:
+
 - Deploy a [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) MAAS cluster atop your Juju controller.
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
 - Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.

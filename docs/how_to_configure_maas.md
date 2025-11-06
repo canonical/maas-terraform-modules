@@ -5,6 +5,7 @@ Copy the `maas-config` configuration sample, and modify as necessary. It is requ
 ```bash
 cp config/maas-config/config.tfvars.sample config/maas-config/config.tfvars
 ```
+
 ```bash
 # The MAAS URL as returned from the `maas-deploy` plan.
 maas_url = "..."
@@ -13,7 +14,9 @@ maas_key = "..."
 
 # Additionally modify other variables if desired
 ```
+
 > [!NOTE] If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller with the following configuration values
+>
 > ```bash
 > # The hostname of a machine from `maas_machines` to use as a rack controller.
 > rack_controller = "..."
@@ -42,7 +45,6 @@ Apply the Terraform plan if the above sanity check passed
 terraform apply -var-file ../../config/maas-config/config.tfvars -auto-approve
 ```
 
-
 # MAAS Access
 
 All modules have been applied at this point, and a running MAAS instance should be available, with the following known values:
@@ -51,13 +53,13 @@ All modules have been applied at this point, and a running MAAS instance should 
 - MAAS Admin API Key
 - MAAS Admin Login Credentials
 
-
 You should now access the charmed MAAS UI [from your browser](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-web-ui-setup), or configure the [MAAS CLI](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-cli-setup) to access the running Instance. Happy MAAS-ing!
 
-
 Previous steps:
+
 - [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
 - Deploy a [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) MAAS cluster atop your Juju controller.
 
 Next steps:
+
 - Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.

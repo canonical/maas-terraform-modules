@@ -17,6 +17,7 @@ cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 
 > [!NOTE]
 > To deploy in Region+Rack mode, you will need to provide the following change to the MAAS region config:
+>
 > ```bash
 > charm_maas_region_config {
 >     enable_rack_mode = true
@@ -75,10 +76,11 @@ Machine  State    Address                                 Inst id        Base   
 1        started  fd42:3eef:9375:6168:216:3eff:fe0a:a497  juju-43f429-1  ubuntu@24.04      Running
 ```
 
-
 Previous steps:
+
 - [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
 
 Next steps:
+
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
 - Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.

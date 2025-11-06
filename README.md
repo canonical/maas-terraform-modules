@@ -13,10 +13,10 @@ This repository exists as a deployment and configuration solution for a [Charmed
 - [Terraform driven Charmed MAAS deployment](#terraform-driven-charmed-maas-deployment)
   - [Contents](#contents)
   - [Architecture](#architecture)
-      - [MAAS Regions](#maas-regions)
-      - [PostgreSQL](#postgresql)
-      - [Juju Controller](#juju-controller)
-      - [LXD Cloud](#lxd-cloud)
+    - [MAAS Regions](#maas-regions)
+    - [PostgreSQL](#postgresql)
+    - [Juju Controller](#juju-controller)
+    - [LXD Cloud](#lxd-cloud)
   - [Deployment Instructions](#deployment-instructions)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
   - [Appendix - Prerequisites](#appendix---prerequisites)
@@ -26,7 +26,6 @@ The full MAAS cluster deployment consists of: one optional bootstrapping, one of
 - [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; Optional if you already have an external Juju controller.
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the provided Juju controller (`juju-bootstrap` or external)
 - [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly recommended. You *can* configure your MAAS independently, but automation is the recommended pathway.
-
 
 ## Architecture
 
@@ -142,28 +141,31 @@ flowchart TB
   class CTRL bootstrapManaged
   class MODEL deployManaged
 ```
-This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
 
+This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
 
 A charmed MAAS deployment consists of the following atomic components:
 
 #### MAAS Regions
+
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
 
 [!Note]: If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left as an exercise to the user.
 
 #### PostgreSQL
+
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
 
 #### Juju Controller
+
 Orchestrates the lifecycle of the deployed charmed applications, [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/controller/)
 
 #### LXD Cloud
+
 Provides the underlying virtual-machine infrastructure that Juju runs on.
-While the development of this repository occured on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
+While the development of this repository occurred on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
 
 LXD Containers and Virtual machines are deployed as Juju machines, which Juju uses to deploy charms in.
-
 
 ## Deployment Instructions
 
@@ -175,13 +177,11 @@ These instructions will take you from a bare system to a running MAAS cluster wi
 2. Deploy a [multi-node](./docs/how_to_deploy_multi_node.md) or [single-node](./docs/how_to_deploy_single_node.md) MAAS cluster
 3. [Configure](./docs/how_to_configure_maas.md) your running MAAS instance
 
-
 ## Appendix - Backup and Restore
 
-There exist two suplementary documents for instructions on [How to Backup](./docs/how_to_backup.md) and [How to Restore](./docs/how_to_restore.md) your MAAS Cluster.
+There exist two supplementary documents for instructions on [How to Backup](./docs/how_to_backup.md) and [How to Restore](./docs/how_to_restore.md) your MAAS Cluster.
 
 It is recommended to take a backup of your cluster after initial setup.
-
 
 ## Appendix - Prerequisites
 

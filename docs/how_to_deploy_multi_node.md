@@ -12,6 +12,7 @@ See the [architecture section](../README.md#architecture) of README.md for an ov
 > part of the reason for one unit -> three units is to avoid [this known issue](https://github.com/canonical/maas-charms/issues/315)
 
 Copy the configuration sample, modifying the entries as required.
+
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
@@ -20,6 +21,7 @@ You should initially ensure the configuration contains `enable_maas_ha=false` an
 
 > [!NOTE]
 > You *MUST* increase the PostgreSQL connections for a multi-node deployment to something larger, for example:
+>
 > ```bash
 > charm_postgresql_config = {
 >   experimental_max_connections = 300
@@ -31,6 +33,7 @@ You should initially ensure the configuration contains `enable_maas_ha=false` an
 
 > [!NOTE]
 > To deploy in Region+Rack mode, you will need to provide the following change to the MAAS region config:
+>
 > ```bash
 > charm_maas_region_config {
 >     enable_rack_mode = true
@@ -103,10 +106,11 @@ Machine  State    Address                                 Inst id        Base   
 5        started  10.120.100.23                           juju-43f429-5  ubuntu@22.04      Running
 ```
 
-
 Previous steps:
+
 - [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
 
 Next steps:
+
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
 - Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.
