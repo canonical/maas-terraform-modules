@@ -2,8 +2,18 @@
 
 To enable MAAS-provided DHCP on a rack controller requires having a subnet that will be used for DHCP, and an additional interface on the relevant rack controllers connected to this subnet. This guide details the manual steps required to achieve this, as there is no current way to manage this with Terraform.
 
+## Prerequisites
+
+Before following this guide, ensure:
+1. You have run the `maas-deploy` module.
+2. You have identified the target rack controller hostname from `terraform output maas_machines`
+3. You have network administrative access to your deployment platform (LXD/MicroCloud)
+
 ## Create a PXE subnet
-If you haven't already, create a subnet for MAAS to serve DHCP from. This requires DHCP being disabled in LXD, so that MAAS can manage it, and may require NAT depending on your needs:
+If you haven't already, create a subnet for MAAS to serve DHCP from.
+
+### LXD setup
+Creating a LXD network requires DHCP being disabled, so that MAAS can manage it, and may require NAT depending on your needs:
 ```bash
 lxc network create maas-pxe
 cat << __EOF | lxc network edit maas-pxe
@@ -23,7 +33,7 @@ locations:
 __EOF
 ```
 ## Attach the network to the rack controller
-1. Identify the rack controller(s) you would like MAAS to provide DHCP from. If `enable_rack_mode=True`, this will be the machines listed in the `terraform ouput` of the `maas-deploy` module.
+1. Identify the rack controller(s) you would like MAAS to provide DHCP from. If `enable_rack_mode=True`, this will be the machines listed in the `terraform output` of the `maas-deploy` module.
 2. Attach the desired network (`maas-pxe`) to the desired rack controller(s) (`$NAME`, for example `juju-2c9858-1`) as a new interface (`eth1`):
    ```
    lxc network attach maas-pxe $NAME eth1
@@ -57,25 +67,25 @@ You can now enable DHCP with Terraform:
    ```hcl
    # Enable DHCP
    data "maas_rack_controller" "dhcp_rack" {
-     count = var.enable_dhp ? 1 : 0
+     count = var.enable_dhcp ? 1 : 0
 
      hostname = var.rack_controller
    }
 
    data "maas_subnet" "pxe" {
-     count = var.enable_dhp ? 1 : 0
+     count = var.enable_dhcp ? 1 : 0
 
      cidr = var.pxe_subnet
    }
 
    data "maas_fabric" "pxe_fabric" {
-     count = var.enable_dhp ? 1 : 0
+     count = var.enable_dhcp ? 1 : 0
 
      name = data.maas_subnet.pxe[0].fabric
    }
 
    resource "maas_subnet_ip_range" "dhcp_range" {
-     count = var.enable_dhp ? 1 : 0
+     count = var.enable_dhcp ? 1 : 0
 
      subnet   = data.maas_subnet.pxe[0].id
      type     = "dynamic"
@@ -84,7 +94,7 @@ You can now enable DHCP with Terraform:
    }
 
    resource "maas_vlan_dhcp" "dhcp_enabled" {
-     count = var.enable_dhp ? 1 : 0
+     count = var.enable_dhcp ? 1 : 0
 
      fabric                  = data.maas_fabric.pxe_fabric[0].id
      vlan                    = data.maas_subnet.pxe[0].vid
@@ -94,7 +104,7 @@ You can now enable DHCP with Terraform:
    ```
    `modules/maas-config/variables`
    ```hcl
-   variable "enable_dhp" {
+   variable "enable_dhcp" {
      description = <<EOF
        Whether to enable DHCP for a given subnet on a specified rack controller
        If you enable this you also need to specify pxe_subnet below
@@ -117,7 +127,7 @@ You can now enable DHCP with Terraform:
    `config/maas-config/config.tfvars`, filling out the appropriate values
    ```hcl
    # Whether to enable DHCP for a given subnet on a specified rack controller
-   enable_dhp = true
+   enable_dhcp = true
    # The hostname of the MAAS rack controller to enable DHCP
    rack_controller = <$NAME of rack controller>
    # The subnet to serve DHCP from the MAAS rack controller
