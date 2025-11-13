@@ -3,44 +3,6 @@ provider "maas" {
   api_url = var.maas_url
 }
 
-# 0
-# Enable DHCP
-data "maas_rack_controller" "dhcp_rack" {
-  count = var.enable_dhp ? 1 : 0
-
-  hostname = var.rack_controller
-}
-
-data "maas_subnet" "pxe" {
-  count = var.enable_dhp ? 1 : 0
-
-  cidr = var.pxe_subnet
-}
-
-data "maas_fabric" "pxe_fabric" {
-  count = var.enable_dhp ? 1 : 0
-
-  name = data.maas_subnet.pxe[0].fabric
-}
-
-resource "maas_subnet_ip_range" "dhcp_range" {
-  count = var.enable_dhp ? 1 : 0
-
-  subnet   = data.maas_subnet.pxe[0].id
-  type     = "dynamic"
-  start_ip = cidrhost(data.maas_subnet.pxe[0].cidr, 99)
-  end_ip   = cidrhost(data.maas_subnet.pxe[0].cidr, 254)
-}
-
-resource "maas_vlan_dhcp" "dhcp_enabled" {
-  count = var.enable_dhp ? 1 : 0
-
-  fabric                  = data.maas_fabric.pxe_fabric[0].id
-  vlan                    = data.maas_subnet.pxe[0].vid
-  primary_rack_controller = data.maas_rack_controller.dhcp_rack[0].id
-  ip_ranges               = [maas_subnet_ip_range.dhcp_range[0].id]
-}
-
 # 1
 # Set boot source
 resource "maas_boot_source" "image_server" {

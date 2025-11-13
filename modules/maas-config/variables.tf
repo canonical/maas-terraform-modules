@@ -12,26 +12,6 @@ variable "maas_key" {
 ## MAAS configuration values
 ###
 
-variable "enable_dhp" {
-  description = <<EOF
-    Whether to enable DHCP for a given subnet on a specified rack controller
-    If you enable this you also need to specify pxe_subnet below
-  EOF
-  type        = bool
-
-  default = false
-}
-
-variable "rack_controller" {
-  description = "The hostname of the MAAS rack controller to enable DHCP on"
-  type        = string
-}
-
-variable "pxe_subnet" {
-  description = "The subnet to serve DHCP from the MAAS rack controller"
-  type        = string
-}
-
 variable "image_server_url" {
   description = <<EOF
     The URL of the boot source to synchronize OS images from

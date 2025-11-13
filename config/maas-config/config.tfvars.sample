@@ -11,13 +11,6 @@ maas_key = "TA34jaREV6GZewNsfz:kz6PgpXbkjUzmsmnCV:n77nHsMQmTbmj5ssvYvMg7muAPnpxy
 ## MAAS configuration values
 ###
 
-# Whether to enable DHCP for a given subnet on a specified rack controller
-# If you enable this you also need to specify pxe_subnet below
-enable_dhp = false
-# The hostname of the MAAS rack controller to enable DHCP on
-rack_controller = "foo-bar"
-# The subnet to serve DHCP from the MAAS rack controller
-pxe_subnet = "10.10.10.0/24"
 # The URL of the boot source to synchronize OS images from
 # This needs to be a simple streams server
 image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
