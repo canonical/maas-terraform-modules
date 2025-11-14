@@ -103,7 +103,7 @@ You can now enable DHCP with Terraform:
      ip_ranges               = [maas_subnet_ip_range.dhcp_range[0].id]
    }
    ```
-   `modules/maas-config/variables`
+   `modules/maas-config/variables.tf`
    ```hcl
    variable "enable_dhcp" {
      description = <<EOF
