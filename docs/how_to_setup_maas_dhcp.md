@@ -12,7 +12,7 @@ Before following this guide, ensure:
 Create a subnet for MAAS to serve DHCP from. If you already have one created, you can skip this section.
 
 
-Creating a LXD network requires DHCP being disabled, so that MAAS can manage it. It may require NAT depending on your needs:
+The LXD network must be created with DHCP disabled so that MAAS can provide DHCP. It may require NAT depending on your needs:
 ```bash
 lxc network create maas-pxe
 cat << __EOF | lxc network edit maas-pxe
@@ -51,6 +51,7 @@ __EOF
         ...
     3: enp6s0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000    # The unconfigured interface
         link/ether xx:xx:xx:xx:xx:xx brd ff:ff:ff:ff:ff:ff
+   ```
 4. As root, setup this interface with netplan using the identified name:
    ```
    netplan set --origin-hint 99-maas-pxe-network ethernets.enp6s0.addresses=[10.20.0.2/24]
@@ -64,6 +65,7 @@ __EOF
 You can now enable DHCP with Terraform:
 
 1. Add the following to
+
    `/modules/maas-config/main.tf`
    ```hcl
    # Enable DHCP

@@ -15,16 +15,9 @@ maas_key = "..."
 # Additionally modify other variables if desired
 ```
 
-> [!NOTE] If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller with the following configuration values
->
-> ```bash
-> # The hostname of a machine from `maas_machines` to use as a rack controller.
-> rack_controller = "..."
-> # Enable DHCP
-> enable_dhp = true
-> # The subnet on which to serve PXE
-> pxe_subnet = "a.b.c.d/24"
-> ```
+> [!NOTE]
+> If deploying in Region+Rack mode, you can additionally serve DHCP from a rack controller by following the instructions in [how_to_setup_maas_dhcp](./how_to_setup_maas_dhcp.md).
+
 
 Initialize the Terraform environment with the required modules and configuration
 
