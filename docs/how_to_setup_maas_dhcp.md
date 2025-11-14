@@ -1,19 +1,18 @@
 # How to setup MAAS DHCP
 
-To enable MAAS-provided DHCP on a rack controller requires having a subnet that will be used for DHCP, and an additional interface on the relevant rack controllers connected to this subnet. This guide details the manual steps required to achieve this, as there is no current way to manage this with Terraform.
+You likely want to have a subnet available in MAAS that has DHCP enabled, perhaps to use as a PXE subnet. To enable MAAS-provided DHCP on a rack controller requires having a subnet available that will be used for DHCP, and an additional interface on the relevant rack controllers connected to this subnet. This guide details the manual steps required to achieve this, as there is no current way to manage this with Terraform.
 
 ## Prerequisites
 
 Before following this guide, ensure:
 1. You have run the `maas-deploy` module.
-2. You have identified the target rack controller hostname from `terraform output maas_machines`
-3. You have network administrative access to your deployment platform (LXD/MicroCloud)
+2. You have identified the target rack controller hostname to enable DHCP on.
 
 ## Create a PXE subnet
-If you haven't already, create a subnet for MAAS to serve DHCP from.
+Create a subnet for MAAS to serve DHCP from. If you already have one created, you can skip this section.
 
-### LXD setup
-Creating a LXD network requires DHCP being disabled, so that MAAS can manage it, and may require NAT depending on your needs:
+
+Creating a LXD network requires DHCP being disabled, so that MAAS can manage it. It may require NAT depending on your needs:
 ```bash
 lxc network create maas-pxe
 cat << __EOF | lxc network edit maas-pxe
@@ -33,8 +32,8 @@ locations:
 __EOF
 ```
 ## Attach the network to the rack controller
-1. Identify the rack controller(s) you would like MAAS to provide DHCP from. If `enable_rack_mode=True`, this will be the machines listed in the `terraform output` of the `maas-deploy` module.
-2. Attach the desired network (`maas-pxe`) to the desired rack controller(s) (`$NAME`, for example `juju-2c9858-1`) as a new interface (`eth1`):
+1. Identify the rack controller you would like MAAS to provide DHCP from. If `enable_rack_mode=True`, this will be a machine listed in the `terraform output maas_machines` of the `maas-deploy` module.
+2. Attach the desired network (`maas-pxe`) to the desired rack controller (`$NAME`, for example `juju-2c9858-1`) as a new interface (`eth1`):
    ```
    lxc network attach maas-pxe $NAME eth1
    ```
@@ -57,6 +56,8 @@ __EOF
    netplan set --origin-hint 99-maas-pxe-network ethernets.enp6s0.addresses=[10.20.0.2/24]
    netplan apply
    ```
+   > [!NOTE]
+   > The above addresses assumes you may want to set a gateway as 10.20.0.1, which is outside of the scope of this document.
 5. After a few moments, you should be able to see the relevant subnet discovered in MAAS, if network discovery is enabled. You can now use this network to enable DHCP using terraform.
 
 ## Enable DHCP on the discovered subnet with Terraform
