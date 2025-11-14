@@ -70,26 +70,18 @@ You can now enable DHCP with Terraform:
    ```hcl
    # Enable DHCP
    data "maas_rack_controller" "dhcp_rack" {
-     count = var.enable_dhcp ? 1 : 0
-
      hostname = var.rack_controller
    }
 
    data "maas_subnet" "pxe" {
-     count = var.enable_dhcp ? 1 : 0
-
      cidr = var.pxe_subnet
    }
 
    data "maas_fabric" "pxe_fabric" {
-     count = var.enable_dhcp ? 1 : 0
-
      name = data.maas_subnet.pxe[0].fabric
    }
 
    resource "maas_subnet_ip_range" "dhcp_range" {
-     count = var.enable_dhcp ? 1 : 0
-
      subnet   = data.maas_subnet.pxe[0].id
      type     = "dynamic"
      start_ip = cidrhost(data.maas_subnet.pxe[0].cidr, 99)
@@ -97,8 +89,6 @@ You can now enable DHCP with Terraform:
    }
 
    resource "maas_vlan_dhcp" "dhcp_enabled" {
-     count = var.enable_dhcp ? 1 : 0
-
      fabric                  = data.maas_fabric.pxe_fabric[0].id
      vlan                    = data.maas_subnet.pxe[0].vid
      primary_rack_controller = data.maas_rack_controller.dhcp_rack[0].id
@@ -107,16 +97,6 @@ You can now enable DHCP with Terraform:
    ```
    `modules/maas-config/variables.tf`
    ```hcl
-   variable "enable_dhcp" {
-     description = <<EOF
-       Whether to enable DHCP for a given subnet on a specified rack controller
-       If you enable this you also need to specify pxe_subnet below
-     EOF
-     type        = bool
-
-     default = false
-   }
-
    variable "rack_controller" {
      description = "The hostname of the MAAS rack controller to enable DHCP on"
      type        = string
@@ -129,8 +109,6 @@ You can now enable DHCP with Terraform:
    ```
    `config/maas-config/config.tfvars`, filling out the appropriate values
    ```hcl
-   # Whether to enable DHCP for a given subnet on a specified rack controller
-   enable_dhcp = true
    # The hostname of the MAAS rack controller to enable DHCP
    rack_controller = <$NAME of rack controller>
    # The subnet to serve DHCP from the MAAS rack controller
