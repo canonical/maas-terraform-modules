@@ -77,13 +77,14 @@ resource "juju_integration" "maas_region_postgresql" {
 resource "terraform_data" "juju_wait_for_maas" {
   input = {
     model = (
-      juju_integration.maas_region_postgresql.model
+      juju_integration.maas_region_postgresql.model_uuid
     )
   }
 
   provisioner "local-exec" {
     command = <<-EOT
-      juju wait-for model "$MODEL" --timeout 3600s \
+      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
+      juju wait-for model "$MODEL_NAME" --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "active")'
     EOT
     environment = {
