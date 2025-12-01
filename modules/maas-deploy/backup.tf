@@ -1,16 +1,16 @@
 resource "juju_machine" "backup" {
   count = var.enable_backup ? 1 : 0
 
-  model = juju_model.maas_model.name
-  base  = startswith(var.charm_s3_integrator_channel, "2/") ? "ubuntu@24.04" : "ubuntu@22.04"
-  name  = "backup"
+  model_uuid = juju_model.maas_model.uuid
+  base       = startswith(var.charm_s3_integrator_channel, "2/") ? "ubuntu@24.04" : "ubuntu@22.04"
+  name       = "backup"
 }
 
 resource "juju_secret" "s3_credentials" {
   count = var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ? 1 : 0
 
-  name  = "s3-credentials"
-  model = juju_model.maas_model.name
+  name       = "s3-credentials"
+  model_uuid = juju_model.maas_model.uuid
 
   value = {
     "access-key" = var.s3_access_key
@@ -30,7 +30,7 @@ locals {
 resource "juju_access_secret" "s3_credentials" {
   count = var.enable_backup && startswith(var.charm_s3_integrator_channel, "2/") ? 1 : 0
 
-  model        = juju_model.maas_model.name
+  model_uuid   = juju_model.maas_model.uuid
   applications = [for a in juju_application.s3_integrator : a.name]
   secret_id    = juju_secret.s3_credentials[0].secret_id
 }
@@ -38,9 +38,9 @@ resource "juju_access_secret" "s3_credentials" {
 resource "juju_application" "s3_integrator" {
   for_each = var.enable_backup ? toset(["postgresql", "maas"]) : toset([])
 
-  name     = "s3-integrator-${each.value}"
-  model    = juju_model.maas_model.name
-  machines = [for m in juju_machine.backup : m.machine_id]
+  name       = "s3-integrator-${each.value}"
+  model_uuid = juju_model.maas_model.uuid
+  machines   = [for m in juju_machine.backup : m.machine_id]
 
   charm {
     name     = "s3-integrator"
@@ -76,7 +76,7 @@ resource "juju_application" "s3_integrator" {
 resource "juju_integration" "s3_integration" {
   for_each = var.enable_backup ? toset(["postgresql", "maas"]) : toset([])
 
-  model = terraform_data.juju_wait_for_maas.output.model
+  model_uuid = juju_model.maas_model.uuid
 
   application {
     name     = juju_application.s3_integrator[each.value].name

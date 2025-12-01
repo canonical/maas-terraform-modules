@@ -170,12 +170,14 @@ variable "s3_ca_chain_file_path" {
 variable "s3_access_key" {
   description = "Access key used to access the S3 backup bucket"
   type        = string
+  default     = ""
 }
 
 variable "s3_secret_key" {
   description = "Secret key used to access the S3 backup bucket"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "s3_bucket_postgresql" {

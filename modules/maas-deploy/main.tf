@@ -13,7 +13,7 @@ resource "juju_model" "maas_model" {
 
 resource "juju_machine" "postgres_machines" {
   count       = var.enable_postgres_ha ? 3 : 1
-  model       = juju_model.maas_model.name
+  model_uuid  = juju_model.maas_model.uuid
   base        = "ubuntu@${var.ubuntu_version}"
   name        = "postgres-${count.index}"
   constraints = var.postgres_constraints
@@ -21,7 +21,7 @@ resource "juju_machine" "postgres_machines" {
 
 resource "juju_machine" "maas_machines" {
   count             = var.enable_maas_ha ? 3 : 1
-  model             = juju_model.maas_model.name
+  model_uuid        = juju_model.maas_model.uuid
   base              = "ubuntu@${var.ubuntu_version}"
   name              = "maas-${count.index}"
   constraints       = var.maas_constraints
@@ -29,9 +29,9 @@ resource "juju_machine" "maas_machines" {
 }
 
 resource "juju_application" "postgresql" {
-  name     = "postgresql"
-  model    = juju_model.maas_model.name
-  machines = [for m in juju_machine.postgres_machines : m.machine_id]
+  name       = "postgresql"
+  model_uuid = juju_model.maas_model.uuid
+  machines   = [for m in juju_machine.postgres_machines : m.machine_id]
 
   charm {
     name     = "postgresql"
@@ -44,9 +44,9 @@ resource "juju_application" "postgresql" {
 }
 
 resource "juju_application" "maas_region" {
-  name     = "maas-region"
-  model    = juju_model.maas_model.name
-  machines = [for m in juju_machine.maas_machines : m.machine_id]
+  name       = "maas-region"
+  model_uuid = juju_model.maas_model.uuid
+  machines   = [for m in juju_machine.maas_machines : m.machine_id]
 
   charm {
     name     = "maas-region"
@@ -59,7 +59,7 @@ resource "juju_application" "maas_region" {
 }
 
 resource "juju_integration" "maas_region_postgresql" {
-  model = juju_model.maas_model.name
+  model_uuid = juju_model.maas_model.uuid
 
   application {
     name     = juju_application.maas_region.name
