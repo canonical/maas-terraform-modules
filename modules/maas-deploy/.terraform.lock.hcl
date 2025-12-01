@@ -21,15 +21,15 @@ provider "registry.terraform.io/hashicorp/external" {
 }
 
 provider "registry.terraform.io/juju/juju" {
-  version     = "0.21.1"
-  constraints = "~> 0.21.0"
+  version     = "1.0.0"
+  constraints = "~> 1.0.0"
   hashes = [
-    "h1:zBouWSkvdaPsLpoM2UyXKsZ+zOl/cofO4xgFPvHSENA=",
-    "zh:263e6be572235056517c21088d1627d64e65038a41c1493aed0998ad8fbbc1f2",
-    "zh:5e9db42224fef435a690ab904c11ae2cf71a21b395432bbc48d4a68e1c180552",
+    "h1:UAE5KGIz0GcecsFUu2vv0hrzlH/93XEeP+pWqXRr7o4=",
+    "zh:2badfce96acbcfe026e76a2b67f3670d95e324e62b179428a0b398f5b4a8e69c",
+    "zh:69509cb8593d69ec0820876c0de46bb9748b586d10f74390911854c5deeadd03",
     "zh:753ad16d007180a77a147bd377de2fb334f409123f6fee36d4c50c7fe8b76a29",
-    "zh:90fcac31d46e402de63716bd2d3f0deac8f62fc1592a2333ed2783e1fa8daa15",
-    "zh:b4cce95c3e5f3b62a207ad8b0d7e843b1e5dd464f6176535b7a0827e439b4bf2",
-    "zh:e84a85ec01e672e59a3bfd4bc7d9644eb2430d73dc1373a178e9934ea1794ec0",
+    "zh:d6e899b7e818281afe83ab347743c08f8d62dd5aa1296902dc407b51b21790ef",
+    "zh:fdff39ba011a94feb3e8db144d0877557df360fca68e763b374216132474bcef",
+    "zh:ffee88ff525e9b959f1306e1026c03f018e96640585dd63af1dce3cee383b4c4",
   ]
 }
