@@ -50,3 +50,10 @@ maas_url: http://10.10.0.28:5240/MAAS
 ## Missing SSH Access
 
 Please follow the instructions under [How to SSH to Juju machines](./docs/how_to_ssh_to_juju_machines.md) to add SSH access to all required Juju nodes.
+
+## `Unable to connect... connect: connection refused` When Bootstrapping
+
+If you see this error during the bootstrapping process, it is likely that the LXC trust token is not valid. A LXC trust token is only valid once and must be created right before bootstrapping. To resolve this:
+
+* Delete the `clouds.yaml` and `credentials.yaml` files in the `modules/juju-bootstrap` directory.
+* In the `$HOME/.local/share/juju` directory, remove `maas-charms` cloud object from `clouds.yaml` and the identically named `maas-charms` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only removed the ones associated with this deployment.
