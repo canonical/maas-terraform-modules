@@ -3,6 +3,46 @@ provider "maas" {
   api_url = var.maas_url
 }
 
+# Experiment
+locals {
+  base_os = (
+    var.maas_version >= "3.6" ? "noble" :
+    var.maas_version >= "3.3" ? "jammy" :
+    var.maas_version >= "2.9" ? "focal" :
+    var.maas_version >= "2.7" ? "bionic" :
+    "bionic" # fallback for very old versions
+  )
+
+  base_os_params = lookup(var.boot_selections, local.base_os, {
+    arches    = ["amd64"]
+    subarches = ["generic"]
+  })
+
+  filtered_boot_selection = { for key, value in var.boot_selections : key => value if key != local.base_os}
+}
+
+output "base_os" {
+  value = local.base_os
+}
+
+
+# Import block for the determined base OS
+import {
+  to = maas_boot_source_selection.base_os_import
+  id = "1:1"
+}
+
+
+# Resource for the imported base OS selection
+resource "maas_boot_source_selection" "base_os_import" {
+  boot_source = maas_boot_source.image_server.id
+  os          = "ubuntu"
+  release     = local.base_os
+  arches      = local.base_os_params.arches
+  subarches   = local.base_os_params.subarches
+}
+
+
 # 1
 # Set boot source
 resource "maas_boot_source" "image_server" {
@@ -13,7 +53,7 @@ resource "maas_boot_source" "image_server" {
 # 2
 # Set boot source selections
 resource "maas_boot_source_selection" "images" {
-  for_each = var.boot_selections
+  for_each = local.filtered_boot_selection
 
   boot_source = maas_boot_source.image_server.id
   os          = "ubuntu"

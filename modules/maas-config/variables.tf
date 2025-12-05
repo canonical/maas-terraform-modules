@@ -12,6 +12,12 @@ variable "maas_key" {
 ## MAAS configuration values
 ###
 
+variable "maas_version" {
+  description = "The MAAS version to use for the base OS import"
+  type        = string
+
+}
+
 variable "image_server_url" {
   description = <<EOF
     The URL of the boot source to synchronize OS images from

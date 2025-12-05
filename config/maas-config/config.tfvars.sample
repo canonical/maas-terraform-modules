@@ -10,23 +10,26 @@ maas_key = "TA34jaREV6GZewNsfz:kz6PgpXbkjUzmsmnCV:n77nHsMQmTbmj5ssvYvMg7muAPnpxy
 ###
 ## MAAS configuration values
 ###
+# Boot source selections need the version to decide which release to import
+maas_version = "3.6"
 
-# The URL of the boot source to synchronize OS images from
-# This needs to be a simple streams server
-image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
 # Configure MAAS to download these images immediately.
 # Each key is the release name and the value is a map of
 # architectures and - optionally - sub-architectures
 boot_selections = {
+  noble = {
+    arches    = ["arm64"]
+    subarches = ["generic"]
+  }
   jammy = {
     arches    = ["amd64"]
     subarches = ["generic"]
   }
-  noble = {
-    arches    = ["amd64"]
-    subarches = ["generic"]
-  }
 }
+
+# The URL of the boot source to synchronize OS images from
+# This needs to be a simple streams server
+image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
 # A map of MAAS configuration settings, where key is the setting name and
 # value is the setting desired value
 maas_config = {
