@@ -70,7 +70,6 @@ resource "juju_application" "cert" {
   }
 
   config = merge(var.charm_cert_config, )
-  depends_on  = [terraform_data.juju_wait_for_haproxy]
 }
 
 resource "juju_integration" "haproxy_cert" {
@@ -109,7 +108,6 @@ resource "juju_machine" "ingress_machines" {
   base        = "ubuntu@${var.ubuntu_version}"
   name        = "ingress-${count.index}"
   constraints = var.ingress_constraints
-  depends_on  = [terraform_data.juju_wait_for_haproxy]
 }
 
 resource "juju_application" "ingress" {
@@ -141,6 +139,7 @@ resource "juju_integration" "haproxy_ingress" {
     name     = module.haproxy[0].app_name
     endpoint = "haproxy-route"
   }
+  depends_on = [ terraform_data.juju_wait_for_haproxy ]
 }
 
 resource "juju_integration" "maas_region_ingress" {
@@ -156,23 +155,24 @@ resource "juju_integration" "maas_region_ingress" {
     name     = juju_application.ingress[0].name
     endpoint = "ingress"
   }
-  depends_on = [juju_integration.haproxy_ingress]
+  depends_on = [ terraform_data.juju_wait_for_haproxy ]
 }
 
-resource "terraform_data" "juju_wait_for_ingress" {
+resource "terraform_data" "juju_wait_for_all" {
   input = {
-    app = (
-      juju_application.ingress[0].name
+    model = (
+      juju_integration.maas_region_ingress[0].model_uuid
     )
   }
 
   provisioner "local-exec" {
     command = <<-EOT
-      juju wait-for application "$APP" --timeout 7200s \
-        --query='forEach(units, unit => unit.agent-status == "idle")'
+      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
+      juju wait-for model "$MODEL_NAME" --timeout 3600s \
+        --query='forEach(units, unit => unit.workload-status == "active")'
     EOT
     environment = {
-      APP = self.input.app
+      MODEL = self.input.model
     }
   }
 }
