@@ -53,9 +53,9 @@ Please follow the instructions under [How to SSH to Juju machines](./docs/how_to
 
 ## `Unable to connect... connect: connection refused` When Bootstrapping
 
-If you see this error during the bootstrapping process, it is likely that the LXC trust token is not valid. A LXC trust token is only valid once and must be created right before bootstrapping. To resolve this:
+If you see this error during the bootstrapping process, it is likely that the LXD trust token is not valid. A LXD trust token is only valid once and must be created right before bootstrapping. To resolve this:
 
 * Delete the `clouds.yaml` and `credentials.yaml` files in the `modules/juju-bootstrap` directory.
-* In the `$HOME/.local/share/juju` directory, remove `maas-charms` cloud object from `clouds.yaml` and the identically named `maas-charms` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only removed the ones associated with this deployment.
+* In the `$HOME/.local/share/juju` directory, remove `maas-charms` cloud object from `clouds.yaml` and the identically named `maas-charms` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only remove the ones associated with this deployment.
 
-Now the old token has been removed, create another token as in the [bootstrapping juju guide](./docs/how_to_bootstrap_juju.md), paste the new token into `config/juju-bootstrap/config.tfvars`, and re-run the terraform plan.
+Now the old token has been removed, create another token as in the [bootstrapping Juju guide](./docs/how_to_bootstrap_juju.md), paste the new token into `config/juju-bootstrap/config.tfvars`, and re-run the Terraform plan.
