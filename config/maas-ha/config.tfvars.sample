@@ -5,7 +5,7 @@
 # The Ubuntu operating system version to install on the virtual machines (VMs)
 ubuntu_version = "24.04"
 # The juju model UUID as output from the previous step
-maas_model_uuid = "75db525e-ac2f-4055-8235-2ba7efa9bc17"
+maas_model_uuid = null
 # The Virtual IP to use for HA MAAS
 virtual_ip = null
 # The Hostname to use for HA MAAS
@@ -31,6 +31,12 @@ charm_ingress_configurator_channel = "latest/stable"
 charm_ingress_configurator_revision = null
 # Operator configuration for Ingress Configurator deployment
 charm_ingress_configurator_config = {
+  retry-count                       = 3
+  retry-redispatch                  = true
+  timeout-server                    = 900
+  load-balancing-algorithm          = "source"
+  load-balancing-consistent-hashing = true
+  http-server-close                 = true
 }
 
 ###
