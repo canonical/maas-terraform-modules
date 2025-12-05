@@ -16,6 +16,12 @@ variable "ingress_constraints" {
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
+variable "haproxy_constraints" {
+  description = "Constraints for the HAProxy virtual machines"
+  type        = string
+  default     = "cores=2 mem=4G virt-type=virtual-machine"
+}
+
 variable "cert_constraints" {
   description = "Constraints for the Certificates virtual machines"
   type        = string
