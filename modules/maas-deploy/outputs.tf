@@ -12,3 +12,7 @@ output "maas_machines" {
     if try(var.charm_maas_region_config.enable_rack_mode, false)
   ]
 }
+
+output "maas_model_uuid" {
+  value = juju_model.maas_model.uuid
+}
