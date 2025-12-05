@@ -18,6 +18,7 @@ external_hostname = null
 # NOTE: if you set up the project with juju-bootstrap your
 #       controller will work with VMs
 ingress_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+haproxy_constraints = "cores=2 mem=4G virt-type=virtual-machine"
 cert_constraints    = "cores=2 mem=4G virt-type=virtual-machine"
 
 ###

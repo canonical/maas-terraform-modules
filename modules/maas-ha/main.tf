@@ -11,10 +11,11 @@ module "haproxy" {
   model_uuid = var.maas_model_uuid
 
   # HAProxy setup
-  app_name = var.haproxy_name
-  channel  = var.charm_haproxy_channel
-  revision = var.charm_haproxy_revision
-  units    = 3
+  app_name    = var.haproxy_name
+  channel     = var.charm_haproxy_channel
+  revision    = var.charm_haproxy_revision
+  constraints = var.haproxy.constraints
+  units       = 3
   config = merge(var.charm_haproxy_config, {
     external-hostname = var.external_hostname
     vip               = var.virtual_ip
@@ -139,7 +140,7 @@ resource "juju_integration" "haproxy_ingress" {
     name     = module.haproxy[0].app_name
     endpoint = "haproxy-route"
   }
-  depends_on = [ terraform_data.juju_wait_for_haproxy ]
+  depends_on = [terraform_data.juju_wait_for_haproxy]
 }
 
 resource "juju_integration" "maas_region_ingress" {
@@ -155,7 +156,7 @@ resource "juju_integration" "maas_region_ingress" {
     name     = juju_application.ingress[0].name
     endpoint = "ingress"
   }
-  depends_on = [ terraform_data.juju_wait_for_haproxy ]
+  depends_on = [terraform_data.juju_wait_for_haproxy]
 }
 
 resource "terraform_data" "juju_wait_for_all" {
