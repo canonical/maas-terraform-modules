@@ -95,8 +95,20 @@ variable "haproxy_name" {
   default     = "haproxy"
 }
 
-variable "haproxy_revision" {
-  description = "Git Commit SHA or version tag in the HAproxy module repo to point to"
+variable "charm_haproxy_channel" {
+  description = "Operator channel for Certificates deployment"
   type        = string
+  default     = "2.8/edge"
+}
+
+variable "charm_haproxy_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
   default     = null
+}
+
+variable "charm_haproxy_config" {
+  description = "Operator configuration for Certificates deployment"
+  type        = map(string)
+  default     = {}
 }

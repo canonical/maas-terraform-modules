@@ -52,3 +52,10 @@ charm_cert_config = {
 
 # Application name of the deployed haproxy charm.
 haproxy_name = "haproxy"
+# Operator channel for HAProxy deployment
+charm_haproxy_channel = "2.8/edge"
+# Operator channel revision for HAProxy deployment
+charm_haproxy_revision = null
+# Operator configuration for HAProxy deployment
+charm_haproxy_config = {
+}

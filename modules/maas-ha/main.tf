@@ -12,12 +12,13 @@ module "haproxy" {
 
   # HAProxy setup
   app_name = var.haproxy_name
-  channel  = "2.8/edge"
+  channel  = var.charm_haproxy_channel
+  revision = var.charm_haproxy_revision
   units    = 3
-  config = {
+  config = merge(var.charm_haproxy_config, {
     external-hostname = var.external_hostname
     vip               = var.virtual_ip
-  }
+  }, )
 
   # Keepalived setup
 
@@ -69,6 +70,7 @@ resource "juju_application" "cert" {
   }
 
   config = merge(var.charm_cert_config, )
+  depends_on  = [terraform_data.juju_wait_for_haproxy]
 }
 
 resource "juju_integration" "haproxy_cert" {
@@ -101,57 +103,58 @@ resource "juju_integration" "haproxy_cert_send" {
   }
 }
 
-# resource "juju_machine" "ingress_machines" {
-#   count       = local.configure_haproxy ? 1 : 0
-#   model_uuid  = var.maas_model_uuid
-#   base        = "ubuntu@${var.ubuntu_version}"
-#   name        = "ingress-${count.index}"
-#   constraints = var.ingress_constraints
-#   depends_on  = [terraform_data.juju_wait_for_haproxy]
-# }
+resource "juju_machine" "ingress_machines" {
+  count       = local.configure_haproxy ? 1 : 0
+  model_uuid  = var.maas_model_uuid
+  base        = "ubuntu@${var.ubuntu_version}"
+  name        = "ingress-${count.index}"
+  constraints = var.ingress_constraints
+  depends_on  = [terraform_data.juju_wait_for_haproxy]
+}
 
-# resource "juju_application" "ingress" {
-#   name       = "ingress"
-#   model_uuid = var.maas_model_uuid
-#   machines   = [for m in juju_machine.ingress_machines : m.machine_id]
-#   count      = local.configure_haproxy ? 1 : 0
+resource "juju_application" "ingress" {
+  name       = "ingress"
+  model_uuid = var.maas_model_uuid
+  machines   = [for m in juju_machine.ingress_machines : m.machine_id]
+  count      = local.configure_haproxy ? 1 : 0
 
-#   charm {
-#     name     = "ingress-configurator"
-#     channel  = var.charm_ingress_configurator_channel
-#     revision = var.charm_ingress_configurator_revision
-#     base     = "ubuntu@${var.ubuntu_version}"
-#   }
+  charm {
+    name     = "ingress-configurator"
+    channel  = var.charm_ingress_configurator_channel
+    revision = var.charm_ingress_configurator_revision
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
 
-#   config = merge(var.charm_ingress_configurator_config, )
-# }
+  config = merge(var.charm_ingress_configurator_config, )
+}
 
-# resource "juju_integration" "maas_region_ingress" {
-#   model_uuid = var.maas_model_uuid
-#   count      = local.configure_haproxy ? 1 : 0
+resource "juju_integration" "haproxy_ingress" {
+  model_uuid = var.maas_model_uuid
+  count      = local.configure_haproxy ? 1 : 0
 
-#   application {
-#     name     = "maas-region"
-#     endpoint = "ingress"
-#   }
+  application {
+    name     = juju_application.ingress[0].name
+    endpoint = "haproxy-route"
+  }
 
-#   application {
-#     name     = juju_application.ingress[0].name
-#     endpoint = "ingress"
-#   }
-# }
+  application {
+    name     = module.haproxy[0].app_name
+    endpoint = "haproxy-route"
+  }
+}
 
-# resource "juju_integration" "haproxy_ingress" {
-#   model_uuid = var.maas_model_uuid
-#   count      = local.configure_haproxy ? 1 : 0
+resource "juju_integration" "maas_region_ingress" {
+  model_uuid = var.maas_model_uuid
+  count      = local.configure_haproxy ? 1 : 0
 
-#   application {
-#     name     = juju_application.ingress[0].name
-#     endpoint = "haproxy-route"
-#   }
+  application {
+    name     = "maas-region"
+    endpoint = "ingress"
+  }
 
-#   application {
-#     name     = module.haproxy[0].app_name
-#     endpoint = "haproxy-route"
-#   }
-# }
+  application {
+    name     = juju_application.ingress[0].name
+    endpoint = "ingress"
+  }
+  depends_on = [juju_integration.haproxy_ingress]
+}
