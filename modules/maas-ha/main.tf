@@ -158,3 +158,21 @@ resource "juju_integration" "maas_region_ingress" {
   }
   depends_on = [juju_integration.haproxy_ingress]
 }
+
+resource "terraform_data" "juju_wait_for_ingress" {
+  input = {
+    app = (
+      juju_application.ingress[0].name
+    )
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      juju wait-for application "$APP" --timeout 7200s \
+        --query='forEach(units, unit => unit.agent-status == "idle")'
+    EOT
+    environment = {
+      APP = self.input.app
+    }
+  }
+}
