@@ -81,7 +81,7 @@ variable "charm_postgresql_config" {
 variable "charm_maas_region_channel" {
   description = "Operator channel for MAAS Region Controller deployment"
   type        = string
-  default     = "3.6/edge"
+  default     = "3.7/edge"
 }
 
 variable "charm_maas_region_revision" {
