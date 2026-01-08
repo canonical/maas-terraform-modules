@@ -14,7 +14,7 @@ module "haproxy" {
   app_name    = var.haproxy_name
   channel     = var.charm_haproxy_channel
   revision    = var.charm_haproxy_revision
-  constraints = var.haproxy.constraints
+  constraints = var.haproxy_constraints
   units       = 3
   config = merge(var.charm_haproxy_config, {
     external-hostname = var.external_hostname
