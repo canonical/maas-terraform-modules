@@ -1,7 +1,8 @@
 resource "terraform_data" "bootstrap_juju" {
   input = {
-    cloud_name  = var.cloud_name
-    lxd_project = var.lxd_project
+    cloud_name     = var.cloud_name
+    lxd_project    = var.lxd_project
+    model_defaults = var.model_defaults
   }
 
   provisioner "local-exec" {
@@ -18,7 +19,7 @@ resource "terraform_data" "bootstrap_juju" {
 
       juju add-cloud --client ${self.input.cloud_name} -f clouds.yaml
       juju add-credential ${self.input.cloud_name} -f credentials.yaml --client
-      juju bootstrap ${self.input.cloud_name} --config project=${self.input.lxd_project}
+      juju bootstrap ${self.input.cloud_name} --config project=${self.input.lxd_project} ${local.model_defaults_args}
     EOT
   }
 
@@ -40,4 +41,8 @@ locals {
     lxd_trust_token = var.lxd_trust_token,
     cloud_name      = var.cloud_name,
   })
+  
+  model_defaults_args = join(" ", [
+    for key, value in var.model_defaults : "--model-default ${key}=${value}"
+  ])
 }

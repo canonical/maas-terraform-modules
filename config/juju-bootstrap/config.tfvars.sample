@@ -7,3 +7,16 @@ cloud_name = "anvil-training"
 lxd_project = "anvil-training"
 # The LXD trust token that Juju should use to authenticate to LXD
 lxd_trust_token = "1234lkjh..."
+
+# Model defaults configuration (optional)
+# Uncomment and configure to pass model configuration defaults to juju bootstrap
+# model_defaults = {
+#   http-proxy       = "http://squid:3128"
+#   https-proxy      = "http://squid:3128"
+#   no-proxy         = "localhost,127.0.0.1"
+#   apt-http-proxy   = "http://squid:3128"
+#   apt-https-proxy  = "http://squid:3128"
+#   snap-http-proxy  = "http://squid:3128"
+#   snap-https-proxy = "http://squid:3128"
+# }
+
