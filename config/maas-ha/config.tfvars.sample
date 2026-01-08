@@ -26,7 +26,7 @@ cert_constraints    = "cores=2 mem=4G virt-type=virtual-machine"
 ###
 
 # Operator channel for Ingress Configurator deployment
-charm_ingress_configurator_channel = "latest/stable"
+charm_ingress_configurator_channel = "latest/edge"
 # Operator channel revision for Ingress Configurator deployment
 charm_ingress_configurator_revision = null
 # Operator configuration for Ingress Configurator deployment
