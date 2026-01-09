@@ -53,6 +53,12 @@ variable "lxd_project" {
   default     = "default"
 }
 
+variable "model_config" {
+  description = "Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)"
+  type        = map(string)
+  default     = {}
+}
+
 ###
 ## PostgreSQL configuration
 ###
