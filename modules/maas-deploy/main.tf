@@ -6,9 +6,12 @@ resource "juju_model" "maas_model" {
     region = var.juju_cloud_region
   }
 
-  config = {
-    project = var.lxd_project
-  }
+  config = merge(
+    var.model_config,
+    {
+      project = var.lxd_project
+    }
+  )
 }
 
 resource "juju_machine" "postgres_machines" {

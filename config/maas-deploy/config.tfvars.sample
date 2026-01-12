@@ -14,6 +14,13 @@ enable_postgres_ha = false
 enable_maas_ha = false
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"
+# Map of additional model configuration parameters
+# Uncomment and configure to pass model configuration to the MAAS Juju model
+# model_config = {
+#   juju-http-proxy       = "http://10.21.2.1:3128"
+#   juju-https-proxy      = "http://10.21.2.1:3128"
+#   juju-no-proxy         = "10.0.0.1/24,10.21.2.0/24,localhost,127.0.0.1"
+# }
 # Use the following constraints for the machines
 # Increase cores and mem for larger MAAS installations
 # We recommend using virtual machines. If you are curious
