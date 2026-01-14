@@ -59,6 +59,12 @@ variable "model_config" {
   default     = {}
 }
 
+variable "path_to_ssh_key" {
+  description = "Path to the SSH key to add to the MAAS Juju model"
+  type        = string
+  default     = null
+}
+
 ###
 ## PostgreSQL configuration
 ###
