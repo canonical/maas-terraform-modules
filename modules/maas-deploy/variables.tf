@@ -59,6 +59,12 @@ variable "model_config" {
   default     = {}
 }
 
+variable "path_to_ssh_key" {
+  description = "The path to the SSH key to use for the model"
+  type        = string
+  default     = null
+}
+
 ###
 ## PostgreSQL configuration
 ###
