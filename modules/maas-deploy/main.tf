@@ -14,6 +14,12 @@ resource "juju_model" "maas_model" {
   )
 }
 
+resource "juju_ssh_key" "model_ssh_key" {
+  count   = var.path_to_ssh_key != null ? 1 : 0
+  model_uuid  = juju_model.maas_model.uuid
+  payload = trimspace(file(var.path_to_ssh_key))
+}
+
 resource "juju_machine" "postgres_machines" {
   count       = var.enable_postgres_ha ? 3 : 1
   model_uuid  = juju_model.maas_model.uuid
