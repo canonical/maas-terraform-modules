@@ -1,8 +1,12 @@
-# OpenTofu/Terraform
-.terraform
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform lockfile
+.terraform.lock.hcl
+
+# .tfstate files
 *.tfstate
-*.tfstate.backup
-*.tfstate.lock.info
+*.tfstate.*
 
 # Config
-config/**/config.tfvars
+*.tfvars
