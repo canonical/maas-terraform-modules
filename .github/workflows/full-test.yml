@@ -1,0 +1,17 @@
+name: Run MAAS Terraform modules Nightly Tests
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Runs daily at midnight UTC
+
+jobs:
+  run-smoke:
+    runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tests/testflinger.sh
+        run: bash tests/testflinger.sh
+        env:
+          SMOKE_TEST: false

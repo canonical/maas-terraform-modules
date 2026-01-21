@@ -1,0 +1,18 @@
+name: Run MAAS Terraform modules Smoke Tests
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  run-smoke:
+    if: contains(github.event.pull_request.labels.*.name, 'run-ci-tests')
+    runs-on: self-hosted-linux-amd64-jammy-private-endpoint-medium
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tests/testflinger.sh
+        run: bash tests/testflinger.sh
+        env:
+          SMOKE_TEST: true

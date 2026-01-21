@@ -10,3 +10,4 @@
 
 # Config
 *.tfvars
+!tests/terraform/config/*.tfvars

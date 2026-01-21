@@ -1,0 +1,18 @@
+job_queue: maas-systemtests-amd64
+output_timeout: 7200
+provision_data:
+  distro: noble
+test_data:
+  attachments:
+    - agent: script.sh
+      local: script.sh
+    - agent: tests.tar.gz
+      local: tests.tar.gz
+    - agent: run_smoke_test.txt
+      local: run_smoke_test.txt
+  test_cmds: 'scp attachments/test/* ubuntu@$DEVICE_IP:
+
+    ssh -t ubuntu@$DEVICE_IP -- chmod 755 *.sh
+
+    ssh -t ubuntu@$DEVICE_IP -- "bash -o pipefail -c ''./script.sh 2>&1 | tee
+    script.sh.log''"'
