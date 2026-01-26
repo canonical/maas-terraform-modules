@@ -133,6 +133,7 @@ data "external" "maas_get_api_key" {
     model    = terraform_data.create_admin.output.model
     username = var.admin_username
   }
+  depends_on = [terraform_data.create_admin]
 }
 
 data "external" "maas_get_api_url" {
