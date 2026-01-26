@@ -53,7 +53,7 @@ cd ../..
 echo "MAAS deployment completed successfully!"
 
 # If SMOKE_TEST is true exit, else run Terraform acceptance tests
-SMOKE_TEST=$(cat run_smoke_test.txt)
+SMOKE_TEST=$(cat ../run_smoke_test.txt)
 if [ "$SMOKE_TEST" == "true" ]; then
   exit 0
 else
