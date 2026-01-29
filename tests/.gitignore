@@ -1,0 +1,10 @@
+# Copied modules from root level
+terraform/modules/juju-bootstrap/
+terraform/modules/maas-config/
+terraform/modules/maas-deploy/
+
+# Generated tarball
+tests.tar.gz
+
+# Smoke test flag
+run_smoke_test.txt
