@@ -13,4 +13,4 @@ cp -r ../modules/* terraform/modules/
 tar -czf tests.tar.gz terraform/
 
 # Consume SMOKE_TEST environment variable from GitHub Actions
-echo $SMOKE_TEST > run_smoke_test.txt
+echo "$SMOKE_TEST" > run_smoke_test.txt

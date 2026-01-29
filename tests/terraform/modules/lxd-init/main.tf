@@ -13,7 +13,7 @@ resource "lxd_trust_token" "maas_charms" {
 }
 
 resource "lxd_trust_token" "vm_host" {
-  name = "vh-host"
+  name = "vm-host"
 }
 
 # Create the network
