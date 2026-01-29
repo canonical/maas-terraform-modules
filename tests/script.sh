@@ -44,12 +44,6 @@ cd modules/maas-config
 terraform init && TF_VAR_maas_url="$MAAS_API_URL" TF_VAR_maas_key="$MAAS_API_KEY" terraform apply -var-file="../../config/maas-config.tfvars" -auto-approve
 cd ../..
 
-# Apply extra MAAS configuration
-cd modules/maas-extra-config
-terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve
-TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
-cd ../..
-
 echo "MAAS deployment completed successfully!"
 
 # If SMOKE_TEST is true exit, else run Terraform acceptance tests
@@ -59,6 +53,12 @@ if [ "$SMOKE_TEST" == "true" ]; then
 else
   echo "Running Terraform acceptance tests..."
 fi
+
+# Apply extra MAAS configuration
+cd modules/maas-extra-config
+terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve
+TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
+cd ../..
 
 ## Terraform acceptance tests setup
 
