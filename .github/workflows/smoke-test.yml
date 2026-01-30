@@ -19,21 +19,10 @@ jobs:
             exit 1
           fi
 
-      # Checkout trusted test infrastructure from main branch
-      - name: Checkout trusted test infrastructure
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: trusted
-
-      # Checkout modules to test from PR
-      - name: Checkout modules to test
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.commit-sha }}
-          path: untrusted
-          sparse-checkout: |
-            modules
 
       - name: Report pending status
         run: |
@@ -45,12 +34,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      # Prepare Testflinger attachments using trusted scripts
       - name: Prepare Testflinger attachments
-        working-directory: trusted/tests
+        working-directory: tests
         run: |
-          # Copy modules from untrusted PR to trusted terraform location
-          cp -r ../../untrusted/modules/* terraform/modules/
+          # Copy all modules from root level to tests/terraform/modules
+          cp -r ../modules/* terraform/modules/
           # Create tarball with terraform directory only
           tar -czf tests.tar.gz terraform/
           # Write smoke test flag
@@ -60,8 +48,8 @@ jobs:
         uses: canonical/testflinger/.github/actions/submit@987fd7ab1467065217a9c6496eb2c3d85a250509
         with:
           poll: true
-          job-path: ./trusted/tests/testflinger.yaml
-          attachments-relative-to: ./trusted/tests/
+          job-path: ./tests/testflinger.yaml
+          attachments-relative-to: ./tests/
 
       - name: Report success status
         if: success()
