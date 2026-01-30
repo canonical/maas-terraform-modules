@@ -12,10 +12,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Prepare Testflinger attachments
-        run: ./testflinger.sh
         working-directory: tests
-        env:
-          SMOKE_TEST: false
+        run: |
+          # Copy all modules from root level to tests/terraform/modules
+          cp -r ../modules/* terraform/modules/
+          # Create tarball with terraform directory only
+          tar -czf tests.tar.gz terraform/
+          # Write smoke test flag
+          echo "false" > run_smoke_test.txt
 
       - name: Run on Testflinger
         uses: canonical/testflinger/.github/actions/submit@987fd7ab1467065217a9c6496eb2c3d85a250509
