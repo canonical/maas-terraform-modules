@@ -102,6 +102,7 @@ resource "terraform_data" "juju_wait_for_maas" {
       MODEL = self.input.model
     }
   }
+  depends_on = [juju_integration.maas_region_postgresql]
 }
 
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388

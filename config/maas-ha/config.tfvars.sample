@@ -8,8 +8,8 @@ ubuntu_version = "24.04"
 maas_model_uuid = null
 # The Virtual IP to use for HA MAAS
 virtual_ip = null
-# The Hostname to use for HA MAAS
-external_hostname = null
+# Whether to add the TLS relations between HAProxy and MAAS
+tls_enabled = false
 # Use the following constraints for the machines
 # Increase cores and mem for larger MAAS installations
 # We recommend using virtual machines. If you are curious
@@ -18,40 +18,6 @@ external_hostname = null
 # NOTE: if you set up the project with juju-bootstrap your
 #       controller will work with VMs
 ingress_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-haproxy_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-cert_constraints    = "cores=2 mem=4G virt-type=virtual-machine"
-
-###
-## Ingress-Configurator configuration
-###
-
-# Operator channel for Ingress Configurator deployment
-charm_ingress_configurator_channel = "latest/edge"
-# Operator channel revision for Ingress Configurator deployment
-charm_ingress_configurator_revision = null
-# Operator configuration for Ingress Configurator deployment
-charm_ingress_configurator_config = {
-  retry-count                       = 3
-  retry-redispatch                  = true
-  timeout-server                    = 900
-  load-balancing-algorithm          = "source"
-  load-balancing-consistent-hashing = true
-  http-server-close                 = true
-}
-
-###
-## Certificates configuration
-###
-
-# Charm name of the deployed certificate charm.
-charm_cert_app = "self-signed-certificates"
-# Operator channel for Certificates deployment
-charm_cert_channel = "1/stable"
-# Operator channel revision for Certificates deployment
-charm_cert_revision = null
-# Operator configuration for Certificates deployment
-charm_cert_config = {
-}
 
 ###
 ## HAProxy configuration
