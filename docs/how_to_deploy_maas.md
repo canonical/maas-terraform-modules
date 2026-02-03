@@ -3,7 +3,7 @@
 This guide gives an overview on how to configure and run the `maas-deploy` module to deploy Charmed MAAS.
 
 > [!Note]
-> A prerequisite is having an existing bootstrapped controller available. Please see the [deployment instructions](../README.md#deployment-instructions) of README.md for more details. 
+> An existing bootstrapped controller is required. Please see the [deployment instructions](../README.md#deployment-instructions) of README.md for more details. 
 
 > [!NOTE]
 > This is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.

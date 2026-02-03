@@ -51,7 +51,7 @@ You should now access the charmed MAAS UI [from your browser](https://canonical.
 Previous steps:
 
 - [Bootstrap](./how_to_bootstrap_juju.md) a new Juju controller, or use an [Externally](./how_to_deploy_to_a_bootstrapped_controller.md) supplied one instead.
-- Deploy a [Single-node](./how_to_deploy_single_node.md) or [Multi-node](./how_to_deploy_multi_node.md) MAAS cluster atop your Juju controller.
+- [Deploy a MAAS cluster](./how_to_deploy_maas.md) atop your Juju controller.
 
 Next steps:
 

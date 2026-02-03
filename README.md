@@ -174,10 +174,10 @@ LXD Containers and Virtual machines are deployed as Juju machines, which Juju us
 
 Before beginning the deployment process, please make sure that [prerequisites](#appendix---prerequisites) are met.
 
-These instructions will take you from a bare system to a running MAAS cluster with either [One](./docs/how_to_deploy_single_node.md) or [Three](./docs/how_to_deploy_multi_node.md) MAAS Regions, one node PostgresSQL or three-node PostgreSQL, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
+These instructions will take you from a bare LXD cloud to a running MAAS cluster with either one or three MAAS Regions, one or three PostgreSQL instances, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
 
 1. [Connect to a Juju controller](./docs/how_to_deploy_to_a_bootstrapped_controller.md) or [Bootstrap a Juju controller](./docs/how_to_bootstrap_juju.md)
-2. Deploy a [multi-node](./docs/how_to_deploy_multi_node.md) or [single-node](./docs/how_to_deploy_single_node.md) MAAS cluster
+2. [Deploy Charmed MAAS](./docs/how_to_deploy_maas.md) in either a single or multi-node configuration
 3. [Configure](./docs/how_to_configure_maas.md) your running MAAS instance
 
 ## Appendix - Backup and Restore
