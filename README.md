@@ -34,8 +34,7 @@ The full MAAS cluster deployment consists of: one optional bootstrapping, one of
 ```mermaid
 flowchart TB
   %% Styling for different concepts (not much right now!)
-  classDef unitOptional color:#888888,stroke-dasharray: 5 5
-  classDef multiNodeGroup stroke-dasharray: 5 5
+  classDef optionalGroup stroke-dasharray: 5 5
 
   %% Terraform module colors
   classDef tfBootstrap fill:#4CAF50,stroke:#2E7D32
@@ -45,6 +44,7 @@ flowchart TB
   %% Group outlines matching module colors
   classDef bootstrapManaged stroke:#4CAF50,stroke-width:2px
   classDef deployManaged stroke:#2196F3,stroke-width:2px
+  classDef configManaged stroke:#F44336,stroke-width:2px
 
   %% LXD Cloud
   subgraph CLOUD["☁️ LXD-based cloud"]
@@ -99,10 +99,12 @@ flowchart TB
       MAAS_MACHINES ~~~ PG_MACHINES
       PG_MACHINES ~~~ BACKUP_M0
 
-      %% Backup machine
-        subgraph BACKUP_M0["Container"]
-        S3_PG["🟡 s3-integrator-postgresql/0"]
-        S3_MAAS["🟡 s3-integrator-maas/0"]
+      %% Backup container
+        subgraph BACKUP_ENABLED["Backup enabled"]
+          subgraph BACKUP_M0["Container"]
+          S3_PG["🟡 s3-integrator-postgresql/0"]
+          S3_MAAS["🟡 s3-integrator-maas/0"]
+        end
       end
     end
   end
@@ -116,11 +118,6 @@ flowchart TB
   S3_BUCKET_PG[("S3 Bucket<br/>Path: /postgresql")]
   S3_BUCKET_MAAS[("S3 Bucket<br/>Path: /maas")]
 
-  %% Application integrations
-  R0 ~~~ A0
-  R1 ~~~ A1
-  R2 ~~~ A2
-
   %% Terraform module relationships
   TF1 -.->|creates| CTRL
   TF2 -.->|creates| MODEL
@@ -131,8 +128,7 @@ flowchart TB
   S3_MAAS ==>S3_BUCKET_MAAS
 
   %% Apply styles
-  class A0,A1,A2,S3_PG,S3_MAAS unitOptional
-  class PG_MULTINODE,MAAS_MULTINODE multiNodeGroup
+  class BACKUP_ENABLED,PG_MULTINODE,MAAS_MULTINODE optionalGroup
 
   %% Terraform modules
   class TF1 tfBootstrap
@@ -142,6 +138,7 @@ flowchart TB
   %% Module managed groups
   class CTRL bootstrapManaged
   class MODEL deployManaged
+  class MAAS_MACHINES configManaged
 ```
 
 This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
