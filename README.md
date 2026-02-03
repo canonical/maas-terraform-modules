@@ -15,10 +15,10 @@ This repository exists as a deployment and configuration solution for a [Charmed
 - [Terraform driven Charmed MAAS deployment](#terraform-driven-charmed-maas-deployment)
   - [Contents](#contents)
   - [Architecture](#architecture)
-    - [MAAS Regions](#maas-regions)
-    - [PostgreSQL](#postgresql)
-    - [Juju Controller](#juju-controller)
-    - [LXD Cloud](#lxd-cloud)
+      - [MAAS Regions](#maas-regions)
+      - [PostgreSQL](#postgresql)
+      - [Juju Controller](#juju-controller)
+      - [LXD Cloud](#lxd-cloud)
   - [Deployment Instructions](#deployment-instructions)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
   - [Appendix - Prerequisites](#appendix---prerequisites)
@@ -152,7 +152,8 @@ A charmed MAAS deployment consists of the following atomic components:
 
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
 
-[!Note]: If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left as an exercise to the user.
+> [!Note]
+> If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left up to the user.
 
 #### PostgreSQL
 

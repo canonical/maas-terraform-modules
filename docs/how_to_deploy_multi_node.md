@@ -1,78 +1,61 @@
-# How to deploy a multi-node MAAS cluster
+# How to deploy a Charmed MAAS
 
-This topology will install three MAAS Region nodes, and three PostgreSQL nodes.
-Deployment occurs in multiple stages, where first a single-node deployment is configured, then scaled out to the full complement of units.
+This guide gives an overview on how to configure and run the `maas-deploy` module to deploy Charmed MAAS.
 
-See the [architecture section](../README.md#architecture) of README.md for an overview that includes a description of multi-node deployments.
-
-> [!NOTE]
-> As deployed in these steps, this is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.
+> [!Note]
+> A prerequisite is having an existing bootstrapped controller available. Please see the [deployment instructions](../README.md#deployment-instructions) of README.md for more details. 
 
 > [!NOTE]
-> part of the reason for one unit -> three units is to avoid [this known issue](https://github.com/canonical/maas-charms/issues/315)
+> This is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.
 
-Copy the configuration sample, modifying the entries as required.
-
+Create a `config.tfvars` from the configuration sample:
 ```bash
 cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 ```
 
-You should initially ensure the configuration contains `enable_maas_ha=false` and `enable_postgres_ha=false`, as we will set these during the appropriate parts of the following steps.
+Modify your configuration as required. Note that setting `enable_maas_ha` and `enable_postgres_ha` to `true` will deploy a 3-node MAAS and PostgreSQL cluster respectively, or `false` for single node deployments.
 
-> [!NOTE]
-> You *MUST* increase the PostgreSQL connections for a multi-node deployment to something larger, for example:
->
+> [!Note] 
+> For multi-node region deployments, you *MUST* increase the PostgreSQL connections to something larger, for example:
+> 
 > ```bash
 > charm_postgresql_config = {
->   experimental_max_connections = 300
+> experimental_max_connections = 300
 > }
 > ```
->
-> If the defaults remain, you will run into the [MAAS connection slots reserved](./troubleshooting.md#maas-connections-slots-reserved) error.
-> To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
+> 
+> Without it you will run into the [MAAS connection slots reserved](./troubleshooting.md#maas-connections-slots-reserved) error. To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
-> [!NOTE]
-> To deploy in Region+Rack mode, you will need to provide the following change to the MAAS region config:
->
-> ```bash
-> charm_maas_region_config {
->     enable_rack_mode = true
-> }
-> ```
+Also note that setting `enable_rack_mode` to `true` will deploy MAAS in Region+Rack mode, installing the rack to the same node as the region. Otherwise it will be deployed in Region only mode:
 
-Initialize the Terraform environment with the required modules and configuration
+```bash
+charm_maas_region_config {
+    enable_rack_mode = true
+}
+```
+
+Initialize the Terraform environment with the required modules and configuration:
 
 ```bash
 cd modules/maas-deploy
 terraform init
 ```
 
-Sanity check the Terraform plan, some variables will not be known until `apply` time.
+Run `terraform plan` and `apply`, specifying your configuration file:
 
 ```bash
 terraform plan -var-file ../../config/maas-deploy/config.tfvars
+terraform apply -var-file ../../config/maas-deploy/config.tfvars
 ```
 
-We first apply the Terraform plan in single-node mode if the sanity check passed
-
-```bash
-terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
-```
-
-Now modify your configuration such that it contains `enable_maas_ha=true` and `enable_postgres_ha=true`, then apply the Terraform plan again to expand the MAAS and PostgreSQL units to 3.
-
-```bash
-terraform apply -var-file ../../config/maas-deploy/config.tfvars -auto-approve
-```
-
-Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary for MAAS configuration later.
+Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary in `maas-config` later.
 
 ```bash
 export MAAS_API_URL=$(terraform output -raw maas_api_url)
 export MAAS_API_KEY=$(terraform output -raw maas_api_key)
 ```
 
-You can optionally also record the `maas_machines` values from the Terraform output if you are running a Region+Rack setup. This will be used in the MAAS configuration later.
+You can optionally also record the `maas_machines` values from the Terraform output if you are running a Region+Rack setup. This will be used in `maas-config` later.
 
 ```bash
 terraform output -json maas_machines
