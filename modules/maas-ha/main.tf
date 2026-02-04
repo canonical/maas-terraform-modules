@@ -1,33 +1,61 @@
-# MAAS HA setup
-module "haproxy" {
-  source = "git::https://github.com/canonical/haproxy-operator.git//terraform/charm?ref=4b9c7dd34d854ac5878d940ce13d821052819373"
-
-  model_uuid = var.maas_model_uuid
-
-  # HAProxy setup
-  app_name    = var.haproxy_name
-  channel     = var.charm_haproxy_channel
-  revision    = var.charm_haproxy_revision
+resource "juju_machine" "haproxy_machines" {
+  count       = 3
+  model_uuid  = var.maas_model_uuid
+  base        = "ubuntu@${var.ubuntu_version}"
+  name        = "postgres-${count.index}"
   constraints = var.haproxy_constraints
-  units       = 3
-  config = merge(var.charm_haproxy_config, {
-    vip = var.virtual_ip
-  }, )
+}
 
-  # Keepalived setup
+# HAProxy setup
 
-  use_keepalived           = true
-  keepalived_charm_channel = "latest/edge"
-  keepalived_config = {
-    virtual_ip = var.virtual_ip
+resource "juju_application" "haproxy" {
+  name       = "haproxy"
+  model_uuid = var.maas_model_uuid
+  machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
+
+  charm {
+    name     = "haproxy"
+    revision = var.charm_haproxy_revision
+    channel  = var.charm_haproxy_channel
+    base     = "ubuntu@${var.ubuntu_version}"
   }
 
+  config = merge(var.charm_haproxy_config, )
+}
+
+resource "juju_application" "keepalived" {
+  name       = var.keepalived_name
+  model_uuid = var.maas_model_uuid
+  units      = 1
+
+  charm {
+    name     = "keepalived"
+    revision = var.charm_keepalived_revision
+    channel  = var.charm_keepalived_channel
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
+
+  config = var.charm_keepalived_config
+}
+
+resource "juju_integration" "keepalived" {
+  model_uuid = var.maas_model_uuid
+
+  application {
+    name     = juju_application.haproxy.name
+    endpoint = "juju-info"
+  }
+
+  application {
+    name     = juju_application.keepalived.name
+    endpoint = "juju-info"
+  }
 }
 
 resource "terraform_data" "juju_wait_for_haproxy" {
   input = {
     app = (
-      module.haproxy.app_name
+      juju_application.haproxy.name
     )
   }
 
@@ -51,7 +79,7 @@ resource "juju_integration" "maas_haproxy_http" {
   }
 
   application {
-    name     = module.haproxy.app_name
+    name     = juju_application.haproxy.name
     endpoint = "haproxy-route-tcp"
   }
   depends_on = [terraform_data.juju_wait_for_haproxy]
@@ -67,7 +95,7 @@ resource "juju_integration" "maas_haproxy_https" {
   }
 
   application {
-    name     = module.haproxy.app_name
+    name     = juju_application.haproxy.name
     endpoint = "haproxy-route-tcp"
   }
   depends_on = [terraform_data.juju_wait_for_haproxy]

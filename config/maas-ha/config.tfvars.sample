@@ -17,11 +17,9 @@ tls_enabled = false
 # hosts but this is untested
 # NOTE: if you set up the project with juju-bootstrap your
 #       controller will work with VMs
-ingress_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+haproxy_constraints    = "cores=2 mem=4G virt-type=virtual-machine"
 
-###
-## HAProxy configuration
-###
+# HAProxy
 
 # Application name of the deployed haproxy charm.
 haproxy_name = "haproxy"
@@ -31,4 +29,16 @@ charm_haproxy_channel = "2.8/edge"
 charm_haproxy_revision = null
 # Operator configuration for HAProxy deployment
 charm_haproxy_config = {
+}
+
+# KeepAlived
+
+# Application name of the deployed KeepAlived charm.
+keepalived_name = "keepalived"
+# Operator channel for KeepAlived deployment
+charm_keepalived_channel = "latest/edge"
+# Operator channel revision for KeepAlived deployment
+charm_keepalived_revision = null
+# Operator configuration for KeepAlived deployment
+charm_keepalived_config = {
 }
