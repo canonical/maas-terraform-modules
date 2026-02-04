@@ -21,7 +21,7 @@ resource "juju_application" "haproxy" {
   }
 
   config = merge(var.charm_haproxy_config, {
-    vip               = var.virtual_ip
+    vip = var.virtual_ip
   }, )
 }
 
@@ -38,7 +38,7 @@ resource "juju_application" "keepalived" {
   }
 
   config = merge(var.charm_keepalived_config, {
-    vip               = var.virtual_ip
+    virtual_ip = var.virtual_ip
   }, )
 }
 
@@ -91,7 +91,7 @@ resource "juju_integration" "maas_haproxy_http" {
 
 resource "juju_integration" "maas_haproxy_https" {
   model_uuid = var.maas_model_uuid
-  count = var.tls_enabled ? 1 : 0
+  count      = var.tls_enabled ? 1 : 0
 
   application {
     name     = "maas-region"
