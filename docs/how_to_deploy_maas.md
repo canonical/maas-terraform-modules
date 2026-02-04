@@ -34,19 +34,21 @@ charm_maas_region_config {
 }
 ```
 
-Initialize the Terraform environment with the required modules and configuration:
+Initialize the Terraform working directory:
 
 ```bash
 cd modules/maas-deploy
 terraform init
 ```
 
-Run `terraform plan` and `apply`, specifying your configuration file:
+Run `plan` and `apply`, specifying your configuration file:
 
 ```bash
 terraform plan -var-file ../../config/maas-deploy/config.tfvars
 terraform apply -var-file ../../config/maas-deploy/config.tfvars
 ```
+
+Wait for all your configuration to deploy and all charms to reach the `active` state. This may take some time depending on your configuration.
 
 Record the `maas_api_url` and `maas_api_key` values from the Terraform output, these will be necessary in `maas-config` later.
 
