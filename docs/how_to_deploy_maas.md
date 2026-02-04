@@ -57,7 +57,7 @@ export MAAS_API_URL=$(terraform output -raw maas_api_url)
 export MAAS_API_KEY=$(terraform output -raw maas_api_key)
 ```
 
-You can optionally also record the `maas_machines` values from the Terraform output if you are running a Region+Rack setup. This will be used in `maas-config` later.
+You can optionally also record the `maas_machines` values from the Terraform output if you are running a Region+Rack setup. This will be used in the MAAS configuraton (`maas-config`)later.
 
 ```bash
 terraform output -json maas_machines
