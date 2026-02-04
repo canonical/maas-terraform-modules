@@ -102,7 +102,6 @@ resource "terraform_data" "juju_wait_for_maas" {
       MODEL = self.input.model
     }
   }
-  depends_on = [juju_integration.maas_region_postgresql]
 }
 
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
@@ -134,7 +133,6 @@ data "external" "maas_get_api_key" {
     model    = terraform_data.create_admin.output.model
     username = var.admin_username
   }
-  depends_on = [terraform_data.create_admin]
 }
 
 data "external" "maas_get_api_url" {

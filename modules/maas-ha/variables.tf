@@ -54,3 +54,32 @@ variable "charm_haproxy_config" {
   type        = map(string)
   default     = {}
 }
+
+
+###
+## Keepalived configuration
+###
+
+variable "keepalived_name" {
+  description = "Application name of the deployed keepalived charm."
+  type        = string
+  default     = "keepalived"
+}
+
+variable "charm_keepalived_channel" {
+  description = "Operator channel for Certificates deployment"
+  type        = string
+  default     = "latest/edge"
+}
+
+variable "charm_keepalived_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_keepalived_config" {
+  description = "Operator configuration for Certificates deployment"
+  type        = map(string)
+  default     = {}
+}
