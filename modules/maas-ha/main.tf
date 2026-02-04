@@ -20,7 +20,9 @@ resource "juju_application" "haproxy" {
     base     = "ubuntu@${var.ubuntu_version}"
   }
 
-  config = merge(var.charm_haproxy_config, )
+  config = merge(var.charm_haproxy_config, {
+    vip               = var.virtual_ip
+  }, )
 }
 
 resource "juju_application" "keepalived" {
@@ -35,7 +37,9 @@ resource "juju_application" "keepalived" {
     base     = "ubuntu@${var.ubuntu_version}"
   }
 
-  config = var.charm_keepalived_config
+  config = merge(var.charm_keepalived_config, {
+    vip               = var.virtual_ip
+  }, )
 }
 
 resource "juju_integration" "keepalived" {
