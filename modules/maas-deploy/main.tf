@@ -1,3 +1,12 @@
+locals {
+  maas_tls = coalesce(
+    var.ssl_cacert_content,
+    var.ssl_cert_content,
+    var.ssl_key_content,
+    "null"
+  ) != "null"
+}
+
 resource "juju_model" "maas_model" {
   name = "maas"
 
@@ -39,6 +48,15 @@ resource "juju_machine" "maas_machines" {
   wait_for_hostname = true
 }
 
+resource "juju_machine" "haproxy_machines" {
+  count             = var.enable_haproxy ? 3 : 0
+  model_uuid        = juju_model.maas_model.uuid
+  base              = "ubuntu@${var.ubuntu_version}"
+  name              = "haproxy-${count.index}"
+  constraints       = var.haproxy_constraints
+  wait_for_hostname = true
+}
+
 resource "juju_application" "postgresql" {
   name       = "postgresql"
   model_uuid = juju_model.maas_model.uuid
@@ -66,7 +84,43 @@ resource "juju_application" "maas_region" {
     base     = "ubuntu@${var.ubuntu_version}"
   }
 
-  config = merge(var.charm_maas_region_config, )
+  config = merge(var.charm_maas_region_config, {
+    maas_url = var.enable_haproxy && var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
+  })
+}
+
+resource "juju_application" "haproxy" {
+  name       = "haproxy"
+  model_uuid = juju_model.maas_model.uuid
+  machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
+
+  charm {
+    name     = "haproxy"
+    channel  = var.charm_haproxy_channel
+    revision = var.charm_haproxy_revision
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
+
+  config = merge(var.charm_haproxy_config, {
+    vip = var.virtual_ip
+  }, )
+}
+
+resource "juju_application" "keepalived" {
+  name       = "keepalived"
+  model_uuid = juju_model.maas_model.uuid
+  units      = var.enable_haproxy ? 1 : 0
+
+  charm {
+    name     = "keepalived"
+    revision = var.charm_keepalived_revision
+    channel  = var.charm_keepalived_channel
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
+
+  config = merge(var.charm_keepalived_config, {
+    virtual_ip = var.virtual_ip
+  }, )
 }
 
 resource "juju_integration" "maas_region_postgresql" {
@@ -82,10 +136,24 @@ resource "juju_integration" "maas_region_postgresql" {
     endpoint = "database"
   }
 }
+resource "juju_integration" "haproxy_keepalived" {
+  model_uuid = juju_model.maas_model.uuid
+  count      = var.enable_haproxy ? 1 : 0
+
+  application {
+    name     = juju_application.haproxy.name
+    endpoint = "juju-info"
+  }
+
+  application {
+    name     = juju_application.keepalived.name
+    endpoint = "juju-info"
+  }
+}
 
 
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
-resource "terraform_data" "juju_wait_for_maas" {
+resource "terraform_data" "juju_wait_for_all" {
   input = {
     model = (
       juju_integration.maas_region_postgresql.model_uuid
@@ -104,10 +172,40 @@ resource "terraform_data" "juju_wait_for_maas" {
   }
 }
 
+resource "juju_integration" "maas_haproxy_http" {
+  model_uuid = terraform_data.juju_wait_for_all.output.model
+  count      = var.enable_haproxy ? 1 : 0
+
+  application {
+    name     = "maas-region"
+    endpoint = "ingress-tcp"
+  }
+
+  application {
+    name     = juju_application.haproxy.name
+    endpoint = "haproxy-route-tcp"
+  }
+}
+
+resource "juju_integration" "maas_haproxy_https" {
+  model_uuid = terraform_data.juju_wait_for_all.output.model
+  count      = var.enable_haproxy && local.maas_tls ? 1 : 0
+
+  application {
+    name     = "maas-region"
+    endpoint = "ingress-tcp-tls"
+  }
+
+  application {
+    name     = juju_application.haproxy.name
+    endpoint = "haproxy-route-tcp"
+  }
+}
+
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
 resource "terraform_data" "create_admin" {
   input = {
-    model = terraform_data.juju_wait_for_maas.output.model
+    model = terraform_data.juju_wait_for_all.output.model
   }
 
   provisioner "local-exec" {

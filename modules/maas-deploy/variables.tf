@@ -63,6 +63,12 @@ variable "enable_maas_ha" {
   default     = false
 }
 
+variable "enable_haproxy" {
+  description = "Set this to true to run MAAS with HAProxy, which will create three HAProxy units and KeepAlived subordinates"
+  type        = bool
+  default     = false
+}
+
 variable "lxd_project" {
   description = "The LXD project in which to create the VMs for Juju"
   type        = string
@@ -120,6 +126,62 @@ variable "charm_maas_region_revision" {
 
 variable "charm_maas_region_config" {
   description = "Operator configuration for MAAS Region Controller deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
+## HAProxy configuration
+###
+
+variable "haproxy_name" {
+  description = "Application name of the deployed haproxy charm."
+  type        = string
+  default     = "haproxy"
+}
+
+variable "charm_haproxy_channel" {
+  description = "Operator channel for Certificates deployment"
+  type        = string
+  default     = "2.8/edge"
+}
+
+variable "charm_haproxy_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_haproxy_config" {
+  description = "Operator configuration for Certificates deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
+## Keepalived configuration
+###
+
+variable "keepalived_name" {
+  description = "Application name of the deployed keepalived charm."
+  type        = string
+  default     = "keepalived"
+}
+
+variable "charm_keepalived_channel" {
+  description = "Operator channel for Certificates deployment"
+  type        = string
+  default     = "latest/edge"
+}
+
+variable "charm_keepalived_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_keepalived_config" {
+  description = "Operator configuration for Certificates deployment"
   type        = map(string)
   default     = {}
 }
@@ -230,4 +292,32 @@ variable "s3_path_maas" {
   description = "Path in the S3 bucket to store MAAS backups in"
   type        = string
   default     = "/maas"
+}
+
+###
+## HAProxy configuration
+###
+
+variable "virtual_ip" {
+  description = "The Virtual IP to use for HA MAAS"
+  type        = string
+  default     = null
+}
+
+variable "ssl_cert_content" {
+  description = "SSL Certificate content, Used for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_key_content" {
+  description = "SSL Key content, Used for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_cacert_content" {
+  description = "SSL CACert content, Optionally used for MAAS TLS mode operations"
+  type        = string
+  default     = null
 }

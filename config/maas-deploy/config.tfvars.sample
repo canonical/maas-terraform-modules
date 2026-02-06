@@ -12,6 +12,8 @@ juju_cloud_region = "default"
 enable_postgres_ha = false
 # Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
 enable_maas_ha = false
+# Set this to true to run MAAS with HAProxy, which will create three HAProxy units and KeepAlived subordinates
+enable_haproxy = false
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"
 # Map of additional model configuration parameters
@@ -69,6 +71,34 @@ charm_maas_region_config = {
 }
 
 ###
+## HAProxy
+###
+
+# Application name of the deployed haproxy charm.
+haproxy_name = "haproxy"
+# Operator channel for HAProxy deployment
+charm_haproxy_channel = "2.8/edge"
+# Operator channel revision for HAProxy deployment
+charm_haproxy_revision = null
+# Operator configuration for HAProxy deployment
+charm_haproxy_config = {
+}
+
+###
+## KeepAlived
+###
+
+# Application name of the deployed KeepAlived charm.
+keepalived_name = "keepalived"
+# Operator channel for KeepAlived deployment
+charm_keepalived_channel = "latest/edge"
+# Operator channel revision for KeepAlived deployment
+charm_keepalived_revision = null
+# Operator configuration for KeepAlived deployment
+charm_keepalived_config = {
+}
+
+###
 ## MAAS Admin configuration
 ###
 
@@ -119,3 +149,16 @@ s3_path_postgresql = "/postgresql"
 s3_bucket_maas = "maas"
 # Path in the S3 bucket to store MAAS backups in
 s3_path_maas = "/maas"
+
+###
+## HA configuration
+###
+
+# The Virtual IP to use for HA MAAS
+virtual_ip = null
+# SSL Certificate content, Used for MAAS TLS mode operations
+ssl_cert_content = null
+# SSL Key content, Used for MAAS TLS mode operations
+ssl_key_content = null
+# SSL CACert content, Optionally used for MAAS TLS mode operations
+ssl_cacert_content = null
