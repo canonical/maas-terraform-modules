@@ -85,7 +85,7 @@ resource "juju_application" "maas_region" {
   }
 
   config = merge(var.charm_maas_region_config, {
-    maas_url = var.enable_haproxy && var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
+    # maas_url = var.enable_haproxy && var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
   })
 }
 
@@ -164,7 +164,7 @@ resource "terraform_data" "juju_wait_for_all" {
     command = <<-EOT
       MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
       juju wait-for model "$MODEL_NAME" --timeout 3600s \
-        --query='forEach(units, unit => unit.workload-status == "active")'
+        --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
     EOT
     environment = {
       MODEL = self.input.model
