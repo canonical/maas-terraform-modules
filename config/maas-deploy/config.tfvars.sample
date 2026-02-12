@@ -25,7 +25,6 @@ lxd_project = "default"
 #       controller will work with VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-haproxy_constraints    = "cores=2 mem=4G virt-type=virtual-machine"
 
 ###
 ## PostgreSQL configuration

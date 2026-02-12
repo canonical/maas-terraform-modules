@@ -35,12 +35,6 @@ variable "postgres_constraints" {
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
-variable "haproxy_constraints" {
-  description = "Constraints for the HAProxy virtual machines"
-  type        = string
-  default     = "cores=2 mem=4G virt-type=virtual-machine"
-}
-
 variable "enable_postgres_ha" {
   description = "Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units"
   type        = bool
@@ -282,20 +276,20 @@ variable "virtual_ip" {
   default     = null
 }
 
-variable "ssl_cert_content" {
-  description = "SSL Certificate content, Used for MAAS TLS mode operations"
+variable "ssl_cert_path" {
+  description = "SSL Certificate Path, Used for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
-variable "ssl_key_content" {
-  description = "SSL Key content, Used for MAAS TLS mode operations"
+variable "ssl_key_path" {
+  description = "SSL Key Path, Used for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
-variable "ssl_cacert_content" {
-  description = "SSL CACert content, Optionally used for MAAS TLS mode operations"
+variable "ssl_cacert_path" {
+  description = "SSL CACert Path, Optionally used for MAAS TLS mode operations"
   type        = string
   default     = null
 }
