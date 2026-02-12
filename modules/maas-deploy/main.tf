@@ -1,10 +1,14 @@
 locals {
   maas_tls = coalesce(
-    var.ssl_cacert_content,
-    var.ssl_cert_content,
-    var.ssl_key_content,
+    var.ssl_cacert_path,
+    var.ssl_cert_path,
+    var.ssl_key_path,
     "null"
   ) != "null"
+  maas_url           = var.enable_haproxy && var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
+  ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
+  ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
+  ssl_cacert_content = var.ssl_cacert_path != null ? file(var.ssl_cacert_path) : null
 }
 
 resource "juju_model" "maas_model" {
@@ -48,51 +52,10 @@ resource "juju_machine" "maas_machines" {
   wait_for_hostname = true
 }
 
-resource "juju_machine" "haproxy_machines" {
-  count             = var.enable_haproxy ? 3 : 0
-  model_uuid        = juju_model.maas_model.uuid
-  base              = "ubuntu@${var.ubuntu_version}"
-  name              = "haproxy-${count.index}"
-  constraints       = var.haproxy_constraints
-  wait_for_hostname = true
-}
-
-resource "juju_application" "postgresql" {
-  name       = "postgresql"
-  model_uuid = juju_model.maas_model.uuid
-  machines   = [for m in juju_machine.postgres_machines : m.machine_id]
-
-  charm {
-    name     = "postgresql"
-    channel  = var.charm_postgresql_channel
-    revision = var.charm_postgresql_revision
-    base     = "ubuntu@${var.ubuntu_version}"
-  }
-
-  config = merge(var.charm_postgresql_config, )
-}
-
-resource "juju_application" "maas_region" {
-  name       = "maas-region"
-  model_uuid = juju_model.maas_model.uuid
-  machines   = [for m in juju_machine.maas_machines : m.machine_id]
-
-  charm {
-    name     = "maas-region"
-    channel  = var.charm_maas_region_channel
-    revision = var.charm_maas_region_revision
-    base     = "ubuntu@${var.ubuntu_version}"
-  }
-
-  config = merge(var.charm_maas_region_config, {
-    # maas_url = var.enable_haproxy && var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
-  })
-}
-
 resource "juju_application" "haproxy" {
   name       = "haproxy"
   model_uuid = juju_model.maas_model.uuid
-  machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
+  machines   = [for m in juju_machine.maas_machines : m.machine_id]
 
   charm {
     name     = "haproxy"
@@ -123,19 +86,6 @@ resource "juju_application" "keepalived" {
   }, )
 }
 
-resource "juju_integration" "maas_region_postgresql" {
-  model_uuid = juju_model.maas_model.uuid
-
-  application {
-    name     = juju_application.maas_region.name
-    endpoint = "maas-db"
-  }
-
-  application {
-    name     = juju_application.postgresql.name
-    endpoint = "database"
-  }
-}
 resource "juju_integration" "haproxy_keepalived" {
   model_uuid = juju_model.maas_model.uuid
   count      = var.enable_haproxy ? 1 : 0
@@ -148,6 +98,73 @@ resource "juju_integration" "haproxy_keepalived" {
   application {
     name     = juju_application.keepalived.name
     endpoint = "juju-info"
+  }
+}
+
+resource "terraform_data" "juju_wait_for_haproxy" {
+  input = {
+    model = (
+      juju_integration.haproxy_keepalived[0].model_uuid
+    )
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
+      juju wait-for model "$MODEL_NAME" --timeout 3600s \
+        --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
+    EOT
+    environment = {
+      MODEL = self.input.model
+    }
+  }
+}
+
+resource "juju_application" "postgresql" {
+  name       = "postgresql"
+  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+  machines   = [for m in juju_machine.postgres_machines : m.machine_id]
+
+  charm {
+    name     = "postgresql"
+    channel  = var.charm_postgresql_channel
+    revision = var.charm_postgresql_revision
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
+
+  config = merge(var.charm_postgresql_config, )
+}
+
+resource "juju_application" "maas_region" {
+  name       = "maas-region"
+  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+  machines   = [for m in juju_machine.maas_machines : m.machine_id]
+
+  charm {
+    name     = "maas-region"
+    channel  = var.charm_maas_region_channel
+    revision = var.charm_maas_region_revision
+    base     = "ubuntu@${var.ubuntu_version}"
+  }
+
+  config = merge(var.charm_maas_region_config, {
+    maas_url           = local.maas_url,
+    ssl_cert_content   = local.ssl_cert_content,
+    ssl_key_content    = local.ssl_key_content,
+    ssl_cacert_content = local.ssl_cacert_content
+  })
+}
+resource "juju_integration" "maas_region_postgresql" {
+  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+
+  application {
+    name     = juju_application.maas_region.name
+    endpoint = "maas-db"
+  }
+
+  application {
+    name     = juju_application.postgresql.name
+    endpoint = "database"
   }
 }
 
