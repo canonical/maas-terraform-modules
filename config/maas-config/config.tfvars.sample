@@ -71,7 +71,7 @@ domain_records = {
   ]
 }
 # A set of node scripts to create, where each set item points to the script
-# file path relevant to node_scripts_location
+# file path relative to node_scripts_location
 node_scripts = [
   "foo.sh",
   "bar.sh"
