@@ -61,15 +61,21 @@ flowchart TB
          subgraph MAAS_M0["VM-3"]
 
           R0["🟣 maas-region/0"]
+          HA0["🟢 haproxy/0"]
+          KA0["🟠 keepalived/0"]
         end
          subgraph MAAS_MULTINODE["Multi-node deployment"]
           subgraph MAAS_M1["VM-4"]
 
             R1["🟣 maas-region/1"]
+            HA1["🟢 haproxy/1"]
+            KA1["🟠 keepalived/1"]
           end
           subgraph MAAS_M2["VM-5"]
 
             R2["🟣 maas-region/2"]
+            HA2["🟢 haproxy/2"]
+            KA2["🟠 keepalived/2"]
           end
          end
         %% Force horizontal layout
@@ -118,6 +124,12 @@ flowchart TB
   R0 ~~~ A0
   R1 ~~~ A1
   R2 ~~~ A2
+  R0 ~~~ HA0
+  R1 ~~~ HA1
+  R2 ~~~ HA2
+  KA0 ~~~ HA0
+  KA1 ~~~ HA1
+  KA2 ~~~ HA2
 
   %% Terraform module relationships
   TF1 -.->|creates| CTRL
@@ -142,7 +154,7 @@ flowchart TB
   class MODEL deployManaged
 ```
 
-This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
+This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣🟢🟠) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
 
 A charmed MAAS deployment consists of the following atomic components:
 
@@ -155,6 +167,10 @@ Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-
 #### PostgreSQL
 
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
+
+#### HAProxy and KeepAlived
+
+Charmed deployment of the HAProxy Deb, [learn more here](https://github.com/haproxy/haproxy), with subordinate KeepAlived, [learn more here](http://www.keepalived.org/)
 
 #### Juju Controller
 
@@ -174,7 +190,7 @@ Before beginning the deployment process, please make sure that [prerequisites](#
 These instructions will take you from a bare system to a running MAAS cluster with either [One](./docs/how_to_deploy_single_node.md) or [Three](./docs/how_to_deploy_multi_node.md) MAAS Regions, one node PostgresSQL or three-node PostgreSQL, and optionally deploying a Juju controller if you are not [supplying one externally](./docs/how_to_deploy_to_a_bootstrapped_controller.md).
 
 1. [Connect to a Juju controller](./docs/how_to_deploy_to_a_bootstrapped_controller.md) or [Bootstrap a Juju controller](./docs/how_to_bootstrap_juju.md)
-2. Deploy a [multi-node](./docs/how_to_deploy_multi_node.md) or [single-node](./docs/how_to_deploy_single_node.md) MAAS cluster
+2. Deploy a [multi-node](./docs/how_to_deploy_multi_node.md) or [single-node](./docs/how_to_deploy_single_node.md) MAAS cluster, with optional HA
 3. [Configure](./docs/how_to_configure_maas.md) your running MAAS instance
 
 ## Appendix - Backup and Restore

@@ -40,6 +40,23 @@ You should initially ensure the configuration contains `enable_maas_ha=false` an
 > }
 > ```
 
+
+> [!NOTE]
+> To deploy with HA, you will need to provide the following:
+>
+> ```bash
+> enable_haproxy = true
+> virtual_ip = ...
+> ```
+>
+> If you would additionally like TLS HA, you will need to supply the certificate (in PEM format) path:
+>
+> ```bash
+> ssl_cert_content = ...
+> ssl_key_content = ...
+> ssl_cacert_content = ...
+> ```
+
 Initialize the Terraform environment with the required modules and configuration
 
 ```bash
