@@ -63,12 +63,6 @@ variable "enable_maas_ha" {
   default     = false
 }
 
-variable "enable_haproxy" {
-  description = "Set this to true to run MAAS with HAProxy, which will create three HAProxy units and KeepAlived subordinates"
-  type        = bool
-  default     = false
-}
-
 variable "lxd_project" {
   description = "The LXD project in which to create the VMs for Juju"
   type        = string
@@ -299,7 +293,7 @@ variable "s3_path_maas" {
 ###
 
 variable "virtual_ip" {
-  description = "The Virtual IP to use for HA MAAS"
+  description = "The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied"
   type        = string
   default     = null
 }

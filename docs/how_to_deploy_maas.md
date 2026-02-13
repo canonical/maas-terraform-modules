@@ -3,7 +3,7 @@
 This guide gives an overview on how to configure and run the `maas-deploy` module to deploy Charmed MAAS.
 
 > [!Note]
-> An existing bootstrapped Juju controller is required. Please see the [deployment instructions](../README.md#deployment-instructions) of README.md for more details. 
+> An existing bootstrapped Juju controller is required. Please see the [deployment instructions](../README.md#deployment-instructions) of README.md for more details.
 
 > [!NOTE]
 > This is not a true HA deployment. You will need to supply an external HA proxy with your MAAS endpoints, for example, for true HA.
@@ -15,15 +15,15 @@ cp config/maas-deploy/config.tfvars.sample config/maas-deploy/config.tfvars
 
 Modify your configuration as required. Note that setting `enable_maas_ha` and `enable_postgres_ha` to `true` will deploy a 3-node MAAS and PostgreSQL cluster respectively, or `false` for single node deployments.
 
-> [!Note] 
+> [!Note]
 > For multi-node region deployments, you *MUST* increase the PostgreSQL connections to something larger, for example:
-> 
+>
 > ```bash
 > charm_postgresql_config = {
 > experimental_max_connections = 300
 > }
 > ```
-> 
+>
 > Without it you will run into the [MAAS connection slots reserved](./troubleshooting.md#maas-connections-slots-reserved) error. To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
 Also note that setting `enable_rack_mode` to `true` will deploy MAAS in Region+Rack mode, installing the rack to the same node as the region. Otherwise it will be deployed in Region only mode:
@@ -33,6 +33,23 @@ charm_maas_region_config {
     enable_rack_mode = true
 }
 ```
+
+
+> [!NOTE]
+> To deploy with HA, you will need to provide the following:
+>
+> ```bash
+> enable_haproxy = true
+> virtual_ip = ...
+> ```
+>
+> If you would additionally like TLS HA, you will need to supply the certificate (in PEM format) path:
+>
+> ```bash
+> ssl_cert_content = ...
+> ssl_key_content = ...
+> ssl_cacert_content = ...
+> ```
 
 Initialize the Terraform working directory:
 
