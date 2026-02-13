@@ -113,7 +113,7 @@ variable "domain_records" {
 variable "node_scripts" {
   description = <<EOF
     A set of node scripts to create, where each set item points to the script
-    file path relevant to node_scripts_location
+    file path relative to node_scripts_location
   EOF
   type        = set(string)
 

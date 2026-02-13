@@ -14,8 +14,8 @@ terraform {
   source = "git::git@github.com:canonical/maas-terraform-modules.git//modules/maas-config?ref=${values.version}"
 }
 
-dependency "maas_setup" {
-  config_path = values.maas_setup_path
+dependency "maas_deploy" {
+  config_path = values.maas_deploy_path
 
   mock_outputs = {
     api_url = "url"
@@ -45,8 +45,8 @@ inputs = merge({
   },
   {
     // Dependent variables
-    maas_url = dependency.maas_setup.outputs.maas_api_url
-    maas_key = dependency.maas_setup.outputs.maas_api_key
+    maas_url = dependency.maas_deploy.outputs.maas_api_url
+    maas_key = dependency.maas_deploy.outputs.maas_api_key
 
     // Required variables
     // (none)
