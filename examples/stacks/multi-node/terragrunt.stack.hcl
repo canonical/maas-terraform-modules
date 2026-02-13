@@ -1,0 +1,210 @@
+unit "juju_bootstrap" {
+  // You'll typically want to pin this to a particular version of your catalog repo.
+  // e.g.
+  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/juju-bootstrap?ref=v0.1.0"
+  source = "../../../units/juju-bootstrap"
+
+  path = "juju-bootstrap"
+
+  values = {
+    // This version here is used as the version passed down to the unit
+    // to use when fetching the OpenTofu/Terraform module.
+    version = "main"
+
+    // The Juju snap channel to install on the system, before running juju-bootstrap.
+    juju_channel = "3.6/stable"
+
+    // Required variables
+    // The LXD trust token that Juju should use to authenticate to LXD
+    lxd_trust_token = get_env("LXD_TRUST_TOKEN")
+    // The API endpoint URL that Juju should use to communicate to LXD
+    lxd_address = "https://10.10.0.1:8443"
+
+    // Optional variables
+    // The LXD project that Juju should use for the controller resources
+    // lxd_project = "charmed-maas"
+    // Map of model configuration defaults to pass to juju bootstrap (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
+    // model_defaults = {}
+    // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
+    // cloud_name = "maas-cloud"
+  }
+}
+
+unit "maas_deploy" {
+  // You'll typically want to pin this to a particular version of your catalog repo.
+  // e.g.
+  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/maas-deploy?ref=v0.1.0"
+  source = "../../../units/maas-deploy"
+
+  path = "maas-deploy"
+
+  values = {
+    // This version here is used as the version passed down to the unit
+    // to use when fetching the OpenTofu/Terraform module.
+    version = "main"
+
+    // Dependencies
+    juju_bootstrap_path = "../juju-bootstrap"
+
+    // Required variables
+    // (none)
+
+    // Optional variables
+    // Uncomment and complete to customize. Defaults are shown where defined in variables.tf.
+    // The LXD project in which to create the VMs for Juju
+    // lxd_project        = "charmed-maas"
+    // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
+    // model_config       = ...
+    // Path to the SSH key to add to the MAAS Juju model
+    path_to_ssh_key = get_env("PATH_TO_SSH_KEY")
+
+    // -- Machines and constraints
+    // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
+    // If you are curious you can change the constraints to use containers or physical
+    // hosts but this is untested
+    // NOTE: if you set up the project with juju-bootstrap your
+    //       controller will work with VMs
+    maas_constraints = "cores=4 mem=4G virt-type=virtual-machine root-disk=20G root-disk-source=default"
+    // Constraints for the PostgreSQL virtual machines
+    postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+    // Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units
+    enable_postgres_ha = true
+    // Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
+    enable_maas_ha = true
+    // The Ubuntu operating system version to install on the virtual machines (VMs)
+    ubuntu_version = "24.04"
+
+    // -- Workload: PostgreSQL
+    // Operator channel for PostgreSQL deployment
+    charm_postgresql_channel = "16/stable"
+    // Operator channel revision for PostgreSQL deployment
+    // charm_postgresql_revision  = ...
+    // Operator configuration for PostgreSQL deployment
+    charm_postgresql_config = {
+      // Maximum number of concurrent connections to allow to the database server
+      experimental_max_connections = 300
+      // Enable btree_gin PostgreSQL plugin since it is required by Temporal, a MAAS >=3.5 key component
+      plugin_btree_gin_enable = true
+    }
+
+    // -- Workload: MAAS
+    // Operator channel for MAAS Region Controller deployment
+    charm_maas_region_channel = "latest/edge"
+    // Operator channel revision for MAAS Region Controller deployment
+    // charm_maas_region_revision = ...
+    // Operator configuration for MAAS Region Controller deployment
+    charm_maas_region_config = { // Uncomment for region + rack configuration
+      enable_rack_mode = true
+    }
+
+    // -- MAAS Admin configuration
+    // The MAAS admin username
+    admin_username = "admin"
+    // The MAAS admin password
+    admin_password = get_env("MAAS_ADMIN_PASSWORD")
+    // The MAAS admin email
+    admin_email = "admin@maas.io"
+    // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
+    admin_ssh_import = get_env("ADMIN_SSH_IMPORT")
+
+    // -- External integrations (backup/s3)
+    // Whether to enable backup for MAAS and PostgreSQL
+    enable_backup = true
+    // Operator channel for S3 Integrator deployment
+    charm_s3_integrator_channel = "1/stable"
+    // Operator channel revision for S3 Integrator deployment
+    // charm_s3_integrator_revision = ...
+    // Operator configuration for both S3 Integrator deployments. Configuration for `bucket`, `path`, and `tls-ca-chain` is skipped even if set, since it is handled by different Terraform variables.
+    charm_s3_integrator_config = {
+      // Endpoint the S3 backup exists at
+      endpoint = "https://10.10.0.26:9000/"
+      // The AWS region the S3 bucket is in. Leave empty for Minio
+      region = ""
+      // The S3 protocol specific bucket path lookup type. Leave `path` for Minio
+      s3-uri-style = "path"
+    }
+    // The file path of the S3 CA chain, used for HTTPS validation
+    s3_ca_chain_file_path = "${get_env("HOME")}/cert.pem"
+    // Access key used to access the S3 backup bucket
+    s3_access_key = get_env("S3_ACCESS_KEY")
+    // Secret key used to access the S3 backup bucket
+    s3_secret_key = get_env("S3_SECRET_KEY")
+    // Bucket name to store PostgreSQL backups in
+    s3_bucket_postgresql = "new"
+    // Path in the S3 bucket to store PostgreSQL backups in
+    s3_path_postgresql = "postgresql-backups"
+    // Bucket name to store MAAS backups in
+    s3_bucket_maas = "maas-backup"
+    // Path in the S3 bucket to store MAAS backups in
+    s3_path_maas = "/maas-backups"
+  }
+}
+
+unit "maas_config" {
+  // You'll typically want to pin this to a particular version of your catalog repo.
+  // e.g.
+  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/maas-deploy?ref=v0.1.0"
+  source = "../../../units/maas-config"
+
+  path = "maas-config"
+
+  values = {
+    // This version here is used as the version passed down to the unit
+    // to use when fetching the OpenTofu/Terraform module.
+    version = "main"
+
+    // Dependencies
+    maas_deploy_path = "../maas-deploy"
+
+    // Optional variables 
+    // The URL of the boot source to synchronize OS images from. This needs to be a simple streams server
+    image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
+    // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
+    boot_selections = {
+      jammy = {
+        arches    = ["amd64"]
+        subarches = ["generic"]
+      }
+    }
+    // A map of package repositories to supply to MAAS deployed machines, where key is the repository name and value is a map of package repository settings
+    package_repositories = {
+      foo_bar = {
+        url    = "http://foo.bar.com/foobar"
+        arches = ["amd64", "arm64"]
+      }
+    }
+    // A map of MAAS configuration settings, where key is the setting name and value is the setting desired value
+    maas_config = {
+      "default_osystem" = "ubuntu"
+    }
+    // A map of tags to create, where key is the tag name and value is a map of tag attributes
+    tags = {
+      "gpu-node" = {
+        comment = "Nodes with GPU hardware"
+      }
+    }
+    // A map of DNS domains to create, where key is the domain name and value is a map of domain attributes
+    domains = {
+      "example.maas" = {
+        ttl           = 3600
+        is_default    = false
+        authoritative = true
+      }
+    }
+    // A map of DNS domain records to create, where key is the domain name and value is a set domain records. Each domain record is a map of domain record attributes
+    domain_records = {
+      "example.maas" = [
+        {
+          name = "web"
+          type = "A/AAAA"
+          data = "192.168.1.100"
+          ttl  = 300
+        }
+      ]
+    }
+    // A set of node scripts to create, where each set item points to the script file path relative to node_scripts_location
+    node_scripts = ["test.py"]
+    // The path in disk where node script files are located
+    node_scripts_location = "${get_repo_root()}/examples/stacks/multi-node"
+  }
+}
