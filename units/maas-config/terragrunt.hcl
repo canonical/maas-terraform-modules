@@ -18,8 +18,8 @@ dependency "maas_deploy" {
   config_path = values.maas_deploy_path
 
   mock_outputs = {
-    api_url = "url"
-    api_key = "key"
+    maas_api_url = "url"
+    maas_api_key = "key"
   }
 }
 
