@@ -26,6 +26,7 @@ resource "juju_machine" "postgres_machines" {
   base        = "ubuntu@${var.ubuntu_version}"
   name        = "postgres-${count.index}"
   constraints = var.postgres_constraints
+  placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
 }
 
 resource "juju_machine" "maas_machines" {
@@ -34,6 +35,7 @@ resource "juju_machine" "maas_machines" {
   base              = "ubuntu@${var.ubuntu_version}"
   name              = "maas-${count.index}"
   constraints       = var.maas_constraints
+  placement         = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
   wait_for_hostname = true
 }
 
