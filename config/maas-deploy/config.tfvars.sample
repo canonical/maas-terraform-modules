@@ -32,8 +32,10 @@ lxd_project = "default"
 #       controller will work with VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-# List of target zones for deploying MAAS and PostgreSQL machines. When non-empty,
-# machines are distributed across the listed zones in round-robin fashion.
+# List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
+# are distributed across these zones in round-robin fashion (for example, with 3 zones and
+# 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
+# zone1, zone2, zone1).
 zone_list = []
 
 ###

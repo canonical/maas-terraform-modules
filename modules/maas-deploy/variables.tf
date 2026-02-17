@@ -37,7 +37,12 @@ variable "postgres_constraints" {
 
 variable "zone_list" {
   type        = list(string)
-  description = "List of target zones allowed for deploying MAAS and PostgreSQL machines. When provided, machines are distributed across zones using round-robin selection."
+  description = <<EOF
+    List of target zones allowed for deploying MAAS and PostgreSQL machines. If provided, machines
+    are distributed across these zones in round-robin fashion (for example, with 3 zones and 3
+    machines, each gets a different zone; with 2 zones and 3 machines, the pattern is zone1, zone2,
+    zone1).
+    EOF
   default     = []
 
   validation {
