@@ -35,6 +35,17 @@ variable "postgres_constraints" {
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
+variable "zone_list" {
+  type        = list(string)
+  description = "List of target zones allowed for deploying MAAS and PostgreSQL machines"
+  default     = []
+
+  validation {
+    condition     = length(var.zone_list) == length(distinct(var.zone_list))
+    error_message = "All zone values must be unique."
+  }
+}
+
 variable "enable_postgres_ha" {
   description = "Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units"
   type        = bool

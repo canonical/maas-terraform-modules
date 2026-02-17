@@ -35,6 +35,7 @@ locals {
     // --- Machines and constraints ---
     maas_constraints     = try(values.maas_constraints, null)
     postgres_constraints = try(values.postgres_constraints, null)
+    zone_list            = try(values.zone_list, null)
     enable_postgres_ha   = try(values.enable_postgres_ha, null)
     enable_maas_ha       = try(values.enable_maas_ha, null)
     ubuntu_version       = try(values.ubuntu_version, null)

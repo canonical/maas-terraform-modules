@@ -32,6 +32,8 @@ lxd_project = "default"
 #       controller will work with VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+# List of target zones allowed for deploying MAAS and PostgreSQL machines
+zone_list = []
 
 ###
 ## PostgreSQL configuration
