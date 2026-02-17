@@ -6,6 +6,7 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
 
+  // The configuration for the local backend. This is where the generated Terraform code will store the state of the stack.
   config = {
     path = "${get_parent_terragrunt_dir()}/.terragrunt-local-state/${path_relative_to_include()}/terraform.tfstate"
   }

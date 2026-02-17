@@ -18,7 +18,7 @@ unit "juju_bootstrap" {
     // The LXD trust token that Juju should use to authenticate to LXD
     lxd_trust_token = get_env("LXD_TRUST_TOKEN")
     // The API endpoint URL that Juju should use to communicate to LXD
-    lxd_address = "https://10.10.0.1:8443"
+    lxd_address = get_env("LXD_ADDRESS")
 
     // Optional variables
     // The LXD project that Juju should use for the controller resources
@@ -99,11 +99,11 @@ unit "maas_deploy" {
 
     // -- MAAS Admin configuration
     // The MAAS admin username
-    // admin_username   = ...
+    admin_username   = "admin"
     // The MAAS admin password
-    // admin_password   = ...
+    admin_password   = "insecure"
     // The MAAS admin email
-    // admin_email      = ...
+    admin_email      = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
     // admin_ssh_import = ...
 

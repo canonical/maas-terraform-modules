@@ -18,7 +18,7 @@ unit "juju_bootstrap" {
     // The LXD trust token that Juju should use to authenticate to LXD
     lxd_trust_token = get_env("LXD_TRUST_TOKEN")
     // The API endpoint URL that Juju should use to communicate to LXD
-    lxd_address = "https://10.10.0.1:8443"
+    lxd_address = get_env("LXD_ADDRESS")
 
     // Optional variables
     // The LXD project that Juju should use for the controller resources
@@ -130,7 +130,7 @@ unit "maas_deploy" {
     // Secret key used to access the S3 backup bucket
     s3_secret_key = get_env("S3_SECRET_KEY")
     // Bucket name to store PostgreSQL backups in
-    s3_bucket_postgresql = "new"
+    s3_bucket_postgresql = "postgresql-backup"
     // Path in the S3 bucket to store PostgreSQL backups in
     s3_path_postgresql = "postgresql-backups"
     // Bucket name to store MAAS backups in
