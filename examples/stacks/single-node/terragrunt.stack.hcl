@@ -131,7 +131,7 @@ unit "maas_deploy" {
 unit "maas_config" {
   // You'll typically want to pin this to a particular version of your catalog repo.
   // e.g.
-  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/maas-deploy?ref=v0.1.0"
+  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/maas-config?ref=v0.1.0"
   source = "../../../units/maas-config"
 
   path = "maas-config"
@@ -144,7 +144,7 @@ unit "maas_config" {
     // Dependencies
     maas_deploy_path = "../maas-deploy"
 
-    // Optional variables 
+    // Optional variables
     // The URL of the boot source to synchronize OS images from. This needs to be a simple streams server
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
     // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
@@ -169,6 +169,12 @@ unit "maas_config" {
     tags = {
       "gpu-node" = {
         comment = "Nodes with GPU hardware"
+      },
+      "gpgpu-tesla-vi" = {
+        // See here for more details on tag management: https://discourse.maas.io/t/maas-ui-automatic-tags-and-tag-management/5565
+        comment     = "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel. "
+        kernel_opts = "console=tty0 console=ttyS0,115200n8r nomodeset modprobe.blacklist=nouveau,nvidiafb,snd_hda_intel nouveau.blacklist=1 video=vesafb:off,efifb:off intel_iommu=on rd.driver.pre=pci-stub rd.driver.pre=vfio-pci pci-stub.ids=10de:1db4 vfio-pci.ids=10de:1db4 vfio_iommu_type1.allow_unsafe_interrupts=1 vfio-pci.disable_vga=1"
+        definition  = "//node[@id=\"cpu:0\"]/capabilities/capability/@id = \"vmx\" and //node[@id=\"display\"]/vendor[contains(.,\"NVIDIA\")] and //node[@id=\"display\"]/description[contains(.,\"3D\")] and //node[@id=\"display\"]/product[contains(.,\"Tesla V100 PCIe 16GB\")]"
       }
     }
     // A map of DNS domains to create, where key is the domain name and value is a map of domain attributes
@@ -191,7 +197,7 @@ unit "maas_config" {
       ]
     }
     // A set of node scripts to create, where each set item points to the script file path relative to node_scripts_location
-    node_scripts = ["testing-script.py"]
+    node_scripts = ["testing-script.sh"]
     // The path in disk where node script files are located
     node_scripts_location = "${get_terragrunt_dir()}/../resources"
   }
