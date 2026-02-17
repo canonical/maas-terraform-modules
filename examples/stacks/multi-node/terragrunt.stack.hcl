@@ -181,6 +181,12 @@ unit "maas_config" {
     tags = {
       "gpu-node" = {
         comment = "Nodes with GPU hardware"
+      },
+      "gpgpu-tesla-vi" = {
+        // See here for more details on tag management: https://discourse.maas.io/t/maas-ui-automatic-tags-and-tag-management/5565
+        comment     = "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel. "
+        kernel_opts = "console=tty0 console=ttyS0,115200n8r nomodeset modprobe.blacklist=nouveau,nvidiafb,snd_hda_intel nouveau.blacklist=1 video=vesafb:off,efifb:off intel_iommu=on rd.driver.pre=pci-stub rd.driver.pre=vfio-pci pci-stub.ids=10de:1db4 vfio-pci.ids=10de:1db4 vfio_iommu_type1.allow_unsafe_interrupts=1 vfio-pci.disable_vga=1"
+        definition  = "//node[@id=\"cpu:0\"]/capabilities/capability/@id = \"vmx\" and //node[@id=\"display\"]/vendor[contains(.,\"NVIDIA\")] and //node[@id=\"display\"]/description[contains(.,\"3D\")] and //node[@id=\"display\"]/product[contains(.,\"Tesla V100 PCIe 16GB\")]"
       }
     }
     // A map of DNS domains to create, where key is the domain name and value is a map of domain attributes
@@ -203,7 +209,7 @@ unit "maas_config" {
       ]
     }
     // A set of node scripts to create, where each set item points to the script file path relative to node_scripts_location
-    node_scripts = ["testing-script.py"]
+    node_scripts = ["testing-script.sh"]
     // The path in disk where node script files are located
     node_scripts_location = "${get_terragrunt_dir()}/../resources"
   }
