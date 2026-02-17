@@ -99,11 +99,11 @@ unit "maas_deploy" {
 
     // -- MAAS Admin configuration
     // The MAAS admin username
-    admin_username   = "admin"
+    admin_username = "admin"
     // The MAAS admin password
-    admin_password   = "insecure"
+    admin_password = "insecure"
     // The MAAS admin email
-    admin_email      = "admin@maas.io"
+    admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
     // admin_ssh_import = ...
 
