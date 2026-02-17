@@ -37,12 +37,12 @@ variable "postgres_constraints" {
 
 variable "zone_list" {
   type        = list(string)
-  description = "List of target zones allowed for deploying MAAS and PostgreSQL machines"
+  description = "List of target zones allowed for deploying MAAS and PostgreSQL machines. When provided, machines are distributed across zones using round-robin selection."
   default     = []
 
   validation {
-    condition     = length(var.zone_list) == length(distinct(var.zone_list))
-    error_message = "All zone values must be unique."
+    condition     = length(var.zone_list) == length(distinct(var.zone_list)) && alltrue([for z in var.zone_list : z != ""])
+    error_message = "All zone values must be unique and non-empty strings."
   }
 }
 
