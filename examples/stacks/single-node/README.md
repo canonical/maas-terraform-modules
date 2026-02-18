@@ -17,7 +17,7 @@ For more context on running this stack, see the [README.md](../README.md) in the
     # MAAS specific:
     export MAAS_ADMIN_PASSWORD="insecure"
     ```
-1. In this directory, generate and apply the stack:
+1. In this directory, generate and apply the stack. Note that if prompted, you should grant sudo privileges to allow installation of the Juju snap:
     ```bash
     cd examples/stacks/single-node
     terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
