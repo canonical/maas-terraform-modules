@@ -101,7 +101,7 @@ unit "maas_deploy" {
     // The MAAS admin username
     admin_username = "admin"
     // The MAAS admin password
-    admin_password = "insecure"
+    admin_password = get_env("MAAS_ADMIN_PASSWORD")
     // The MAAS admin email
     admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
