@@ -123,8 +123,9 @@ unit "maas_deploy" {
       // The S3 protocol specific bucket path lookup type. Leave `path` for Minio
       s3-uri-style = "path"
     }
-    // The file path of the S3 CA chain, used for HTTPS validation
-    s3_ca_chain_file_path = "${get_env("HOME")}/cert.pem"
+    // The file path of the S3 CA chain, used for HTTPS validation.
+    // Configure via the S3_CA_CHAIN_FILE_PATH environment variable; defaults to empty (disabled).
+    s3_ca_chain_file_path = get_env("S3_CA_CHAIN_FILE_PATH", "")
     // Access key used to access the S3 backup bucket
     s3_access_key = get_env("S3_ACCESS_KEY")
     // Secret key used to access the S3 backup bucket
