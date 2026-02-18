@@ -124,12 +124,11 @@ unit "maas_deploy" {
       s3-uri-style = "path"
     }
     // The file path of the S3 CA chain, used for HTTPS validation.
-    // Configure via the S3_CA_CHAIN_FILE_PATH environment variable; defaults to empty (disabled).
     s3_ca_chain_file_path = get_env("S3_CA_CHAIN_FILE_PATH", "")
     // Access key used to access the S3 backup bucket
-    s3_access_key = get_env("S3_ACCESS_KEY")
+    s3_access_key = get_env("S3_ACCESS_KEY", "")
     // Secret key used to access the S3 backup bucket
-    s3_secret_key = get_env("S3_SECRET_KEY")
+    s3_secret_key = get_env("S3_SECRET_KEY", "")
     // Bucket name to store PostgreSQL backups in
     s3_bucket_postgresql = "postgresql-backup"
     // Path in the S3 bucket to store PostgreSQL backups in
