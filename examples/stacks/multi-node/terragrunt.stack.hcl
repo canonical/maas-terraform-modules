@@ -87,7 +87,7 @@ unit "maas_deploy" {
     // Operator configuration for PostgreSQL deployment
     charm_postgresql_config = {
       // Maximum number of concurrent connections to allow to the database server
-      experimental_max_connections = 300
+      experimental_max_connections = 400
       // Enable btree_gin PostgreSQL plugin since it is required by Temporal, a MAAS >=3.5 key component
       plugin_btree_gin_enable = true
     }
@@ -114,7 +114,7 @@ unit "maas_deploy" {
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL
-    enable_backup = true
+    enable_backup = false
     // Operator channel for S3 Integrator deployment
     charm_s3_integrator_channel = "1/stable"
     // Operator channel revision for S3 Integrator deployment
@@ -161,7 +161,7 @@ unit "maas_config" {
     // Dependencies
     maas_deploy_path = "../maas-deploy"
 
-    // Optional variables 
+    // Optional variables
     // The URL of the boot source to synchronize OS images from. This needs to be a simple streams server
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
     // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
