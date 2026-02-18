@@ -67,6 +67,11 @@ unit "maas_deploy" {
     maas_constraints = "cores=4 mem=4G virt-type=virtual-machine root-disk=20G root-disk-source=default"
     // Constraints for the PostgreSQL virtual machines
     postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+    // List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
+    // are distributed across these zones in round-robin fashion (for example, with 3 zones and
+    // 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
+    // zone1, zone2, zone1).
+    // zone_list            = ...
     // Set this to true to run PostgreSQL in high availability (HA), which will create three PostgreSQL units
     enable_postgres_ha = true
     // Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
