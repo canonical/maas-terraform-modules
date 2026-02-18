@@ -1,6 +1,6 @@
 # Single-node stack example
 
-This is the simplest example of a stack that runs the `juju-bootstap`, `maas-deploy` and `maas-config` modules. It is an appropriate hello world example, and is a good starting point for users new to stacks.
+This is the simplest example of a stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. It is an appropriate hello world example, and is a good starting point for users new to stacks.
 
 The stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) and postgresql charm, and configures MAAS with example resources.
 
