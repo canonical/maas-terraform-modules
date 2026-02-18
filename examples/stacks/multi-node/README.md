@@ -1,6 +1,6 @@
 # Multi-node stack example
 
-This example will spin up a multi-node stack that runs the `juju-bootstap`, `maas-deploy` and `maas-config` modules. If running this locally, it will require at least 32GB of RAM to run succesfully with the pre-populated constraints in `terragrunt.stack.hcl`. It is a good example of how to use these stacks for more complex deployments. 
+This example will spin up a multi-node stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. If running this locally, it will require at least 32GB of RAM to run successfully with the pre-populated constraints in `terragrunt.stack.hcl`. It is a good example of how to use these stacks for more complex deployments. 
 
 The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region only mode), 3 units of the postgresql charm, and 2 units of the s3-integrator charm for backups. MAAS is then configured with example resources.
 
