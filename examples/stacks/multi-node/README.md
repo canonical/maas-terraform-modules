@@ -22,4 +22,4 @@ For more context on running this stack, see the [README.md](../README.md) in the
     terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
     terragrunt stack run apply      #  Applies the generated stack. 
     ```
-1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the credentials you can find in the `maas-deploy` unit in the `terragrunt.stack.hcl` file, and checkout your newly configured MAAS deployment!
+1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the credentials you can find in the `maas-deploy` unit in the `terragrunt.stack.hcl` file, and check out your newly configured MAAS deployment!
