@@ -21,7 +21,7 @@ resource "juju_controller" "controller" {
     auth_type = "interactive"
     name      = "${var.cloud_name}-token"
     attributes = {
-      trust_token = var.lxd_trust_token
+      trust-token = var.lxd_trust_token
     }
   }
 
