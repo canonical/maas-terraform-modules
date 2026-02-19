@@ -4,6 +4,16 @@ variable "ubuntu_version" {
   default     = "24.04"
 }
 
+variable "juju_credentials" {
+  description = "The credentials to use when authenticating to the Juju controller."
+  type = object({
+    controller_addresses = list(string)
+    client_id            = string
+    client_secret        = string
+    ca_certificate       = string
+  })
+}
+
 variable "juju_cloud_name" {
   description = "The Juju cloud name to deploy the charmed MAAS model on"
   type        = string

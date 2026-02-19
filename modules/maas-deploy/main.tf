@@ -1,3 +1,10 @@
+provider "juju" {
+  controller_addresses = join(",", var.juju_credentials.controller_addresses)
+  client_id            = var.juju_credentials.client_id
+  client_secret        = var.juju_credentials.client_secret
+  ca_certificate       = var.juju_credentials.ca_certificate
+}
+
 resource "juju_model" "maas_model" {
   name = "maas"
 

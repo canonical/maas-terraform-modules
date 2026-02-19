@@ -19,9 +19,13 @@ dependency "juju_bootstrap" {
 
   mock_outputs = {
     juju_cloud = "mock-cloud-name"
-    controller = "controller-name"
+    juju_credentials = {
+      controller_addresses = ["https://mock-controller:17070"]
+      client_id            = "mock-client-id"
+      client_secret        = "mock-client-secret"
+      ca_certificate       = "mock-ca-cert"
+    }
   }
-
 }
 
 locals {
@@ -71,13 +75,16 @@ locals {
   }
 }
 
-inputs = merge({
-  # Optional inputs (only passed if defined in the stacks config)
-  for k, v in local.optional_inputs :
-  k => v
-  if v != null
+inputs = merge(
+  {
+    # Optional inputs (only passed if defined in the stacks config)
+    for k, v in local.optional_inputs :
+    k => v
+    if v != null
   },
   {
     // --- Dependencies ---
-    juju_cloud_name = dependency.juju_bootstrap.outputs.juju_cloud
-})
+    juju_cloud_name  = dependency.juju_bootstrap.outputs.juju_cloud
+    juju_credentials = dependency.juju_bootstrap.outputs.juju_credentials
+  },
+)
