@@ -1,7 +1,12 @@
+provider "juju" {
+  controller_mode = true
+}
+
 resource "juju_controller" "controller" {
   juju_binary = "/snap/bin/juju"
+  name        = "maas-controller"
 
-  cloud {
+  cloud = {
     auth_types = ["certificate"]
     name       = var.cloud_name
     type       = "lxd"
@@ -12,7 +17,7 @@ resource "juju_controller" "controller" {
     }
   }
 
-  cloud_credential {
+  cloud_credential = {
     auth_type = "interactive"
     name      = "${var.cloud_name}-token"
     attributes = {

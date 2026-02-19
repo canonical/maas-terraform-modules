@@ -9,4 +9,5 @@ output "juju_credentials" {
     client_secret        = juju_controller.controller.password
     ca_certificate       = juju_controller.controller.ca_cert
   }
+  sensitive = true
 }
