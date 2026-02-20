@@ -5,7 +5,7 @@ locals {
     var.ssl_key_path,
     "null"
   ) != "null"
-  enable_haproxy = var.virtual_ip != null
+  enable_haproxy     = var.virtual_ip != null
   maas_url           = var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
   ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
   ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
@@ -65,9 +65,7 @@ resource "juju_application" "haproxy" {
     base     = "ubuntu@${var.ubuntu_version}"
   }
 
-  config = merge(var.charm_haproxy_config, {
-    vip = var.virtual_ip
-  }, )
+  config = var.charm_haproxy_config
 }
 
 resource "juju_application" "keepalived" {

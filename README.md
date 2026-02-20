@@ -173,9 +173,9 @@ Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-
 
 Charmed deployment that connects to MAAS Regions to provide the MAAS Database, [learn more here](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/)
 
-#### HAProxy and KeepAlived
+#### HAProxy and Keepalived
 
-Charmed deployment of the HAProxy Deb, [learn more here](https://github.com/haproxy/haproxy), with subordinate KeepAlived, [learn more here](http://www.keepalived.org/)
+Charmed deployment of the HAProxy Deb, [learn more here](https://github.com/haproxy/haproxy), with subordinate Keepalived, [learn more here](http://www.keepalived.org/)
 
 #### Juju Controller
 

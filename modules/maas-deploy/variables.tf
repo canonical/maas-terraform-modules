@@ -128,12 +128,6 @@ variable "charm_maas_region_config" {
 ## HAProxy configuration
 ###
 
-variable "haproxy_name" {
-  description = "Application name of the deployed haproxy charm."
-  type        = string
-  default     = "haproxy"
-}
-
 variable "charm_haproxy_channel" {
   description = "Operator channel for Certificates deployment"
   type        = string
@@ -155,12 +149,6 @@ variable "charm_haproxy_config" {
 ###
 ## Keepalived configuration
 ###
-
-variable "keepalived_name" {
-  description = "Application name of the deployed keepalived charm."
-  type        = string
-  default     = "keepalived"
-}
 
 variable "charm_keepalived_channel" {
   description = "Operator channel for Certificates deployment"

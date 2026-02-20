@@ -36,10 +36,9 @@ charm_maas_region_config {
 
 
 > [!NOTE]
-> To deploy with HA, you will need to provide the following:
+> To deploy with HA, you will need to provide the virtual ip keepalived will use:
 >
 > ```bash
-> enable_haproxy = true
 > virtual_ip = ...
 > ```
 >
@@ -115,6 +114,5 @@ Previous steps:
 
 Next steps:
 
-- Configure [full HA](./how_to_deploy_ha.md) for propper load balancing and failover.
 - Configure your running [MAAS](./how_to_configure_maas.md) to finalise your cluster.
 - Setup [Backup](./how_to_backup.md) for MAAS and PostgreSQL.
