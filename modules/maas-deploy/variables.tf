@@ -125,6 +125,50 @@ variable "charm_maas_region_config" {
 }
 
 ###
+## HAProxy configuration
+###
+
+variable "charm_haproxy_channel" {
+  description = "Operator channel for Certificates deployment"
+  type        = string
+  default     = "2.8/edge"
+}
+
+variable "charm_haproxy_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_haproxy_config" {
+  description = "Operator configuration for Certificates deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
+## Keepalived configuration
+###
+
+variable "charm_keepalived_channel" {
+  description = "Operator channel for Certificates deployment"
+  type        = string
+  default     = "latest/edge"
+}
+
+variable "charm_keepalived_revision" {
+  description = "Operator channel revision for Certificates deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_keepalived_config" {
+  description = "Operator configuration for Certificates deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
 ## MAAS Admin configuration
 ###
 
@@ -230,4 +274,32 @@ variable "s3_path_maas" {
   description = "Path in the S3 bucket to store MAAS backups in"
   type        = string
   default     = "/maas"
+}
+
+###
+## HAProxy configuration
+###
+
+variable "virtual_ip" {
+  description = "The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied"
+  type        = string
+  default     = null
+}
+
+variable "ssl_cert_path" {
+  description = "SSL Certificate Path, Used for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_key_path" {
+  description = "SSL Key Path, Used for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_cacert_path" {
+  description = "SSL CACert Path, Optionally used for MAAS TLS mode operations"
+  type        = string
+  default     = null
 }

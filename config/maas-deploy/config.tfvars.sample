@@ -12,6 +12,14 @@ juju_cloud_region = "default"
 enable_postgres_ha = false
 # Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
 enable_maas_ha = false
+# The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied
+virtual_ip = null
+# SSL Certificate content, Used for MAAS TLS mode operations
+ssl_cert_path = null
+# SSL Key content, Used for MAAS TLS mode operations
+ssl_key_path = null
+# SSL CACert content, Optionally used for MAAS TLS mode operations
+ssl_cacert_path = null
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"
 # Map of additional model configuration parameters
@@ -66,6 +74,30 @@ charm_maas_region_revision = null
 charm_maas_region_config = {
   # Deploy region in Region+Rack mode
   enable_rack_mode = false
+}
+
+###
+## HAProxy
+###
+
+# Operator channel for HAProxy deployment
+charm_haproxy_channel = "2.8/edge"
+# Operator channel revision for HAProxy deployment
+charm_haproxy_revision = null
+# Operator configuration for HAProxy deployment
+charm_haproxy_config = {
+}
+
+###
+## Keepalived
+###
+
+# Operator channel for Keepalived deployment
+charm_keepalived_channel = "latest/edge"
+# Operator channel revision for Keepalived deployment
+charm_keepalived_revision = null
+# Operator configuration for Keepalived deployment
+charm_keepalived_config = {
 }
 
 ###
