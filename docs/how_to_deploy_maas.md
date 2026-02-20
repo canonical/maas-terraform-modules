@@ -35,20 +35,17 @@ charm_maas_region_config {
 ```
 
 
-> [!NOTE]
-> To deploy with HA, you will need to provide the virtual ip keepalived will use:
->
-> ```bash
-> virtual_ip = ...
-> ```
->
-> If you would additionally like TLS HA, you will need to supply the certificate (in PEM format) path:
->
-> ```bash
-> ssl_cert_content = ...
-> ssl_key_content = ...
-> ssl_cacert_content = ...
-> ```
+To additionally deploy with HA, you will need to provide the virtual ip keepalived will use:
+```bash
+virtual_ip = ...
+```
+
+If you would additionally like TLS HA, you will need to supply the certificate and key (in PEM format) path, optionally with the cacert for a self signed certificate:
+```bash
+ssl_cert_content = ...
+ssl_key_content = ...
+ssl_cacert_content = ...
+```
 
 Initialize the Terraform working directory:
 
