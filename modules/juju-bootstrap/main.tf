@@ -3,7 +3,7 @@ provider "juju" {
 }
 
 resource "juju_controller" "controller" {
-  juju_binary = "/snap/bin/juju"
+  juju_binary = "/snap/juju/current/bin/juju"
   name        = "maas-controller"
 
   cloud = {
