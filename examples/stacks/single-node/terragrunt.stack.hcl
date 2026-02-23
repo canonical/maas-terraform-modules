@@ -93,9 +93,9 @@ unit "maas_deploy" {
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
-    # charm_maas_region_config   = {      // Uncomment for region + rack configuration
-    #   enable_rack_mode = true
-    # }
+    charm_maas_region_config   = {
+      enable_rack_mode = true
+    }
 
     // -- MAAS Admin configuration
     // The MAAS admin username
