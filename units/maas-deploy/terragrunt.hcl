@@ -11,7 +11,7 @@ terraform {
   //
   // Assume that a user consuming this unit will exclusively have access
   // to the directory this file is in, and nothing else in this repository.
-  source = "git::git@github.com:canonical/maas-terraform-modules.git//modules/maas-deploy?ref=${values.version}"
+  source = "git::https://github.com/canonical/maas-terraform-modules.git//modules/maas-deploy?ref=${values.version}"
 }
 
 dependency "juju_bootstrap" {
