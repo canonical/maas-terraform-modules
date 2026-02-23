@@ -40,13 +40,15 @@ if [ "$SMOKE_TEST" != "true" ]; then
   git clone https://github.com/canonical/terraform-provider-maas.git || true
 fi
 
-# Generate MAAS admin password
-MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
-
-# Export environment variables for stacks
+# Export common environment variables for both stacks
 export LXD_TRUST_TOKEN
 export LXD_ADDRESS="https://10.0.2.1:8443"
-export MAAS_ADMIN_PASSWORD
+export MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
+
+# Export environment variables for multi-node stack only
+export PATH_TO_SSH_KEY="/tmp/dummy_id_ed25519"
+ssh-keygen -t ed25519 -N "" -f "$PATH_TO_SSH_KEY"
+export ADMIN_SSH_IMPORT=gh:tobiasdemendonca        # "gh:<gh-username>" or "lp:<launchpad-id>"
 
 # Loop through both example stacks
 STACK_DIRS=(
@@ -64,9 +66,9 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   terragrunt stack run apply --non-interactive
   
   # Retrieve outputs from the deployed stack
-  MAAS_API_URL=$(terragrunt output -raw maas_api_url)
-  MAAS_API_KEY=$(terragrunt output -raw maas_api_key)
-  RACK_CONTROLLER=$(terragrunt output -json maas_machines | jq -r '.[0]')
+  MAAS_API_URL=$(terragrunt stack output -raw maas_deploy.maas_api_url)
+  MAAS_API_KEY=$(terragrunt stack output -raw maas_deploy.maas_api_key)
+  RACK_CONTROLLER=$(terragrunt stack output -json maas_deploy | jq -r '.maas_deploy.maas_machines[0]')
   
   # Return to terraform directory
   cd ../../..
