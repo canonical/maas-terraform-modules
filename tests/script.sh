@@ -9,6 +9,8 @@ set -ex
 sudo snap install lxd --channel=5.21/stable
 sudo snap install juju --channel=3.6/stable
 sudo snap install terraform --classic
+curl -sL https://terragrunt.gruntwork.io/install | bash
+export PATH=$PATH:$HOME/.terragrunt/bin
 
 lxd init --auto --network-address 0.0.0.0
 
@@ -48,8 +50,8 @@ export MAAS_ADMIN_PASSWORD
 
 # Loop through both example stacks
 STACK_DIRS=(
-  "stacks/single-node"
-  "stacks/multi-node"
+  "examples/stacks/single-node"
+  "examples/stacks/multi-node"
 )
 
 for STACK_DIR in "${STACK_DIRS[@]}"; do
@@ -67,7 +69,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   RACK_CONTROLLER=$(terragrunt output -json maas_machines | jq -r '.[0]')
   
   # Return to terraform directory
-  cd ../..
+  cd ../../..
   
   echo "MAAS deployment completed successfully for ${STACK_DIR}!"
   
