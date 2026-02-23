@@ -16,6 +16,8 @@ jobs:
         run: |
           # Copy all modules from root level to tests/terraform/modules
           cp -r ../modules/* terraform/modules/
+          # Copy all stacks from root level to tests/terraform/stacks
+          cp -r ../stacks/* terraform/stacks/
           # Create tarball with terraform directory only
           tar -czf tests.tar.gz terraform/
           # Write smoke test flag
