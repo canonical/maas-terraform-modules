@@ -71,7 +71,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   # Return to terraform directory
   cd ../../..
   
-  echo "MAAS deployment completed successfully for ${STACK_DIR}!"
+  echo "MAAS deployment completed successfully for ${STACK_DIR}"
   
   # Apply extra MAAS configuration
   cd modules/maas-extra-config

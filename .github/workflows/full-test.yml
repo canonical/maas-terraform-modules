@@ -16,12 +16,12 @@ jobs:
         run: |
           # Copy all modules from root level to tests/terraform/modules
           cp -r ../modules/* terraform/modules/
-          # Copy all stacks from root level to tests/terraform/stacks
-          mkdir terraform/examples/
-          mkdir terraform/examples/stacks
+          # Copy all stacks from root level to tests/terraform/examples/stacks
+          mkdir -p terraform/examples/
+          mkdir -p terraform/examples/stacks
           cp -r ../examples/stacks/* terraform/examples/stacks/
           # Copy all units from root level to tests/terraform/units
-          mkdir terraform/units
+          mkdir -p terraform/units
           cp -r ../units/* terraform/units/
           # Create tarball with terraform directory only
           tar -czf tests.tar.gz terraform/
