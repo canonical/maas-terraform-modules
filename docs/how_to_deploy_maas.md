@@ -35,8 +35,9 @@ charm_maas_region_config {
 ```
 
 
-To additionally deploy with HA, you will need to provide the virtual ip keepalived will use:
+To additionally deploy with HA, you will need to set `enable_ha` to true, and optionall set a virtual ip keepalived will use:
 ```bash
+enable_ha = true
 virtual_ip = ...
 ```
 

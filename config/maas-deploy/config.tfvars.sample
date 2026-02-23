@@ -12,6 +12,8 @@ juju_cloud_region = "default"
 enable_postgres_ha = false
 # Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
 enable_maas_ha = false
+# Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived
+enable_ha_proxy = false
 # The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied
 virtual_ip = null
 # SSL Certificate content, Used for MAAS TLS mode operations

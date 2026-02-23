@@ -5,7 +5,6 @@ locals {
     var.ssl_key_path,
     "null"
   ) != "null"
-  enable_haproxy     = var.virtual_ip != null
   maas_url           = var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
   ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
   ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
@@ -71,7 +70,7 @@ resource "juju_application" "haproxy" {
 resource "juju_application" "keepalived" {
   name       = "keepalived"
   model_uuid = juju_model.maas_model.uuid
-  units      = local.enable_haproxy ? 1 : 0
+  units      = var.enable_ha_proxy ? 1 : 0
 
   charm {
     name     = "keepalived"
@@ -87,7 +86,7 @@ resource "juju_application" "keepalived" {
 
 resource "juju_integration" "haproxy_keepalived" {
   model_uuid = juju_model.maas_model.uuid
-  count      = local.enable_haproxy ? 1 : 0
+  count      = var.enable_ha_proxy ? 1 : 0
 
   application {
     name     = juju_application.haproxy.name
@@ -190,7 +189,7 @@ resource "terraform_data" "juju_wait_for_all" {
 
 resource "juju_integration" "maas_haproxy_http" {
   model_uuid = terraform_data.juju_wait_for_all.output.model
-  count      = local.enable_haproxy ? 1 : 0
+  count      = var.enable_ha_proxy ? 1 : 0
 
   application {
     name     = "maas-region"
@@ -205,7 +204,7 @@ resource "juju_integration" "maas_haproxy_http" {
 
 resource "juju_integration" "maas_haproxy_https" {
   model_uuid = terraform_data.juju_wait_for_all.output.model
-  count      = local.enable_haproxy && local.maas_tls ? 1 : 0
+  count      = var.enable_ha_proxy && local.maas_tls ? 1 : 0
 
   application {
     name     = "maas-region"

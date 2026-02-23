@@ -63,6 +63,12 @@ variable "enable_maas_ha" {
   default     = false
 }
 
+variable "enable_ha_proxy" {
+  description = "Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived"
+  type        = bool
+  default     = false
+}
+
 variable "lxd_project" {
   description = "The LXD project in which to create the VMs for Juju"
   type        = string
