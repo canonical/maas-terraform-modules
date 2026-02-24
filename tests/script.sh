@@ -19,13 +19,14 @@ tar -xzf tests.tar.gz
 
 # Configuration
 cd terraform
+ROOT_DIR=$(pwd)
 
 # Initialize LXD and get trust token
 cd modules/lxd-init
 terraform init && terraform apply -auto-approve
 LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
 LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
-cd ../..
+cd $ROOT_DIR
 
 # Check if SMOKE_TEST is true
 SMOKE_TEST=$(cat ../run_smoke_test.txt)
@@ -60,9 +61,12 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   echo "Deploying MAAS stack: ${STACK_DIR}"
   echo "=========================================="
   
-  # Deploy the stack
+  # Deploy the stack. Use --source-map to point to local modules, instead of the remote
+  # git repository defined in the units
   cd "$STACK_DIR"
-  terragrunt stack run apply --non-interactive
+  terragrunt stack run apply \
+  --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+  --non-interactive
   
   # Retrieve outputs from the deployed stack
   MAAS_API_URL=$(terragrunt stack output -raw maas_deploy.maas_api_url)
@@ -70,7 +74,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   RACK_CONTROLLER=$(terragrunt stack output -json maas_deploy | jq -r '.maas_deploy.maas_machines[0]')
   
   # Return to terraform directory
-  cd ../../..
+  cd $ROOT_DIR
   
   echo "MAAS deployment completed successfully for ${STACK_DIR}"
   
@@ -78,7 +82,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   cd modules/maas-extra-config
   terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve
   TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
-  cd ../..
+  cd $ROOT_DIR
   
   # If SMOKE_TEST is true, skip acceptance tests
   if [ "$SMOKE_TEST" == "true" ]; then
@@ -109,9 +113,16 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
   make testacc TESTARGS='-run MAASConfiguration'
   make testacc TESTARGS='-run MAASBootSource_'
-  cd ..
+  cd $ROOT_DIR
   
   echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
+
+  # Destroy the stack
+  echo "Destroying MAAS stack: ${STACK_DIR}"
+  cd $STACK_DIR
+  terragrunt stack run destroy \
+  --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+  --non-interactive
 done
 
 echo "All stack deployments and tests completed successfully!"
