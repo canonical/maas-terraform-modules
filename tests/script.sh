@@ -35,8 +35,7 @@ if [ "$SMOKE_TEST" != "true" ]; then
   echo "Installing test prerequisites..."
   sudo apt install -y make golang-1.23
   sudo ln -sf ../lib/go-1.23/bin/go /usr/bin/go
-  
-  # Git clone the terraform-provider-maas repository once
+
   git clone https://github.com/canonical/terraform-provider-maas.git || true
 fi
 
@@ -48,7 +47,7 @@ export MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
 # Export environment variables for multi-node stack only
 export PATH_TO_SSH_KEY="/tmp/dummy_id_ed25519"
 ssh-keygen -t ed25519 -N "" -f "$PATH_TO_SSH_KEY"
-export ADMIN_SSH_IMPORT=gh:tobiasdemendonca        # "gh:<gh-username>" or "lp:<launchpad-id>"
+export ADMIN_SSH_IMPORT=gh:tobiasdemendonca
 
 # Loop through both example stacks
 STACK_DIRS=(
