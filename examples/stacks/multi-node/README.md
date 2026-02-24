@@ -1,8 +1,8 @@
 # Multi-node stack example
 
-This example will spin up a multi-node stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. If running this locally, it will require at least 26GB of RAM to run successfully with the pre-populated constraints in `terragrunt.stack.hcl`. It is a good example of how to use these stacks for more complex deployments. 
+This example will spin up a multi-node stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. If running this locally, it will require at least 26GB of RAM to run successfully with the pre-populated constraints in `terragrunt.stack.hcl`. It is a good example of how to use these stacks for more complex deployments.
 
-The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region+rack mode), and 3 units of the postgresql charm. MAAS is then configured with example resources.
+The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region+only mode), 3 units of the postgresql charm, 2 units of the s3-integrator charm for backups, and 3 units of the HAProxy charm (with Keepalived subordinate). MAAS is then configured with example resources.
 
 For more context on running this stack, see the [README.md](../README.md) in the parent directory.
 
@@ -13,13 +13,13 @@ For more context on running this stack, see the [README.md](../README.md) in the
     ```bash
     source .env
     ```
-1. Review the configuration in `terragrunt.stack.hcl` and make any necessary adjustments to the variables that are pre-populated. 
+1. Review the configuration in `terragrunt.stack.hcl` and make any necessary adjustments to the variables that are pre-populated.
    > [!Note]
    > If you do not have an existing S3 compatible storage, set `enable_backup=false` to skip deploying and configuring the relevant infrastructure.
 1. In this directory, generate and apply the stack:
     ```bash
     cd examples/stacks/multi-node
     terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
-    terragrunt stack run apply      #  Applies the generated stack. 
+    terragrunt stack run apply      #  Applies the generated stack.
     ```
 1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the credentials you can find in the `maas-deploy` unit in the `terragrunt.stack.hcl` file, and check out your newly configured MAAS deployment!
