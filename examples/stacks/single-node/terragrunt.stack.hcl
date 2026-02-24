@@ -76,6 +76,8 @@ unit "maas_deploy" {
     // enable_postgres_ha   = ...
     // Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
     // enable_maas_ha       = ...
+    // Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived
+    // enable_ha_proxy = ...
     // The Ubuntu operating system version to install on the virtual machines (VMs)
     // ubuntu_version       = ...
 
@@ -86,6 +88,22 @@ unit "maas_deploy" {
     // charm_postgresql_revision  = ...
     // Operator configuration for PostgreSQL deployment
     // charm_postgresql_config    = ...
+
+    // --- Workload: HAProxy ---
+    // Operator channel for HAProxy deployment
+    // charm_haproxy_channel = "2.8/edge"
+    // Operator channel revision for HAProxy deployment
+    // charm_haproxy_revision  = ...
+    // Operator configuration for HAProxy deployment
+    // charm_haproxy_config = {}
+
+    // --- Workload: Keepalived ---
+    // Operator channel for Keepalived deployment
+    // charm_keepalived_channel = "latest/edge"
+    // Operator channel revision for Keepalived deployment
+    // charm_keepalived_revision  = ...
+    // Operator configuration for Keepalived deployment
+    // charm_keepalived_config = {}
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
@@ -106,6 +124,16 @@ unit "maas_deploy" {
     admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
     // admin_ssh_import = ...
+
+    // --- MAAS HAProxy configuration ---
+    // The Virtual IP to use for HA MAAS. Will configure the cluster with HAProxy virtual ip if supplied
+    // virtual_ip = ...
+    // SSL Certificate content, Used for MAAS TLS mode operations
+    // ssl_cert_path = ...
+    // SSL Key content, Used for MAAS TLS mode operations
+    // ssl_key_path = ...
+    // SSL CACert content, Optionally used for MAAS TLS mode operations
+    // ssl_cacert_path = ...
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL
