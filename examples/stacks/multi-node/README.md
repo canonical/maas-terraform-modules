@@ -10,7 +10,7 @@ This stack deploys a highly available MAAS cluster with:
 - 1 Juju controller
 - 3 MAAS region units (region+rack mode)
 - 3 PostgreSQL units
-<!-- - 3 HAProxy units with subordinate Keepalived for load balancing -->
+- 3 HAProxy units with subordinate Keepalived for load balancing
 - (Optional) S3 integrator charms for backup functionality
 - Initial MAAS configuration with example resources
 
