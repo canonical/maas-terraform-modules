@@ -128,12 +128,6 @@ flowchart TB
   R0 ~~~ A0
   R1 ~~~ A1
   R2 ~~~ A2
-  R0 ~~~ HA0
-  R1 ~~~ HA1
-  R2 ~~~ HA2
-  KA0 ~~~ HA0
-  KA1 ~~~ HA1
-  KA2 ~~~ HA2
 
   %% Terraform module relationships
   TF1 -.->|creates| CTRL

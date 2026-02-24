@@ -12,16 +12,17 @@ juju_cloud_region = "default"
 enable_postgres_ha = false
 # Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
 enable_maas_ha = false
-# Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived
-enable_ha_proxy = false# The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
+# Set this to true to run MAAS with HAProxy, which will deploy HAProxy
+enable_ha_proxy = false
+# The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
 maas_url = null
-# The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied
+# The optional Virtual IP to use for HA MAAS. If given, will configure the keepalived subordinate charm.
 virtual_ip = null
-# SSL Certificate content, Used for MAAS TLS mode operations
+# SSL Certificate content, used for MAAS TLS mode operations
 ssl_cert_path = null
-# SSL Key content, Used for MAAS TLS mode operations
+# SSL Key content, used for MAAS TLS mode operations
 ssl_key_path = null
-# SSL CACert content, Optionally used for MAAS TLS mode operations
+# SSL CACert content, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
 ssl_cacert_path = null
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"

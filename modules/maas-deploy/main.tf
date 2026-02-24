@@ -1,10 +1,10 @@
 locals {
-  maas_tls = coalesce(
-    var.ssl_cacert_path,
-    var.ssl_cert_path,
-    var.ssl_key_path,
-    "null"
-  ) != "null"
+  maas_tls = anytrue([
+    var.ssl_cacert_path != null,
+    var.ssl_cert_path != null,
+    var.ssl_key_path != null,
+  ])
+  enable_keepalived  = var.enable_ha_proxy && (var.virtual_ip != null)
   maas_url           = var.maas_url != null ? var.maas_url : (var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null)
   ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
   ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
@@ -69,8 +69,9 @@ resource "juju_application" "haproxy" {
 
 resource "juju_application" "keepalived" {
   name       = "keepalived"
+  count      = local.enable_keepalived ? 1 : 0
   model_uuid = juju_model.maas_model.uuid
-  units      = var.enable_ha_proxy ? 1 : 0
+  units      = 1
 
   charm {
     name     = "keepalived"
@@ -86,7 +87,7 @@ resource "juju_application" "keepalived" {
 
 resource "juju_integration" "haproxy_keepalived" {
   model_uuid = juju_model.maas_model.uuid
-  count      = var.enable_ha_proxy ? 1 : 0
+  count      = local.enable_keepalived ? 1 : 0
 
   application {
     name     = juju_application.haproxy.name
@@ -94,33 +95,14 @@ resource "juju_integration" "haproxy_keepalived" {
   }
 
   application {
-    name     = juju_application.keepalived.name
+    name     = juju_application.keepalived[0].name
     endpoint = "juju-info"
-  }
-}
-
-resource "terraform_data" "juju_wait_for_haproxy" {
-  input = {
-    model = (
-      juju_integration.haproxy_keepalived[0].model_uuid
-    )
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
-      juju wait-for model "$MODEL_NAME" --timeout 3600s \
-        --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
-    EOT
-    environment = {
-      MODEL = self.input.model
-    }
   }
 }
 
 resource "juju_application" "postgresql" {
   name       = "postgresql"
-  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+  model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.postgres_machines : m.machine_id]
 
   charm {
@@ -135,7 +117,7 @@ resource "juju_application" "postgresql" {
 
 resource "juju_application" "maas_region" {
   name       = "maas-region"
-  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+  model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.maas_machines : m.machine_id]
 
   charm {
@@ -153,7 +135,7 @@ resource "juju_application" "maas_region" {
   })
 }
 resource "juju_integration" "maas_region_postgresql" {
-  model_uuid = terraform_data.juju_wait_for_haproxy.output.model
+  model_uuid = juju_model.maas_model.uuid
 
   application {
     name     = juju_application.maas_region.name

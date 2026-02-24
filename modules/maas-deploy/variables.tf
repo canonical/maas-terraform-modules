@@ -135,19 +135,19 @@ variable "charm_maas_region_config" {
 ###
 
 variable "charm_haproxy_channel" {
-  description = "Operator channel for Certificates deployment"
+  description = "Operator channel for HAProxy deployment"
   type        = string
   default     = "2.8/edge"
 }
 
 variable "charm_haproxy_revision" {
-  description = "Operator channel revision for Certificates deployment"
+  description = "Operator channel revision for HAProxy deployment"
   type        = number
   default     = null
 }
 
 variable "charm_haproxy_config" {
-  description = "Operator configuration for Certificates deployment"
+  description = "Operator configuration for HAProxy deployment"
   type        = map(string)
   default     = {}
 }
@@ -157,19 +157,19 @@ variable "charm_haproxy_config" {
 ###
 
 variable "charm_keepalived_channel" {
-  description = "Operator channel for Certificates deployment"
+  description = "Operator channel for Keepalived deployment"
   type        = string
   default     = "latest/edge"
 }
 
 variable "charm_keepalived_revision" {
-  description = "Operator channel revision for Certificates deployment"
+  description = "Operator channel revision for Keepalived deployment"
   type        = number
   default     = null
 }
 
 variable "charm_keepalived_config" {
-  description = "Operator configuration for Certificates deployment"
+  description = "Operator configuration for Keepalived deployment"
   type        = map(string)
   default     = {}
 }
@@ -292,25 +292,25 @@ variable "maas_url" {
     default = null
 }
 variable "virtual_ip" {
-  description = "The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied"
+  description = "The optional Virtual IP to use for HA MAAS. If given, will configure the keepalived subordinate charm."
   type        = string
   default     = null
 }
 
 variable "ssl_cert_path" {
-  description = "SSL Certificate Path, Used for MAAS TLS mode operations"
+  description = "SSL Certificate Path, required for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
 variable "ssl_key_path" {
-  description = "SSL Key Path, Used for MAAS TLS mode operations"
+  description = "SSL Key Path, required for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
 variable "ssl_cacert_path" {
-  description = "SSL CACert Path, Optionally used for MAAS TLS mode operations"
+  description = "SSL CACert content, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed"
   type        = string
   default     = null
 }
