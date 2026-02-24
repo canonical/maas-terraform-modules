@@ -286,6 +286,11 @@ variable "s3_path_maas" {
 ## HAProxy configuration
 ###
 
+variable "maas_url" {
+    description = "The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs"
+    type = string
+    default = null
+}
 variable "virtual_ip" {
   description = "The Virtual IP to use for HA MAAS. Will configure the cluster with HAproxy if supplied"
   type        = string
