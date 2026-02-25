@@ -64,7 +64,7 @@ variable "enable_maas_ha" {
 }
 
 variable "enable_ha_proxy" {
-  description = "Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived"
+  description = "Set this to true to run MAAS with HAProxy, which will deploy HAProxy"
   type        = bool
   default     = false
 }
