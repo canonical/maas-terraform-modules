@@ -25,6 +25,7 @@ resource "juju_application" "haproxy" {
   name       = "haproxy"
   model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
+  count      = var.enable_ha_proxy ? 1 : 0
 
   charm {
     name     = "haproxy"
@@ -58,7 +59,7 @@ resource "juju_integration" "haproxy_keepalived" {
   count      = local.enable_keepalived ? 1 : 0
 
   application {
-    name     = juju_application.haproxy.name
+    name     = juju_application.haproxy[0].name
     endpoint = "juju-info"
   }
 
@@ -78,7 +79,7 @@ resource "juju_integration" "maas_haproxy_http" {
   }
 
   application {
-    name     = juju_application.haproxy.name
+    name     = juju_application.haproxy[0].name
     endpoint = "haproxy-route-tcp"
   }
 }
@@ -93,7 +94,7 @@ resource "juju_integration" "maas_haproxy_https" {
   }
 
   application {
-    name     = juju_application.haproxy.name
+    name     = juju_application.haproxy[0].name
     endpoint = "haproxy-route-tcp"
   }
 }
