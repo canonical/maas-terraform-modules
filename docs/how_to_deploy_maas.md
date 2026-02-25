@@ -35,13 +35,13 @@ charm_maas_region_config {
 ```
 
 
-To additionally deploy with HA, you will need to set `enable_ha` to true, and optionally set the MAAS URL, and a virtual IP Keepalived will use:
+To additionally deploy with HAProxy for API HA, you will need to set `enable_haproxy` to true, and optionally set the MAAS URL, and a virtual IP Keepalived will use:
 ```bash
-enable_ha = true
+enable_haproxy = true
 maas_url = ...
 virtual_ip = ...
 ```
-If the MAAS url is not provided, the charm will derive the MAAS API URL from the virtual IP, or that being null, from a HAProxy/MAAS Unit IPs.
+If `maas_url` is not provided, the charm will derive the MAAS API URL from the virtual IP, or that being null, from a HAProxy/MAAS Unit IPs.
 
 Also note that MAAS can be configured to run in TLS Mode, integrating with the HAProxy TLS relation. You will need to supply the certificate and key path (in PEM format), and additionally the cacert path if the certificate is self signed:
 ```bash
