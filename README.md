@@ -34,7 +34,8 @@ The full MAAS cluster deployment consists of: one optional bootstrapping, one of
 ```mermaid
 flowchart TB
   %% Styling for different concepts (not much right now!)
-  classDef optionalGroup stroke-dasharray: 5 5
+  classDef unitOptional color:#888888,stroke-dasharray: 5 5
+  classDef multiNodeGroup stroke-dasharray: 5 5
 
   %% Terraform module colors
   classDef tfBootstrap fill:#4CAF50,stroke:#2E7D32
@@ -44,7 +45,6 @@ flowchart TB
   %% Group outlines matching module colors
   classDef bootstrapManaged stroke:#4CAF50,stroke-width:2px
   classDef deployManaged stroke:#2196F3,stroke-width:2px
-  classDef configManaged stroke:#F44336,stroke-width:2px
 
   %% LXD Cloud
   subgraph CLOUD["☁️ LXD-based cloud"]
@@ -63,25 +63,37 @@ flowchart TB
          subgraph MAAS_M0["VM-3"]
 
           R0["🟣 maas-region/0"]
-          HA0["🟢 haproxy/0"]
-          KA0["🟠 keepalived/0"]
         end
          subgraph MAAS_MULTINODE["Multi-node deployment"]
           subgraph MAAS_M1["VM-4"]
 
             R1["🟣 maas-region/1"]
-            HA1["🟢 haproxy/1"]
-            KA1["🟠 keepalived/1"]
           end
           subgraph MAAS_M2["VM-5"]
 
             R2["🟣 maas-region/2"]
-            HA2["🟢 haproxy/2"]
-            KA2["🟠 keepalived/2"]
           end
          end
         %% Force horizontal layout
         MAAS_M0 ~~~ MAAS_M1 ~~~ MAAS_M2
+      end
+
+      %% HAProxy dedicated containers
+      subgraph HAPROXY_CONTAINERS["HAProxy containers"]
+        subgraph HAPROXY_H0["Container-1"]
+          HA0["🟢 haproxy/0"]
+          KA0["🟠 keepalived/0"]
+        end
+        subgraph HAPROXY_H1["Container-2"]
+          HA1["🟢 haproxy/1"]
+          KA1["🟠 keepalived/1"]
+        end
+        subgraph HAPROXY_H2["Container-3"]
+          HA2["🟢 haproxy/2"]
+          KA2["🟠 keepalived/2"]
+        end
+        %% Force horizontal layout
+        HAPROXY_H0 ~~~ HAPROXY_H1 ~~~ HAPROXY_H2
       end
 
       %% PostgreSQL dedicated machines
@@ -102,15 +114,14 @@ flowchart TB
       end
 
       %% Force vertical group layout
-      MAAS_MACHINES ~~~ PG_MACHINES
+      MAAS_MACHINES ~~~ HAPROXY_CONTAINERS
+      HAPROXY_CONTAINERS ~~~ PG_MACHINES
       PG_MACHINES ~~~ BACKUP_M0
 
-      %% Backup container
-        subgraph BACKUP_ENABLED["Backup enabled"]
-          subgraph BACKUP_M0["Container"]
-          S3_PG["🟡 s3-integrator-postgresql/0"]
-          S3_MAAS["🟡 s3-integrator-maas/0"]
-        end
+      %% Backup machine
+        subgraph BACKUP_M0["Container"]
+        S3_PG["🟡 s3-integrator-postgresql/0"]
+        S3_MAAS["🟡 s3-integrator-maas/0"]
       end
     end
   end
@@ -139,7 +150,8 @@ flowchart TB
   S3_MAAS ==>S3_BUCKET_MAAS
 
   %% Apply styles
-  class BACKUP_ENABLED,PG_MULTINODE,MAAS_MULTINODE optionalGroup
+  class A0,A1,A2,S3_PG,S3_MAAS,HAPROXY_CONTAINERS unitOptional
+  class PG_MULTINODE,MAAS_MULTINODE multiNodeGroup
 
   %% Terraform modules
   class TF1 tfBootstrap
@@ -149,7 +161,6 @@ flowchart TB
   %% Module managed groups
   class CTRL bootstrapManaged
   class MODEL deployManaged
-  class MAAS_MACHINES configManaged
 ```
 
 This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣🟢🟠) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
