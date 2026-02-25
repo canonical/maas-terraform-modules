@@ -68,26 +68,6 @@ resource "juju_integration" "haproxy_keepalived" {
   }
 }
 
-# TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
-resource "terraform_data" "juju_wait_for_haproxy" {
-  input = {
-    model = (
-      juju_integration.haproxy_keepalived[0].model_uuid
-    )
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
-      juju wait-for model "$MODEL_NAME" --timeout 3600s \
-        --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
-    EOT
-    environment = {
-      MODEL = self.input.model
-    }
-  }
-}
-
 resource "juju_integration" "maas_haproxy_http" {
   model_uuid = terraform_data.juju_wait_for_all.output.model
   count      = var.enable_ha_proxy ? 1 : 0
