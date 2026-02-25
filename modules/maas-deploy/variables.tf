@@ -36,7 +36,7 @@ variable "postgres_constraints" {
 }
 
 variable "haproxy_constraints" {
-  description = "Constraints for the HAProxy Containers"
+  description = "Constraints for the HAProxy Machines"
   type        = string
   default     = "cores=1 mem=1G"
 }
