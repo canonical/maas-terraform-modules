@@ -16,13 +16,13 @@ enable_maas_ha = false
 enable_ha_proxy = false
 # The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
 maas_url = null
-# The optional Virtual IP to use for HA MAAS. If given, will configure the keepalived subordinate charm.
+# The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm.
 virtual_ip = null
-# SSL Certificate content, used for MAAS TLS mode operations
+# SSL Certificate path, used for MAAS TLS mode operations
 ssl_cert_path = null
-# SSL Key content, used for MAAS TLS mode operations
+# SSL Key path, used for MAAS TLS mode operations
 ssl_key_path = null
-# SSL CACert content, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
+# SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
 ssl_cacert_path = null
 # The LXD project in which to create the VMs for Juju
 lxd_project = "default"
@@ -44,7 +44,8 @@ lxd_project = "default"
 #       controller will work with VMs
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
-# List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
+haproxy_constraints  = "cores=1 mem=1G"
+# List of target zones for deploying MAAS, PostgreSQL, and HAProxy machines. If provided, machines
 # are distributed across these zones in round-robin fashion (for example, with 3 zones and
 # 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
 # zone1, zone2, zone1).

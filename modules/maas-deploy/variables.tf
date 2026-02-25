@@ -35,10 +35,16 @@ variable "postgres_constraints" {
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
+variable "haproxy_constraints" {
+  description = "Constraints for the Postgres virtual machines"
+  type        = string
+  default     = "cores=1 mem=1G"
+}
+
 variable "zone_list" {
   type        = list(string)
   description = <<EOF
-    List of target zones allowed for deploying MAAS and PostgreSQL machines. If provided, machines
+    List of target zones allowed for deploying MAAS, PostgreSQL, and HAProxy machines. If provided, machines
     are distributed across these zones in round-robin fashion (for example, with 3 zones and 3
     machines, each gets a different zone; with 2 zones and 3 machines, the pattern is zone1, zone2,
     zone1).
@@ -292,25 +298,25 @@ variable "maas_url" {
     default = null
 }
 variable "virtual_ip" {
-  description = "The optional Virtual IP to use for HA MAAS. If given, will configure the keepalived subordinate charm."
+  description = "The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm."
   type        = string
   default     = null
 }
 
 variable "ssl_cert_path" {
-  description = "SSL Certificate Path, required for MAAS TLS mode operations"
+  description = "SSL Certificate path, required for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
 variable "ssl_key_path" {
-  description = "SSL Key Path, required for MAAS TLS mode operations"
+  description = "SSL Key path, required for MAAS TLS mode operations"
   type        = string
   default     = null
 }
 
 variable "ssl_cacert_path" {
-  description = "SSL CACert content, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed"
+  description = "SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed"
   type        = string
   default     = null
 }

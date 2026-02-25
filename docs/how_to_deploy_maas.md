@@ -35,7 +35,7 @@ charm_maas_region_config {
 ```
 
 
-To additionally deploy with HA, you will need to set `enable_ha` to true, and optionally set the MAAS url, and a virtual ip keepalived will use:
+To additionally deploy with HA, you will need to set `enable_ha` to true, and optionally set the MAAS URL, and a virtual IP Keepalived will use:
 ```bash
 enable_ha = true
 maas_url = ...
@@ -71,7 +71,6 @@ Record the `maas_api_url` and `maas_api_key` values from the Terraform output, t
 ```bash
 export MAAS_API_URL=$(terraform output -raw maas_api_url)
 export MAAS_API_KEY=$(terraform output -raw maas_api_key)
-export MAAS_MODEL_UUID=$(terraform output -raw maas_model_uuid)
 ```
 
 You can optionally also record the `maas_machines` values from the Terraform output if you are running a Region+Rack setup. This will be used in the MAAS configuraton (`maas-config`)later.
