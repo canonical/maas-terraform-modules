@@ -35,7 +35,7 @@ lxd_project = "default"
 maas_constraints     = "cores=2 mem=4G virt-type=virtual-machine"
 postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
 haproxy_constraints  = "cores=1 mem=1G"
-# List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
+# List of target zones for deploying MAAS, PostgreSQL, and HAProxy machines. If provided, machines
 # are distributed across these zones in round-robin fashion (for example, with 3 zones and
 # 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
 # zone1, zone2, zone1).

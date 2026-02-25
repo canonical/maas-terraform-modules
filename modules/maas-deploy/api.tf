@@ -12,12 +12,12 @@ locals {
 }
 
 resource "juju_machine" "haproxy_machines" {
-  count             = var.enable_haproxy ? 3 : 0
-  model_uuid        = juju_model.maas_model.uuid
-  base              = "ubuntu@${var.ubuntu_version}"
-  name              = "haproxy-${count.index}"
-  constraints       = var.haproxy_constraints
-  wait_for_hostname = true
+  count       = var.enable_haproxy ? 3 : 0
+  model_uuid  = juju_model.maas_model.uuid
+  base        = "ubuntu@${var.ubuntu_version}"
+  name        = "haproxy-${count.index}"
+  constraints = var.haproxy_constraints
+  placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
 }
 
 resource "juju_application" "haproxy" {
