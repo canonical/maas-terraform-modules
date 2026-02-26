@@ -52,7 +52,7 @@ unit "maas_deploy" {
     // Optional variables
     // Uncomment and complete to customize. Defaults are shown where defined in variables.tf.
     // The LXD project in which to create the VMs for Juju
-    lxd_project        = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
+    lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config       = ...
     // Path to the SSH key to add to the MAAS Juju model
@@ -89,11 +89,11 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel  = "3.7/edge"
+    charm_maas_region_channel = "3.7/edge"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
-    charm_maas_region_config   = {
+    charm_maas_region_config = {
       enable_rack_mode = true
     }
 
