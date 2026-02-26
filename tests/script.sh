@@ -86,37 +86,36 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   cd $ROOT_DIR
 
   # If SMOKE_TEST is true, skip acceptance tests
-  if [ "$SMOKE_TEST" == "true" ]; then
+  if [ "$SMOKE_TEST" != "true" ]; then
+    ## Terraform acceptance tests setup
+    echo "Running Terraform acceptance tests for ${STACK_DIR}..."
+
+    # Set test environment variables
+    export MAAS_API_URL
+    export MAAS_API_KEY
+    export TF_ACC_VM_HOST_ID
+    export TF_ACC_NETWORK_INTERFACE_MACHINE="acceptance-vm"
+    export TF_ACC_BLOCK_DEVICE_MACHINE="acceptance-vm"
+    export TF_ACC_TAG_MACHINES="acceptance-vm"
+    export TF_ACC_MACHINE_HOSTNAME="acceptance-vm"
+    export TF_ACC_RACK_CONTROLLER_HOSTNAME="$RACK_CONTROLLER"
+    export TF_ACC_BOOT_RESOURCES_OS="noble"
+    export TF_ACC_CONFIGURATION_DISTRO_SERIES="noble"
+    export MAAS_VERSION="3.7"
+
+    # Run a subset of Terraform provider acceptance tests to validate the
+    # deployment without increasing the likelihood of flakey tests.
+    cd terraform-provider-maas
+    make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
+    sleep 15
+    make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
+    make testacc TESTARGS='-run MAASConfiguration'
+    cd $ROOT_DIR
+
+    echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
+  else
     echo "SMOKE_TEST=true; skipping acceptance tests for ${STACK_DIR}"
-    continue
   fi
-
-  ## Terraform acceptance tests setup
-  echo "Running Terraform acceptance tests for ${STACK_DIR}..."
-
-  # Set test environment variables
-  export MAAS_API_URL
-  export MAAS_API_KEY
-  export TF_ACC_VM_HOST_ID
-  export TF_ACC_NETWORK_INTERFACE_MACHINE="acceptance-vm"
-  export TF_ACC_BLOCK_DEVICE_MACHINE="acceptance-vm"
-  export TF_ACC_TAG_MACHINES="acceptance-vm"
-  export TF_ACC_MACHINE_HOSTNAME="acceptance-vm"
-  export TF_ACC_RACK_CONTROLLER_HOSTNAME="$RACK_CONTROLLER"
-  export TF_ACC_BOOT_RESOURCES_OS="noble"
-  export TF_ACC_CONFIGURATION_DISTRO_SERIES="noble"
-  export MAAS_VERSION="3.7"
-
-  # Run a subset of Terraform provider acceptance tests to validate the 
-  # deployment without increasing the likelihood of flakey tests.
-  cd terraform-provider-maas
-  make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
-  sleep 15
-  make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
-  make testacc TESTARGS='-run MAASConfiguration'
-  cd $ROOT_DIR
-
-  echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
 
   # Destroy the stack
   echo "Destroying MAAS stack: ${STACK_DIR}"
