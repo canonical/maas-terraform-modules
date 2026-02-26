@@ -1,18 +1,22 @@
 locals {
-  maas_tls = anytrue([
+  enable_tls = var.enable_haproxy && anytrue([
     var.ssl_cacert_path != null,
     var.ssl_cert_path != null,
     var.ssl_key_path != null,
   ])
-  enable_keepalived  = var.enable_haproxy && (var.virtual_ip != null)
-  maas_url           = var.maas_url != null ? var.maas_url : (var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null)
+  enable_keepalived = var.enable_haproxy && (var.virtual_ip != null)
+
+  # MAAS Configuration values
+  maas_url = var.maas_url != null ? var.maas_url : (
+    var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
+  )
   ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
   ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
   ssl_cacert_content = var.ssl_cacert_path != null ? file(var.ssl_cacert_path) : null
 }
 
 resource "juju_machine" "haproxy_machines" {
-  count       = var.enable_haproxy ? 3 : 0
+  count       = var.enable_haproxy ? (var.virtual_ip != null ? 3 : 1) : 0
   model_uuid  = juju_model.maas_model.uuid
   base        = "ubuntu@${var.ubuntu_version}"
   name        = "haproxy-${count.index}"
@@ -84,7 +88,7 @@ resource "juju_integration" "maas_haproxy_http" {
 }
 
 resource "juju_integration" "maas_haproxy_https" {
-  count      = var.enable_haproxy && local.maas_tls ? 1 : 0
+  count      = local.enable_tls ? 1 : 0
   model_uuid = terraform_data.juju_wait_for_all.output.model
 
   application {
