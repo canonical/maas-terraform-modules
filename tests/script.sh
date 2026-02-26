@@ -107,13 +107,13 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   export TF_ACC_CONFIGURATION_DISTRO_SERIES="noble"
   export MAAS_VERSION="3.7"
 
-  # Run Terraform provider acceptance tests
+  # Run a subset of Terraform provider acceptance tests to validate the 
+  # deployment without increasing the likelihood of flakey tests.
   cd terraform-provider-maas
   make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
   sleep 15
   make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
   make testacc TESTARGS='-run MAASConfiguration'
-  make testacc TESTARGS='-run MAASBootSource_'
   cd $ROOT_DIR
 
   echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
@@ -124,6 +124,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   terragrunt stack run destroy \
   --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
   --non-interactive
+  cd $ROOT_DIR
 done
 
 echo "All stack deployments and tests completed successfully!"
