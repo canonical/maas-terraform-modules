@@ -89,6 +89,8 @@ unit "maas_deploy" {
     maas_constraints = "cores=4 mem=4G virt-type=virtual-machine root-disk=20G root-disk-source=default"
     // Constraints for the PostgreSQL virtual machines
     postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
+    // Constraints for the HAProxy Machines
+    haproxy_constraints  = "cores=1 mem=1G"
     // List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
     // are distributed across these zones in round-robin fashion (for example, with 3 zones and
     // 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
@@ -98,8 +100,8 @@ unit "maas_deploy" {
     enable_postgres_ha = true
     // Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
     enable_maas_ha = true
-    // Set this to true to run MAAS with HAProxy, which will deploy HAProxy and Keepalived
-    enable_ha_proxy = true
+    // Set this to true to run MAAS with HAProxy, which will deploy HAProxy
+    enable_haproxy = true
     // The Ubuntu operating system version to install on the virtual machines (VMs)
     ubuntu_version = "24.04"
 
@@ -161,6 +163,18 @@ unit "maas_deploy" {
     ssl_key_path = get_env("SSL_KEY_PATH", "")
     // SSL CACert content, Optionally used for MAAS TLS mode operations
     ssl_cacert_path = get_env("SSL_CACERT_PATH", "")
+
+    // --- MAAS HAProxy configuration ---
+    // The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
+    // maas_url        = get_env("MAAS_URL", "")
+    // The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm.
+    // virtual_ip      = get_env("VIRTUAL_IP", "")
+    // SSL Certificate path, Required for MAAS TLS mode operations
+    // ssl_cert_path   = get_env("SSL_CERT_PATH", "")
+    // SSL Key path, Required for MAAS TLS mode operations
+    // ssl_key_path    = get_env("SSL_KEY_PATH", "")
+    // SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
+    // ssl_cacert_path = get_env("SSL_CACERT_PATH", "")
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL

@@ -40,10 +40,11 @@ locals {
     // --- Machines and constraints ---
     maas_constraints     = try(values.maas_constraints, null)
     postgres_constraints = try(values.postgres_constraints, null)
+    haproxy_constraints  = try(values.haproxy_constraints, null)
     zone_list            = try(values.zone_list, null)
     enable_postgres_ha   = try(values.enable_postgres_ha, null)
     enable_maas_ha       = try(values.enable_maas_ha, null)
-    enable_ha_proxy      = try(values.enable_ha_proxy, null)
+    enable_haproxy      = try(values.enable_haproxy, null)
     ubuntu_version       = try(values.ubuntu_version, null)
 
     // --- Workload: PostgreSQL ---
@@ -73,10 +74,11 @@ locals {
     admin_ssh_import = try(values.admin_ssh_import, null)
 
     // --- MAAS HAProxy configuration ---
+    maas_url        = try(values.maas_url, null)
     virtual_ip      = try(values.virtual_ip, null)
-    ssl_cert_path      = try(values.ssl_cert_path, null)
-    ssl_key_path      = try(values.ssl_key_path, null)
-    ssl_cacert_path      = try(values.ssl_cacert_path, null)
+    ssl_cert_path   = try(values.ssl_cert_path, null)
+    ssl_key_path    = try(values.ssl_key_path, null)
+    ssl_cacert_path = try(values.ssl_cacert_path, null)
 
     // --- External integrations (backup/s3) ---
     enable_backup                = try(values.enable_backup, null)
