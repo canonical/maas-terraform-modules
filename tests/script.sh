@@ -103,7 +103,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     export MAAS_VERSION="3.7"
 
     # Run a subset of Terraform provider acceptance tests to validate the
-    # deployment without increasing the likelihood of flakey tests.
+    # deployment without increasing the likelihood of flaky tests.
     cd terraform-provider-maas
     make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
     sleep 15
