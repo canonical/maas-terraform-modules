@@ -43,7 +43,7 @@ locals {
     zone_list            = try(values.zone_list, null)
     enable_postgres_ha   = try(values.enable_postgres_ha, null)
     enable_maas_ha       = try(values.enable_maas_ha, null)
-    enable_haproxy      = try(values.enable_haproxy, null)
+    enable_haproxy       = try(values.enable_haproxy, null)
     ubuntu_version       = try(values.ubuntu_version, null)
 
     // --- Workload: PostgreSQL ---
@@ -72,7 +72,7 @@ locals {
     admin_email      = try(values.admin_email, null)
     admin_ssh_import = try(values.admin_ssh_import, null)
 
-    // --- MAAS HAProxy configuration ---
+    // --- MAAS API Configuration ---
     maas_url        = try(values.maas_url, null)
     virtual_ip      = try(values.virtual_ip, null)
     ssl_cert_path   = try(values.ssl_cert_path, null)
