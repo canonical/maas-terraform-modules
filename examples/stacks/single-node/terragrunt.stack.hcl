@@ -99,14 +99,6 @@ unit "maas_deploy" {
     // Operator configuration for HAProxy deployment
     // charm_haproxy_config = {}
 
-    // --- Workload: Keepalived ---
-    // Operator channel for Keepalived deployment
-    // charm_keepalived_channel = "latest/edge"
-    // Operator channel revision for Keepalived deployment
-    // charm_keepalived_revision  = ...
-    // Operator configuration for Keepalived deployment
-    // charm_keepalived_config = {}
-
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
     charm_maas_region_channel = "3.7/edge"
@@ -127,11 +119,9 @@ unit "maas_deploy" {
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
     // admin_ssh_import = ...
 
-    // --- MAAS HAProxy configuration ---
+    // --- MAAS API Configuration ---
     // The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
     // maas_url        = ...
-    // The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm.
-    // virtual_ip      = ...
     // SSL Certificate path, Required for MAAS TLS mode operations
     // ssl_cert_path   = ...
     // SSL Key path, Required for MAAS TLS mode operations
