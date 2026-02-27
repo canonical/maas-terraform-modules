@@ -71,7 +71,7 @@ resource "juju_application" "s3_integrator" {
         access-key=${var.s3_access_key} \
         secret-key=${var.s3_secret_key}
 
-      juju logout -c maas-controller
+      juju unregister maas-controller --no-prompt
     EOT
     )
   }

@@ -15,7 +15,7 @@ echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS"
 get_key_cmd=$(juju run -m $MODEL maas-region/leader get-api-key username=$USERNAME --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
 
 # Logout of Juju
-juju logout -c maas-controller
+juju unregister maas-controller --no-prompt
 
 # Safely produce a JSON object containing the result value.
 # jq will ensure that the value is properly quoted

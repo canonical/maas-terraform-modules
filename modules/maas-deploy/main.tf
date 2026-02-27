@@ -109,7 +109,7 @@ resource "terraform_data" "juju_wait_for_all" {
       MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
       juju wait-for model "$MODEL_NAME" --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
-      juju logout -c maas-controller
+      juju unregister maas-controller --no-prompt
     EOT
     environment = {
       MODEL                   = self.input.model
@@ -132,7 +132,7 @@ resource "terraform_data" "create_admin" {
       juju run -m "$MODEL" maas-region/leader create-admin \
         username="$USERNAME" password="$PASSWORD" \
         email="$EMAIL" ssh-import="$SSH_IMPORT"
-      juju logout -c maas-controller
+      juju unregister maas-controller --no-prompt
     EOT
     environment = {
       MODEL                   = self.input.model
