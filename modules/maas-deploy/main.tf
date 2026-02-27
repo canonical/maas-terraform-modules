@@ -105,12 +105,17 @@ resource "terraform_data" "juju_wait_for_all" {
 
   provisioner "local-exec" {
     command = <<-EOT
+      echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
       MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
       juju wait-for model "$MODEL_NAME" --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
+      juju logout -c maas-controller
     EOT
     environment = {
-      MODEL = self.input.model
+      MODEL                   = self.input.model
+      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_credentials.client_id
+      JUJU_PASSWORD           = var.juju_credentials.client_secret
     }
   }
 }
@@ -123,16 +128,21 @@ resource "terraform_data" "create_admin" {
 
   provisioner "local-exec" {
     command = <<-EOT
+      echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
       juju run -m "$MODEL" maas-region/leader create-admin \
         username="$USERNAME" password="$PASSWORD" \
         email="$EMAIL" ssh-import="$SSH_IMPORT"
+      juju logout -c maas-controller
     EOT
     environment = {
-      MODEL      = self.input.model
-      USERNAME   = var.admin_username
-      PASSWORD   = var.admin_password
-      EMAIL      = var.admin_email
-      SSH_IMPORT = var.admin_ssh_import
+      MODEL                   = self.input.model
+      USERNAME                = var.admin_username
+      PASSWORD                = var.admin_password
+      EMAIL                   = var.admin_email
+      SSH_IMPORT              = var.admin_ssh_import
+      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_credentials.client_id
+      JUJU_PASSWORD           = var.juju_credentials.client_secret
     }
   }
 }
@@ -141,8 +151,11 @@ data "external" "maas_get_api_key" {
   program = ["bash", "${path.module}/scripts/get-api-key.sh"]
 
   query = {
-    model    = terraform_data.create_admin.output.model
-    username = var.admin_username
+    model                   = terraform_data.create_admin.output.model
+    username                = var.admin_username
+    juju_controller_address = var.juju_credentials.controller_addresses[0]
+    juju_username           = var.juju_credentials.client_id
+    juju_password           = var.juju_credentials.client_secret
   }
 }
 
@@ -150,6 +163,9 @@ data "external" "maas_get_api_url" {
   program = ["bash", "${path.module}/scripts/get-api-url.sh"]
 
   query = {
-    model = terraform_data.create_admin.output.model
+    model                   = terraform_data.create_admin.output.model
+    juju_controller_address = var.juju_credentials.controller_addresses[0]
+    juju_username           = var.juju_credentials.client_id
+    juju_password           = var.juju_credentials.client_secret
   }
 }
