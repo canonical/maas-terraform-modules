@@ -105,6 +105,7 @@ resource "terraform_data" "juju_wait_for_all" {
 
   provisioner "local-exec" {
     command = <<-EOT
+      export JUJU_DATA=/tmp/$(openssl rand -hex 4)
       echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
       MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
       juju wait-for model "$MODEL_NAME" --timeout 3600s \
@@ -128,6 +129,7 @@ resource "terraform_data" "create_admin" {
 
   provisioner "local-exec" {
     command = <<-EOT
+      export JUJU_DATA=/tmp/$(openssl rand -hex 4)
       echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
       juju run -m "$MODEL" maas-region/leader create-admin \
         username="$USERNAME" password="$PASSWORD" \
