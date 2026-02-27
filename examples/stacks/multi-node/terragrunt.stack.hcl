@@ -56,7 +56,7 @@ unit "maas_deploy" {
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config       = ...
     // Path to the SSH key to add to the MAAS Juju model
-    path_to_ssh_key = get_env("PATH_TO_SSH_KEY")
+    path_to_ssh_key = get_env("PATH_TO_SSH_KEY", null)
 
     // -- Machines and constraints
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
@@ -110,7 +110,7 @@ unit "maas_deploy" {
     // The MAAS admin email
     admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
-    admin_ssh_import = get_env("ADMIN_SSH_IMPORT")
+    admin_ssh_import = get_env("ADMIN_SSH_IMPORT", "")
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL

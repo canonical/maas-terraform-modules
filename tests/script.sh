@@ -45,11 +45,6 @@ export LXD_ADDRESS="https://10.0.2.1:8443"
 export MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
 export LXD_PROJECT_MAAS_MACHINES="maas-system"
 
-# Export environment variables for multi-node stack only
-export PATH_TO_SSH_KEY="/tmp/dummy_id_ed25519"
-ssh-keygen -t ed25519 -N "" -f "$PATH_TO_SSH_KEY"
-export ADMIN_SSH_IMPORT=gh:tobiasdemendonca
-
 # Loop through both example stacks
 STACK_DIRS=(
   "examples/stacks/single-node"
