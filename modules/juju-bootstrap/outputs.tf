@@ -5,8 +5,8 @@ output "juju_cloud" {
 output "juju_credentials" {
   value = {
     controller_addresses = juju_controller.controller.api_addresses
-    client_id            = juju_controller.controller.username
-    client_secret        = juju_controller.controller.password
+    username             = juju_controller.controller.username
+    password             = juju_controller.controller.password
     ca_certificate       = juju_controller.controller.ca_cert
   }
   sensitive = true

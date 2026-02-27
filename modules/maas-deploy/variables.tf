@@ -8,8 +8,8 @@ variable "juju_credentials" {
   description = "The credentials to use when authenticating to the Juju controller."
   type = object({
     controller_addresses = list(string)
-    client_id            = string
-    client_secret        = string
+    username             = string
+    password             = string
     ca_certificate       = string
   })
 }

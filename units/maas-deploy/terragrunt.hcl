@@ -21,8 +21,8 @@ dependency "juju_bootstrap" {
     juju_cloud = "mock-cloud-name"
     juju_credentials = {
       controller_addresses = ["https://mock-controller:17070"]
-      client_id            = "mock-client-id"
-      client_secret        = "mock-client-secret"
+      username             = "mock-username"
+      password             = "mock-password"
       ca_certificate       = "mock-ca-cert"
     }
   }
