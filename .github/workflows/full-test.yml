@@ -17,7 +17,6 @@ jobs:
           # Copy all modules from root level to tests/terraform/modules
           cp -r ../modules/* terraform/modules/
           # Copy all stacks from root level to tests/terraform/examples/stacks
-          mkdir -p terraform/examples/
           mkdir -p terraform/examples/stacks
           cp -r ../examples/stacks/* terraform/examples/stacks/
           # Copy all units from root level to tests/terraform/units

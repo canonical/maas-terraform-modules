@@ -9,8 +9,7 @@ set -ex
 sudo snap install lxd --channel=5.21/stable
 sudo snap install juju --channel=3.6/stable
 sudo snap install terraform --classic
-curl -sL https://terragrunt.gruntwork.io/install | bash
-export PATH=$PATH:$HOME/.terragrunt/bin
+./install-terragrunt.sh
 
 lxd init --auto --network-address 0.0.0.0
 
