@@ -62,17 +62,17 @@ resource "juju_application" "s3_integrator" {
     # set with a Juju secret. Currently the Juju provider does not either support wait-for
     # application or running Juju actions.
     command = (startswith(var.charm_s3_integrator_channel, "2/") ? "/bin/true" : <<-EOT
-      export JUJU_DATA=/tmp/$(openssl rand -hex 4)
-      echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
 
-      juju wait-for application -m ${self.model_uuid} ${self.name} --timeout 3600s \
+      /snap/juju/current/bin/juju wait-for application -m ${self.model_uuid} ${self.name} --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "blocked" && unit.agent-status=="idle")'
 
-      juju run -m ${self.model_uuid} ${self.name}/leader sync-s3-credentials \
+      /snap/juju/current/bin/juju run -m ${self.model_uuid} ${self.name}/leader sync-s3-credentials \
         access-key=${var.s3_access_key} \
         secret-key=${var.s3_secret_key}
 
-      juju unregister maas-controller --no-prompt
+      rm -rf $JUJU_DATA
     EOT
     )
   }

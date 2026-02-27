@@ -10,13 +10,13 @@ set -e
 eval "$(jq -r '@sh "MODEL=\(.model) JUJU_CONTROLLER_ADDRESS=\(.juju_controller_address) JUJU_USERNAME=\(.juju_username) JUJU_PASSWORD=\(.juju_password)"')"
 
 # Login to Juju
-export JUJU_DATA=/tmp/$(openssl rand -hex 4)
-echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
 
-get_url_cmd=$(juju run -m $MODEL maas-region/leader get-api-endpoint --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
+get_url_cmd=$(/snap/juju/current/bin/juju run -m $MODEL maas-region/leader get-api-endpoint --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
 
-# Logout of Juju
-juju unregister maas-controller --no-prompt
+# Delete local Juju data to logout and clean up any cached credentials
+rm -rf $JUJU_DATA
 
 # Safely produce a JSON object containing the result value.
 # jq will ensure that the value is properly quoted

@@ -105,12 +105,12 @@ resource "terraform_data" "juju_wait_for_all" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      export JUJU_DATA=/tmp/$(openssl rand -hex 4)
-      echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
-      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
-      juju wait-for model "$MODEL_NAME" --timeout 3600s \
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+      MODEL_NAME=$(/snap/juju/current/bin/juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
+      /snap/juju/current/bin/juju wait-for model "$MODEL_NAME" --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
-      juju unregister maas-controller --no-prompt
+      rm -rf $JUJU_DATA
     EOT
     environment = {
       MODEL                   = self.input.model
@@ -129,12 +129,12 @@ resource "terraform_data" "create_admin" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      export JUJU_DATA=/tmp/$(openssl rand -hex 4)
-      echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
-      juju run -m "$MODEL" maas-region/leader create-admin \
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+      /snap/juju/current/bin/juju run -m "$MODEL" maas-region/leader create-admin \
         username="$USERNAME" password="$PASSWORD" \
         email="$EMAIL" ssh-import="$SSH_IMPORT"
-      juju unregister maas-controller --no-prompt
+      rm -rf $JUJU_DATA
     EOT
     environment = {
       MODEL                   = self.input.model
