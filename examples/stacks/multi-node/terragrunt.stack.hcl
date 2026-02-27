@@ -56,7 +56,7 @@ unit "maas_deploy" {
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config       = ...
     // Path to the SSH key to add to the MAAS Juju model
-    path_to_ssh_key = get_env("PATH_TO_SSH_KEY", null)
+    // path_to_ssh_key = ...
 
     // -- Machines and constraints
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
