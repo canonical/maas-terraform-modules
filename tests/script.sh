@@ -80,7 +80,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
 
   # Apply extra MAAS configuration
   cd modules/maas-extra-config
-  terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve
+  terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
   TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
   cd $ROOT_DIR
 
