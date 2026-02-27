@@ -1,3 +1,13 @@
+locals {
+    // These are nullable values
+    path_to_ssh_key = trimspace(get_env("PATH_TO_SSH_KEY", ""))
+    maas_url        = trimspace(get_env("MAAS_URL", ""))
+    virtual_ip      = trimspace(get_env("VIRTUAL_IP", ""))
+    ssl_cert_path   = trimspace(get_env("SSL_CERT_PATH", ""))
+    ssl_key_path    = trimspace(get_env("SSL_KEY_PATH", ""))
+    ssl_cacert_path = trimspace(get_env("SSL_CACERT_PATH", ""))
+}
+
 unit "juju_bootstrap" {
   // You'll typically want to pin this to a particular version of your catalog repo.
   // e.g.
@@ -134,15 +144,15 @@ unit "maas_deploy" {
 
     // --- MAAS API Configuration ---
     // The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs
-    maas_url        = get_env("MAAS_URL", "")
+    maas_url = local.maas_url != "" ? local.maas_url : null
     // The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm.
-    virtual_ip      = get_env("VIRTUAL_IP", "")
+    virtual_ip = local.virtual_ip != "" ? local.virtual_ip : null
     // SSL Certificate path, Required for MAAS TLS mode operations
-    ssl_cert_path   = get_env("SSL_CERT_PATH", "")
+    ssl_cert_path = local.ssl_cert_path != "" ? local.ssl_cert_path : null
     // SSL Key path, Required for MAAS TLS mode operations
-    ssl_key_path    = get_env("SSL_KEY_PATH", "")
+    ssl_key_path = local.ssl_key_path != "" ? local.ssl_key_path : null
     // SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
-    ssl_cacert_path = get_env("SSL_CACERT_PATH", "")
+    ssl_cacert_path = local.ssl_cacert_path != "" ? local.ssl_cacert_path : null
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL
