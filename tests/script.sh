@@ -126,6 +126,11 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
   --non-interactive
   cd $ROOT_DIR
+
+  # Destroy LXD init, required to regenerate the trust tokens
+  cd modules/lxd-init
+  terraform destroy -auto-approve
+  cd $ROOT_DIR
 done
 
 echo "All stack deployments and tests completed successfully!"
