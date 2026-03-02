@@ -20,20 +20,21 @@ cd terraform
 
 # Initialize LXD and get trust token
 cd modules/lxd-init
-terraform init && terraform apply -auto-approve
+terraform init && terraform apply -auto-approve -input=false
 LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
 LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
 cd ../..
 
 # Bootstrap Juju with LXD trust token
 cd modules/juju-bootstrap
-terraform init && TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN" terraform apply -var-file="../../config/juju-bootstrap.tfvars" -auto-approve
+terraform init && TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN" terraform apply -var-file="../../config/juju-bootstrap.tfvars" -auto-approve -input=false
 JUJU_CLOUD_NAME=$(terraform output -raw juju_cloud)
+JUJU_CREDENTIALS=$(terraform output -json juju_credentials)
 cd ../..
 
 # Deploy MAAS with Juju cloud
 cd modules/maas-deploy
-terraform init && TF_VAR_juju_cloud_name="$JUJU_CLOUD_NAME" terraform apply -var-file="../../config/maas-deploy.tfvars" -auto-approve
+terraform init && TF_VAR_juju_cloud_name="$JUJU_CLOUD_NAME" TF_VAR_juju_credentials="$JUJU_CREDENTIALS" terraform apply -var-file="../../config/maas-deploy.tfvars" -auto-approve -input=false
 MAAS_API_URL=$(terraform output -raw maas_api_url)
 MAAS_API_KEY=$(terraform output -raw maas_api_key)
 RACK_CONTROLLER=$(terraform output -json maas_machines | jq -r '.[0]')
@@ -41,7 +42,7 @@ cd ../..
 
 # Configure MAAS with API details
 cd modules/maas-config
-terraform init && TF_VAR_maas_url="$MAAS_API_URL" TF_VAR_maas_key="$MAAS_API_KEY" terraform apply -var-file="../../config/maas-config.tfvars" -auto-approve
+terraform init && TF_VAR_maas_url="$MAAS_API_URL" TF_VAR_maas_key="$MAAS_API_KEY" terraform apply -var-file="../../config/maas-config.tfvars" -auto-approve -input=false
 cd ../..
 
 echo "MAAS deployment completed successfully!"
@@ -56,7 +57,7 @@ fi
 
 # Apply extra MAAS configuration
 cd modules/maas-extra-config
-terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve
+terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve -input=false
 TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
 cd ../..
 
