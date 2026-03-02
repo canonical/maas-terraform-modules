@@ -166,7 +166,7 @@ unit "maas_config" {
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
     // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
     boot_selections = {
-      jammy = {
+      noble = {
         arches    = ["amd64"]
         subarches = ["generic"]
       }

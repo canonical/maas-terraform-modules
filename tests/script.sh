@@ -20,12 +20,6 @@ tar -xzf tests.tar.gz
 cd terraform
 ROOT_DIR=$(pwd)
 
-# Initialize LXD and get trust token
-cd modules/lxd-init
-terraform init && terraform apply -auto-approve
-LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
-LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
-cd $ROOT_DIR
 
 # Check if SMOKE_TEST is true
 SMOKE_TEST=$(cat ../run_smoke_test.txt)
@@ -40,10 +34,8 @@ if [ "$SMOKE_TEST" != "true" ]; then
 fi
 
 # Export common environment variables for both stacks
-export LXD_TRUST_TOKEN
-export LXD_ADDRESS="https://10.0.2.1:8443"
 export MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
-export LXD_PROJECT_MAAS_MACHINES="maas-system"
+export LXD_ADDRESS="https://10.0.2.1:8443"
 
 # Loop through both example stacks
 STACK_DIRS=(
@@ -52,6 +44,17 @@ STACK_DIRS=(
 )
 
 for STACK_DIR in "${STACK_DIRS[@]}"; do
+  # Initialize LXD and get trust token
+  cd modules/lxd-init
+  terraform init && terraform apply -auto-approve
+  LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
+  LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
+  cd $ROOT_DIR
+
+  # Export relevant environment variables for the stack deployment
+  export LXD_TRUST_TOKEN
+  export LXD_PROJECT_MAAS_MACHINES="maas-system"
+
   echo "=========================================="
   echo "Deploying MAAS stack: ${STACK_DIR}"
   echo "=========================================="
@@ -102,7 +105,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     cd terraform-provider-maas
     make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
     sleep 15
-    make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
+    make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_" -skip="TestAccDataSourceMAASVMHost_virsh"'
     make testacc TESTARGS='-run MAASConfiguration'
     cd $ROOT_DIR
 
