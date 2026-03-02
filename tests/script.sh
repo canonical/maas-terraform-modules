@@ -20,7 +20,6 @@ tar -xzf tests.tar.gz
 cd terraform
 ROOT_DIR=$(pwd)
 
-
 # Check if SMOKE_TEST is true
 SMOKE_TEST=$(cat ../run_smoke_test.txt)
 
@@ -44,9 +43,9 @@ STACK_DIRS=(
 )
 
 for STACK_DIR in "${STACK_DIRS[@]}"; do
-  # Initialize LXD and get trust token
+  # Initialize LXD and get new trust tokens each time
   cd modules/lxd-init
-  terraform init && terraform apply -auto-approve
+  terraform init && terraform apply -replace=lxd_trust_token.maas_charms -replace=lxd_trust_token.vm_host -auto-approve 
   LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
   LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
   cd $ROOT_DIR
@@ -125,11 +124,6 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   terragrunt stack run destroy \
   --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
   --non-interactive
-  cd $ROOT_DIR
-
-  # Destroy LXD init, required to regenerate the trust tokens
-  cd modules/lxd-init
-  terraform destroy -auto-approve
   cd $ROOT_DIR
 done
 
