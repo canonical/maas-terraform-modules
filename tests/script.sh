@@ -111,6 +111,11 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     echo "SMOKE_TEST=true; skipping acceptance tests for ${STACK_DIR}"
   fi
 
+  # Destroy the extra MAAS configuration
+  cd modules/maas-extra-config
+  MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform destroy -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
+  cd $ROOT_DIR
+
   # Destroy the stack
   echo "Destroying MAAS stack: ${STACK_DIR}"
   cd $STACK_DIR
