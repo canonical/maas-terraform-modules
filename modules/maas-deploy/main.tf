@@ -66,9 +66,13 @@ resource "juju_application" "maas_region" {
     base     = "ubuntu@${var.ubuntu_version}"
   }
 
-  config = merge(var.charm_maas_region_config, )
+  config = merge(var.charm_maas_region_config, {
+    maas_url           = local.maas_url,
+    ssl_cert_content   = local.ssl_cert_content,
+    ssl_key_content    = local.ssl_key_content,
+    ssl_cacert_content = local.ssl_cacert_content
+  })
 }
-
 resource "juju_integration" "maas_region_postgresql" {
   model_uuid = juju_model.maas_model.uuid
 
@@ -85,7 +89,7 @@ resource "juju_integration" "maas_region_postgresql" {
 
 
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
-resource "terraform_data" "juju_wait_for_maas" {
+resource "terraform_data" "juju_wait_for_all" {
   input = {
     model = (
       juju_integration.maas_region_postgresql.model_uuid
@@ -96,7 +100,7 @@ resource "terraform_data" "juju_wait_for_maas" {
     command = <<-EOT
       MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
       juju wait-for model "$MODEL_NAME" --timeout 3600s \
-        --query='forEach(units, unit => unit.workload-status == "active")'
+        --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
     EOT
     environment = {
       MODEL = self.input.model
@@ -107,7 +111,7 @@ resource "terraform_data" "juju_wait_for_maas" {
 # TODO: linked to this issue https://github.com/juju/terraform-provider-juju/issues/388
 resource "terraform_data" "create_admin" {
   input = {
-    model = terraform_data.juju_wait_for_maas.output.model
+    model = terraform_data.juju_wait_for_all.output.model
   }
 
   provisioner "local-exec" {

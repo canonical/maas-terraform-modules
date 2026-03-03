@@ -29,6 +29,11 @@ resource "maas_configuration" "config" {
 
   key   = each.key
   value = each.value
+
+  # This ensures that the boot source selections are created before the configuration is applied,
+  # as some configuration options may depend on the boot resources being available.
+  # e.g., commissioning_distro_series, default_distro_series, etc.
+  depends_on = [maas_boot_source_selection.images]
 }
 
 # 4

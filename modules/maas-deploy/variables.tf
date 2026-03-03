@@ -35,10 +35,16 @@ variable "postgres_constraints" {
   default     = "cores=2 mem=4G virt-type=virtual-machine"
 }
 
+variable "haproxy_constraints" {
+  description = "Constraints for the HAProxy Machines"
+  type        = string
+  default     = "cores=1 mem=1G"
+}
+
 variable "zone_list" {
   type        = list(string)
   description = <<EOF
-    List of target zones allowed for deploying MAAS and PostgreSQL machines. If provided, machines
+    List of target zones allowed for deploying MAAS PostgreSQL, and HAProxy machines. If provided, machines
     are distributed across these zones in round-robin fashion (for example, with 3 zones and 3
     machines, each gets a different zone; with 2 zones and 3 machines, the pattern is zone1, zone2,
     zone1).
@@ -59,6 +65,12 @@ variable "enable_postgres_ha" {
 
 variable "enable_maas_ha" {
   description = "Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units"
+  type        = bool
+  default     = false
+}
+
+variable "enable_haproxy" {
+  description = "Set this to true to run MAAS with HAProxy, which will deploy HAProxy"
   type        = bool
   default     = false
 }
@@ -125,6 +137,50 @@ variable "charm_maas_region_config" {
 }
 
 ###
+## HAProxy configuration
+###
+
+variable "charm_haproxy_channel" {
+  description = "Operator channel for HAProxy deployment"
+  type        = string
+  default     = "2.8/edge"
+}
+
+variable "charm_haproxy_revision" {
+  description = "Operator channel revision for HAProxy deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_haproxy_config" {
+  description = "Operator configuration for HAProxy deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
+## Keepalived configuration
+###
+
+variable "charm_keepalived_channel" {
+  description = "Operator channel for Keepalived deployment"
+  type        = string
+  default     = "latest/edge"
+}
+
+variable "charm_keepalived_revision" {
+  description = "Operator channel revision for Keepalived deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_keepalived_config" {
+  description = "Operator configuration for Keepalived deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
 ## MAAS Admin configuration
 ###
 
@@ -155,6 +211,41 @@ variable "admin_ssh_import" {
   type        = string
   default     = ""
 }
+
+###
+## API configuration
+###
+
+variable "maas_url" {
+  description = "The MAAS URL to use for the MAAS API. If not given, will default to one derived from the `virtual_ip`, or the HAProxy/MAAS Unit IPs"
+  type        = string
+  default     = null
+}
+
+variable "virtual_ip" {
+  description = "The optional Virtual IP to use for HA MAAS. If given, will configure the Keepalived subordinate charm."
+  type        = string
+  default     = null
+}
+
+variable "ssl_cert_path" {
+  description = "SSL Certificate path, required for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_key_path" {
+  description = "SSL Key path, required for MAAS TLS mode operations"
+  type        = string
+  default     = null
+}
+
+variable "ssl_cacert_path" {
+  description = "SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed"
+  type        = string
+  default     = null
+}
+
 
 ###
 ## Backup configuration
