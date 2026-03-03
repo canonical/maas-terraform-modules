@@ -52,7 +52,7 @@ unit "maas_deploy" {
     // Optional variables
     // Uncomment and complete to customize. Defaults are shown where defined in variables.tf.
     // The LXD project in which to create the VMs for Juju
-    // lxd_project        = "charmed-maas"
+    lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config       = ...
     // Path to the SSH key to add to the MAAS Juju model
@@ -89,13 +89,13 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    // charm_maas_region_channel  = ...
+    charm_maas_region_channel = "3.7/edge"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
-    # charm_maas_region_config   = {      // Uncomment for region + rack configuration
-    #   enable_rack_mode = true
-    # }
+    charm_maas_region_config = {
+      enable_rack_mode = true
+    }
 
     // -- MAAS Admin configuration
     // The MAAS admin username
@@ -154,7 +154,7 @@ unit "maas_config" {
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
     // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
     boot_selections = {
-      jammy = {
+      noble = {
         arches    = ["amd64"]
         subarches = ["generic"]
       }
@@ -177,7 +177,7 @@ unit "maas_config" {
       },
       "gpgpu-tesla-vi" = {
         // See here for more details on tag management: https://discourse.maas.io/t/maas-ui-automatic-tags-and-tag-management/5565
-        comment     = "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel. "
+        comment     = "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel."
         kernel_opts = "console=tty0 console=ttyS0,115200n8r nomodeset modprobe.blacklist=nouveau,nvidiafb,snd_hda_intel nouveau.blacklist=1 video=vesafb:off,efifb:off intel_iommu=on rd.driver.pre=pci-stub rd.driver.pre=vfio-pci pci-stub.ids=10de:1db4 vfio-pci.ids=10de:1db4 vfio_iommu_type1.allow_unsafe_interrupts=1 vfio-pci.disable_vga=1"
         definition  = "//node[@id=\"cpu:0\"]/capabilities/capability/@id = \"vmx\" and //node[@id=\"display\"]/vendor[contains(.,\"NVIDIA\")] and //node[@id=\"display\"]/description[contains(.,\"3D\")] and //node[@id=\"display\"]/product[contains(.,\"Tesla V100 PCIe 16GB\")]"
       }

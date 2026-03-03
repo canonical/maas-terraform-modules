@@ -52,11 +52,11 @@ unit "maas_deploy" {
     // Optional variables
     // Uncomment and complete to customize. Defaults are shown where defined in variables.tf.
     // The LXD project in which to create the VMs for Juju
-    // lxd_project        = "charmed-maas"
+    lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config       = ...
     // Path to the SSH key to add to the MAAS Juju model
-    path_to_ssh_key = get_env("PATH_TO_SSH_KEY")
+    // path_to_ssh_key = ...
 
     // -- Machines and constraints
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
@@ -94,11 +94,11 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel = "latest/edge"
+    charm_maas_region_channel = "3.7/edge"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
-    charm_maas_region_config = { // Uncomment for region + rack configuration
+    charm_maas_region_config = {
       enable_rack_mode = true
     }
 
@@ -110,7 +110,7 @@ unit "maas_deploy" {
     // The MAAS admin email
     admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
-    admin_ssh_import = get_env("ADMIN_SSH_IMPORT")
+    admin_ssh_import = get_env("ADMIN_SSH_IMPORT", "")
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL
@@ -166,7 +166,7 @@ unit "maas_config" {
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
     // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
     boot_selections = {
-      jammy = {
+      noble = {
         arches    = ["amd64"]
         subarches = ["generic"]
       }
