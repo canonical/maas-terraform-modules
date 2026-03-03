@@ -1,5 +1,5 @@
-# Format checking jobs to run on every PR or push to main
-name: Format checks
+# Static analysis jobs to run on every PR or push to main
+name: Static Analysis
 
 on:
   pull_request:
