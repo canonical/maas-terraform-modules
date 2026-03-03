@@ -1,0 +1,42 @@
+# Format checking jobs to run on every PR or push to main
+name: Format checks
+
+on:
+  pull_request:
+    paths-ignore:
+      - "README.md"
+      - "docs"
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "README.md"
+      - "docs"
+
+# Testing only needs permissions to read the repository contents.
+permissions:
+  contents: read
+
+jobs:
+  terraform_fmt:
+    name: terraform fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: terraform fmt
+        run: terraform fmt -recursive -check || (echo "Terraform files aren't formatted. Run 'terraform fmt -recursive'"; exit 1;)
+
+  terragrunt_hcl_fmt:
+    name: terragrunt hcl fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Install Terragrunt
+        uses: gruntwork-io/terragrunt-action@v3
+        with:
+          tg_version: "0.99.4"
+          tf_path: "terraform"
+      - name: terragrunt hcl fmt
+        run: terragrunt hcl fmt --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
