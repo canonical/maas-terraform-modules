@@ -43,9 +43,9 @@ STACK_DIRS=(
 )
 
 for STACK_DIR in "${STACK_DIRS[@]}"; do
-  # Initialize LXD and get new trust tokens each time
+  # Initialize LXD and get trust token
   cd modules/lxd-init
-  terraform init && terraform apply -replace=lxd_trust_token.maas_charms -replace=lxd_trust_token.vm_host -auto-approve 
+  terraform init && terraform apply -replace=lxd_trust_token.maas_charms -replace=lxd_trust_token.vm_host -auto-approve
   LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
   LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
   cd $ROOT_DIR
@@ -75,14 +75,15 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
 
   echo "MAAS deployment completed successfully for ${STACK_DIR}"
 
-  # Apply extra MAAS configuration
-  cd modules/maas-extra-config
-  terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
-  TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
-  cd $ROOT_DIR
 
   # If SMOKE_TEST is true, skip acceptance tests
   if [ "$SMOKE_TEST" != "true" ]; then
+    # Apply extra MAAS configuration
+    cd modules/maas-extra-config
+    terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
+    TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
+    cd $ROOT_DIR
+
     ## Terraform acceptance tests setup
     echo "Running Terraform acceptance tests for ${STACK_DIR}..."
 
@@ -109,14 +110,14 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     cd $ROOT_DIR
 
     echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
-  else
-    echo "SMOKE_TEST=true; skipping acceptance tests for ${STACK_DIR}"
-  fi
 
-  # Destroy the extra MAAS configuration
-  cd modules/maas-extra-config
-  MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform destroy -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
-  cd $ROOT_DIR
+    # Destroy the extra MAAS configuration
+    cd modules/maas-extra-config
+    MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform destroy -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
+    cd $ROOT_DIR
+  else
+    echo "SMOKE_TEST=true; skipping acceptance tests and maas-extra-config for ${STACK_DIR}"
+  fi
 
   # Destroy the stack
   echo "Destroying MAAS stack: ${STACK_DIR}"
