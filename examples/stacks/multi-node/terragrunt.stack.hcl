@@ -1,6 +1,5 @@
 locals {
     // These are nullable values
-    path_to_ssh_key = trimspace(get_env("PATH_TO_SSH_KEY", ""))
     maas_url        = trimspace(get_env("MAAS_URL", ""))
     virtual_ip      = trimspace(get_env("VIRTUAL_IP", ""))
     ssl_cert_path   = trimspace(get_env("SSL_CERT_PATH", ""))
