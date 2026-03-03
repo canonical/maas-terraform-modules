@@ -1,4 +1,4 @@
-# Static analysis jobs to run on every PR or push to main
+# Static analysis to run on every PR or push to main
 name: Static Analysis
 
 on:
