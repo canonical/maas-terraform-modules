@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - name: terraform fmt
-        run: terraform fmt -recursive -check || (echo "Terraform files aren't formatted. Run 'terraform fmt -recursive'"; exit 1;)
+        run: terraform fmt -recursive -diff -check || (echo "Terraform files aren't formatted. Run 'terraform fmt -recursive'"; exit 1;)
 
   terragrunt_hcl_fmt:
     name: terragrunt hcl fmt
@@ -38,4 +38,4 @@ jobs:
           tg_version: "0.99.4"
           tf_path: "terraform"
       - name: terragrunt hcl fmt
-        run: terragrunt hcl fmt --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
+        run: terragrunt hcl fmt --diff --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
