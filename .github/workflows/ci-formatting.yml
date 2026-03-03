@@ -32,10 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - uses: hashicorp/setup-terraform@v3
       - name: Install Terragrunt
         uses: gruntwork-io/terragrunt-action@v3
         with:
           tg_version: "0.99.4"
+          tf_path: "terraform"
       - name: terragrunt hcl fmt
         run: terragrunt hcl fmt --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
