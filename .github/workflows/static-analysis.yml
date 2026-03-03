@@ -1,0 +1,41 @@
+# Static analysis jobs to run on every PR or push to main
+name: Static Analysis
+
+on:
+  pull_request:
+    paths-ignore:
+      - "README.md"
+      - "docs"
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "README.md"
+      - "docs"
+
+# Testing only needs permissions to read the repository contents.
+permissions:
+  contents: read
+
+jobs:
+  terraform_fmt:
+    name: terraform fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+      - name: terraform fmt
+        run: terraform fmt -recursive -diff -check || (echo "Terraform files aren't formatted. Run 'terraform fmt -recursive'"; exit 1;)
+
+  terragrunt_hcl_fmt:
+    name: terragrunt hcl fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # To avoid depending on jdx/mise-action@v2 which gruntwork-io/terragrunt-action@v3
+      # depends on, use our own install script
+      - name: Install Terragrunt
+        run: ./tests/install-terragrunt.sh
+      - name: terragrunt hcl fmt
+        run: terragrunt hcl fmt --diff --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)

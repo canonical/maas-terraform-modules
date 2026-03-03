@@ -41,7 +41,7 @@ locals {
     lxd_trust_token = var.lxd_trust_token,
     cloud_name      = var.cloud_name,
   })
-  
+
   model_defaults_args = join(" ", [
     for key, value in var.model_defaults : "--model-default ${key}=${value}"
   ])
