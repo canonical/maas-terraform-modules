@@ -32,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
       - name: Install Terragrunt
         uses: gruntwork-io/terragrunt-action@v3
         with:
