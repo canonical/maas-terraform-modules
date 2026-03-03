@@ -35,7 +35,7 @@ jobs:
 
       # To avoid depending on jdx/mise-action@v2 which gruntwork-io/terragrunt-action@v3
       # depends on, use our own install script
-      - name: Install terragrunt
-        run: ./tests/install_terragrunt.sh
+      - name: Install Terragrunt
+        run: ./tests/install-terragrunt.sh
       - name: terragrunt hcl fmt
         run: terragrunt hcl fmt --diff --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
