@@ -25,6 +25,16 @@ unit "juju_bootstrap" {
     // lxd_project = "charmed-maas"
     // Map of model configuration defaults to pass to juju bootstrap (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
     // model_defaults = {}
+    // Example:
+    // model_defaults = {
+    //   http-proxy       = "http://squid:3128"
+    //   https-proxy      = "http://squid:3128"
+    //   no-proxy         = "localhost,127.0.0.1"
+    //   apt-http-proxy   = "http://squid:3128"
+    //   apt-https-proxy  = "http://squid:3128"
+    //   snap-http-proxy  = "http://squid:3128"
+    //   snap-https-proxy = "http://squid:3128"
+    // }
     // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
     // cloud_name = "maas-cloud"
   }
