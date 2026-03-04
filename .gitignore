@@ -14,6 +14,7 @@
 
 # Local Terragrunt directories
 **/.terragrunt-stack/*
+**/.terragrunt-cache/*
 
 # .env files containing secrets
 **/.env
