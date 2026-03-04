@@ -64,9 +64,17 @@ unit "maas_deploy" {
     // The LXD project in which to create the VMs for Juju
     lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
-    // model_config       = ...
+    // model_config = ...
+    // Example:
+    // model_config = {
+    //   juju-http-proxy  = "http://10.21.2.1:3128"
+    //   juju-https-proxy = "http://10.21.2.1:3128"
+    //   juju-no-proxy    = "10.0.0.1/24,10.21.2.0/24,localhost,127.0.0.1"
+    // }
     // Path to the SSH key to add to the MAAS Juju model
     // path_to_ssh_key = ...
+    // Example:
+    // path_to_ssh_key = "/home/ubuntu/.ssh/id_ed25519.pub"
 
     // -- Machines and constraints
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
