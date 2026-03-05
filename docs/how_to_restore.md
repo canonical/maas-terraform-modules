@@ -97,19 +97,19 @@ Restore your backup data:
    juju config s3-integrator-postgresql path=postgresql-restore-1
    ```
 
-1. Update the relevant variable in your `config.tfvars` to the path set in the previous step.
+1. Update the relevant variable in your stack/unit file to the path set in the previous step.
 1. Integrate `postgresql` and `maas-region`:
 
    ```bash
    juju integrate postgresql maas-region
    ```
 
-1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units), now you can re-run your `terraform apply` step for the `maas-deploy` module as detailed in [README.md](../README.md) with `enable_postgres_ha=true`, and wait for its completion.
+1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units), now you can set `enable_postgres_ha=true` in your stack/unit file, and re-run the relevant terragrunt apply step. Wait for its completion.
 
-   Otherwise, simply re-run the `terraform apply` step for the `maas-deploy` module to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
+   Otherwise, simply re-run the relevant terragrunt apply step for your stack/unit to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
 
    ```bash
-   ❯ terraform apply -var-file ../../config/maas-setup/config.tfvars
+   ❯ terragrunt stack run apply
    juju_model.maas_model: Refreshing state... [id=cada3a8b-9e2d-482f-81d7-9381bbc5e3ae]
    ...
 
