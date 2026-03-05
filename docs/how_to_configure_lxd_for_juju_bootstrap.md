@@ -1,6 +1,6 @@
 # How to configure a LXD cloud for Juju bootstrap
 
-This document outlines how to configure your LXD backing cloud to create the inputs required for the `juju-bootstrap` module and unit. If running the stacks or units for the first time, you should follow these instructions first. 
+This document outlines how to configure your LXD backing cloud to create the inputs required for the `juju-bootstrap` unit and the stacks. If running the stacks or units for the first time, you should follow these instructions first. 
 
 ## Prerequisites
 
