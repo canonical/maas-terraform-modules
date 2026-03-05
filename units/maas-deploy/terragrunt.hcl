@@ -17,6 +17,10 @@ terraform {
 dependency "juju_bootstrap" {
   config_path = values.juju_bootstrap_path
 
+  // If juju_cloud_name is specified, we assume someone is bootstrapping to an exisiting 
+  // juju controller so this module dependency is not required.
+  enabled = try(values.juju_cloud_name, null) == null
+
   mock_outputs = {
     juju_cloud = "mock-cloud-name"
     controller = "controller-name"
@@ -79,5 +83,5 @@ inputs = merge({
   },
   {
     // --- Dependencies ---
-    juju_cloud_name = dependency.juju_bootstrap.outputs.juju_cloud
+    juju_cloud_name = try(values.juju_cloud_name, dependency.juju_bootstrap.outputs.juju_cloud)
 })
