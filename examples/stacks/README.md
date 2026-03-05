@@ -1,7 +1,26 @@
-# Example stacks
+# Example Stacks
 
-This directory contains example stacks that can be used as a reference when creating a stack file specific to a particular deployment. Each child directory contains a `terragrunt.stack.hcl` file, which is a complete configuration file that can be used to spin up an entire deployment of all modules included in that stack.
+This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/features/stacks/) that deploy the full MAAS cluster in a single coordinated workflow. Each child directory contains a `terragrunt.stack.hcl` file — a complete configuration that orchestrates all modules and their dependencies together.
 
-All stacks are dependent on the `root.hcl` file in this directory, which contains the common configuration for all example stacks. To run these example stacks, either copy this directory including the `root.hcl` file, or clone this repository, before following the instructions in each stack's `README.md`.
+## Available stacks
 
-The `root.hcl` file determines the location of the Terraform state file, which as written is configured to store state locally in `.terragrunt-local-state/` in this directory. This allows you to run the example stacks without needing to set up a remote backend for Terraform state management. For more information see Terragrunt's [docs](https://terragrunt.gruntwork.io/docs/features/stacks/#how-it-works).
+| Stack | Description |
+|-------|-------------|
+| [single-node](./single-node) | Deploys a minimal single-unit MAAS region and PostgreSQL — a good starting point |
+| [multi-node](./multi-node) | Deploys a multi-unit HA MAAS with PostgreSQL, HAProxy, and optionally backup integration |
+
+## Prerequisites
+
+- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
+- [Terragrunt](https://terragrunt.gruntwork.io/)
+- A LXD cloud installed and configured
+
+## How to use
+
+All stacks depend on the [`root.hcl`](../root.hcl) file one directory up, which configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage). As written, it stores state locally in `.terragrunt-local-state/` — no remote backend setup is needed to get started.
+
+To run an example stack, either clone this repository or copy the `examples/` directory (including `root.hcl`), then follow the instructions in each stack's README.
+
+## Stacks vs. Units
+
+Stacks deploy all modules in one coordinated workflow, handling dependencies automatically. If you want to deploy modules individually, use the [example units](../units/) instead.

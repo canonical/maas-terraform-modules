@@ -1,26 +1,43 @@
 # Single-node stack example
 
-This is the simplest example of a stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. It is an appropriate hello world example, and is a good starting point for users new to stacks.
+The simplest example stack — a good starting point for users new to Terragrunt stacks and Charmed MAAS.
 
-The stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) and postgresql charm, and configures MAAS with example resources.
+This stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) with a single PostgreSQL unit, and configures MAAS with example resources.
 
-For more context on running this stack, see the [README.md](../README.md) in the parent directory.
+For general context on example stacks, see the [parent README](../README.md).
 
-## How to run the stack
+## Prerequisites
 
-1. Populate the required environment variables that will be used in the stack:
+- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
+- [Terragrunt](https://terragrunt.gruntwork.io/)
+- A LXD cloud installed and configured
+
+## How to run
+
+1. Set the required environment variables:
+
     ```bash
     # Specific to your backing cloud:
-    export LXD_ADDRESS="https://10.10.0.1:8443" 
-    export LXD_TRUST_TOKEN="eyJjbGllbnRfbmFtZSI6ImNoYXJtZ..."
+    export LXD_ADDRESS="https://10.10.0.1:8443"
+    export LXD_TRUST_TOKEN="eyJjbGllbnRfbmFtZSI6ImNoYXJtZ..."  # lxc config trust add --name charmed-maas
 
     # MAAS specific:
     export MAAS_ADMIN_PASSWORD="insecure"
     ```
-1. In this directory, generate and apply the stack. Note that if prompted, you should grant sudo privileges to allow installation of the Juju snap:
+
+2. Review the configuration in `terragrunt.stack.hcl` and adjust any optional variables as needed.
+
+3. Generate and apply the stack. If prompted, grant sudo privileges to allow installation of the Juju snap:
+
     ```bash
     cd examples/stacks/single-node
-    terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
-    terragrunt stack run apply      #  Applies the generated stack. 
+    terragrunt stack generate       # Optional — creates units in ./.terragrunt-stack
+    terragrunt stack run apply
     ```
-1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the username found in the `maas-deploy` unit in the `terragrunt.stack.hcl` file and the password you set with the `MAAS_ADMIN_PASSWORD` environment variable, and check out your newly configured MAAS deployment!
+
+4. Once complete, run the following to obtain the MAAS URL:
+    ```bash
+    terragrunt stack output maas_deploy.maas_api_url
+    ```
+
+    Log in with the admin username specified in `terragrunt.stack.hcl` and the password you set earlier. You should have a functioning and configured MAAS!

@@ -9,7 +9,7 @@ Each unit's `terragrunt.hcl` lists its required and optional input variables wit
 | Unit | Description |
 |------|-------------|
 | [juju-bootstrap](./juju-bootstrap) | Bootstraps a Juju controller on a LXD server or cluster |
-| [maas-deploy](./maas-deploy) | Deploys Charmed MAAS on the Juju controller |
+| [maas-deploy](./maas-deploy) | Deploys Charmed MAAS using a Juju controller |
 | [maas-config](./maas-config) | Configures the deployed MAAS instance |
 
 ## Getting started
@@ -32,7 +32,7 @@ terragrunt catalog "https://github.com/canonical/maas-terraform-modules.git?ref=
 
 2. Browse the available modules in the interactive UI and scaffold the ones you need. This generates a `terragrunt.hcl` pre-filled with the module's variables.
 
-3. Fill in the required values and apply:
+3. Fill in the required values and apply. Accept the plan when prompted:
 
 ```bash
 terragrunt run apply
@@ -40,7 +40,7 @@ terragrunt run apply
 
 ### Option 2: Use the examples directly
 
-1. Copy this `examples/` directory (including the `root.hcl` one level up) to your working location. The `root.hcl` file configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage) and is required by each unit's `include "root"` block. Alternatively, clone this repository to get the full example tree.
+1. Copy this `examples/` directory (including the `root.hcl` one level up) to your working location. Alternatively, clone this repository to get the full example tree.
 
 2. Open the unit you want to deploy (e.g. `juju-bootstrap/terragrunt.hcl`), and fill in the required input values marked with `# TODO`, and any optional values as needed.
 

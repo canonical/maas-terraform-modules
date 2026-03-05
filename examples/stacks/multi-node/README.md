@@ -1,25 +1,43 @@
 # Multi-node stack example
 
-This example will spin up a multi-node stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. If running this locally, it will require at least 26GB of RAM to run successfully with the pre-populated constraints in `terragrunt.stack.hcl`. It is a good example of how to use these stacks for more complex deployments. 
+A production-oriented example stack that deploys a full HA Charmed MAAS cluster. With the pre-populated constraints in `terragrunt.stack.hcl`, this requires at least 26 GB of RAM if running locally.
 
-The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region+rack mode), and 3 units of the postgresql charm. MAAS is then configured with example resources.
+The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region+rack mode) and 3 units of the PostgreSQL charm, then configures MAAS with example resources.
 
-For more context on running this stack, see the [README.md](../README.md) in the parent directory.
+For general context on example stacks, see the [parent README](../README.md).
 
-## How to run the stack
+## Prerequisites
 
-1. Create your own .env file from `.env.sample`. Populate the environment variables.
-1. Source your .env file to populate the environment variables in your shell:
+- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
+- [Terragrunt](https://terragrunt.gruntwork.io/)
+- A LXD cloud installed and configured
+
+## How to run
+
+1. Create a `.env` file from [`.env.sample`](.env.sample) and fill in the values:
+
     ```bash
+    cp .env.sample .env
+    # Edit .env with your values
     source .env
     ```
-1. Review the configuration in `terragrunt.stack.hcl` and make any necessary adjustments to the variables that are pre-populated. 
-   > [!Note]
-   > If you do not have an existing S3 compatible storage, set `enable_backup=false` to skip deploying and configuring the relevant infrastructure.
-1. In this directory, generate and apply the stack:
+
+2. Review the configuration in `terragrunt.stack.hcl` and adjust any variables as needed.
+
+    > [!Note]
+    > If you do not have S3-compatible storage available, set `enable_backup = false` to skip deploying the backup infrastructure.
+
+3. Generate and apply the stack. If prompted, grant sudo privileges to allow installation of the Juju snap:
+
     ```bash
     cd examples/stacks/multi-node
-    terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
-    terragrunt stack run apply      #  Applies the generated stack. 
+    terragrunt stack generate       # Optional — creates units in ./.terragrunt-stack
+    terragrunt stack run apply
     ```
-1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the credentials you can find in the `maas-deploy` unit in the `terragrunt.stack.hcl` file, and check out your newly configured MAAS deployment!
+
+4. Once complete, run the following to obtain the MAAS URL:
+    ```bash
+    terragrunt stack output maas_deploy.maas_api_url
+    ```
+
+    Log in with the admin username specified in `terragrunt.stack.hcl` and the password you set earlier. You should have a functioning and configured MAAS!
