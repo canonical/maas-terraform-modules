@@ -1,14 +1,14 @@
 # How to configure a LXD cloud for Juju bootstrap
 
-This document outlines how to configure your LXD backing cloud to create the inputs required for the `juju-bootstrap` unit and the stacks. If running the stacks or units for the first time, you should follow these instructions first. 
+This document outlines how to configure your LXD backing cloud to create the inputs required for the `juju-bootstrap` unit and the stacks. If running the stacks or units for the first time, you should follow these instructions first.
 
 ## Prerequisites
 
-- A LXD based cloud installed and initialised. 
+See the prerequisites in the root README.
 
 ## Getting started
 
-1. Ensure your cloud is exposed to the network. See [the LXD documentation](https://documentation.ubuntu.com/lxd/latest/howto/server_expose/) for more information. 
+1. Ensure your cloud is exposed to the network. See [the LXD documentation](https://documentation.ubuntu.com/lxd/latest/howto/server_expose/) for more information.
     ```bash
     lxc config set core.https_address :8443
     ```
@@ -31,8 +31,7 @@ This document outlines how to configure your LXD backing cloud to create the inp
     ```
 
 1. Add the address, trust token, and any other options to the relevant stack/unit file you'd like to deploy. See the `examples/` directory for more information.
-   
 
 ## Next steps
 
-- See the `examples/` directory to start deploying using the provided stacks and units.
+- See the [examples/stacks](../examples/stacks/README.md) directory to start deploying using the provided stacks.

@@ -11,15 +11,14 @@ This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/
 
 ## Prerequisites
 
-- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
-- [Terragrunt](https://terragrunt.gruntwork.io/)
-- A LXD cloud installed and configured
+See the prerequisites in the root README.
 
 ## How to use
 
-All stacks depend on the [`root.hcl`](../root.hcl) file one directory up, which configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage). 
-
 To try deploying an example stack, clone this repository, then follow the instructions in your chosen stack's README. For more information about using stacks, please see [How to use this Repository](../../README.md#how-to-use-this-repository) in the root README.
+
+All stacks depend on the [`root.hcl`](../root.hcl) file one directory up, which configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage).
+
 
 ## Stacks vs. Units
 

@@ -2,13 +2,22 @@
 
 [![Nightly Tests](https://github.com/canonical/maas-terraform-modules/actions/workflows/full-test.yml/badge.svg?branch=main)](https://github.com/canonical/maas-terraform-modules/actions/workflows/full-test.yml?query=branch%3Amain)
 
-This repository is an collection of Terraform modules, Terragrunt units and Terragrunt stacks that automate the deployment and configuration of high availability (HA) [Charmed](https://juju.is/docs) [MAAS](https://canonical.com/maas/docs). Using the provided Terragrunt stacks, you can go from a bare machine cloud to a deployed and configured MAAS cluster with just a few commands.
+This repository is a collection of Terraform modules, Terragrunt units and Terragrunt stacks that automate the deployment and configuration of high availability (HA) [Charmed](https://juju.is/docs) [MAAS](https://canonical.com/maas/docs). Using the provided Terragrunt stacks, you can go from a bare machine cloud to a deployed and configured MAAS cluster with just a few commands.
+
+The key modules contained in this catalog are:
+
+- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; optional if you already have an external Juju controller.
+- [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS
+- [MAAS Config](./modules/maas-config) - Initially configures charmed MAAS
+
+The deployment of these modules is driven by Terragrunt stacks.
 
 > [!NOTE]
 > The `juju-bootstrap` module and its respective unit are LXD cloud specific, and this catalog is tested with a LXD cloud. However, for the other modules and units, any machine cloud is a valid deployment target, but manual clouds are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
 
 > [!NOTE]
-> The contents of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
+> The content of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
+
 
 ## Contents
 
@@ -26,20 +35,13 @@ This repository is an collection of Terraform modules, Terragrunt units and Terr
       - [Cloud](#cloud)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
 
-The full MAAS cluster deployment consists of: bootstrapping, one of two Deployment, and a recommended (but optional), Terraform modules that should be run in the following order:
-
-- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; Optional if you already have an external Juju controller.
-- [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the provided Juju controller (`juju-bootstrap` or external)
-- [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly recommended. You *can* configure your MAAS independently, but automation is the recommended pathway.
-
 ## Getting started
 
-If you just want to deploy Charmed MAAS: 
+If you just want to deploy Charmed MAAS:
 
 1. Review the [Prerequisites](#prerequisites) section.
 1. Follow the [LXD configuration guide](./docs/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
 1. Explore the [example stacks](./examples/stacks/) to deploy your first MAAS cluster.
-
 
 ## Prerequisites
 
@@ -47,7 +49,7 @@ To run the stacks and units in this repository, the following software must be i
 
 - OpenTofu/Terraform
 - Terragrunt
-- A LXD cloud that is initialized and configured. Please see [how_to_configure_lxd_for_juju_bootsrap.md](./docs/how_to_configure_lxd_for_juju_bootstrap.md) for more information on how to establish a network connection between Juju and your cloud.
+- A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/how_to_configure_lxd_for_juju_bootstrap.md))
 
 It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
 
@@ -55,8 +57,8 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 
 This repository provides Terraform modules for you to consume and deploy your own infrastructure. These modules can be consumed in several ways:
 
-- Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands. Use the example stacks provided in the `example/stacks` directory to get started with your first deployment. Read more about how to use them in the README in that directory.
-- Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the `example/units` directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
+- Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands. See the [examples/stacks](./examples/stacks/README.md) directory to get started.
+- Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the [examples/units](./examples/units/README.md) directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
 
 Typically, you should create your own repository (e.g. `infrastructure-live`) to hold your Terragrunt stack and unit files that are specific to your deployments. When you do this, you will need to pin units and modules to specific tags or commit SHAs using the `source` argument to make your file an immutable definition of your infrastructure. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) and their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
 
@@ -64,13 +66,14 @@ Typically, you should create your own repository (e.g. `infrastructure-live`) to
 
 Each directory listed below contains a README with more details on how to use the contents of that directory.
 
-- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not. 
+- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
 - `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
 - `docs/` - Contains supplementary documentation for the deployment, such as how to deploy to a bootstrapped controller, how to backup and restore your MAAS cluster, and more.
-- `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`. 
+- `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`.
 - `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory. Note that there are no tests for the example units in the `examples/units` directory.
 
 ## Architecture
+
 
 ```mermaid
 flowchart TB
@@ -157,10 +160,10 @@ flowchart TB
       PG_MACHINES ~~~ BACKUP_M0
 
       %% Backup container
-     
+
       subgraph BACKUP_M0["Container"]
         S3_PG["🟡 s3-integrator-postgresql/0"]
-        S3_MAAS["🟡 s3-integrator-maas/0"] 
+        S3_MAAS["🟡 s3-integrator-maas/0"]
       end
     end
   end

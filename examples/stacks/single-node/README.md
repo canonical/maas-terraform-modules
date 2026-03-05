@@ -6,12 +6,6 @@ This stack bootstraps a Juju controller, deploys a single unit of the maas-regio
 
 For general context on example stacks, see the [parent README](../README.md).
 
-## Prerequisites
-
-- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
-- [Terragrunt](https://terragrunt.gruntwork.io/)
-- A LXD cloud installed and configured
-
 ## How to run
 
 1. Set the required environment variables:

@@ -16,9 +16,7 @@ Each unit's `terragrunt.hcl` lists its required and optional input variables wit
 
 ### Prerequisites
 
-- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
-- [Terragrunt](https://terragrunt.gruntwork.io/)
-- A LXD cloud installed and configured.
+See the prerequisites in the root README.
 
 ### Option 1: Scaffold units from the catalog (recommended)
 

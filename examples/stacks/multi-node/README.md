@@ -6,12 +6,6 @@ The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm
 
 For general context on example stacks, see the [parent README](../README.md).
 
-## Prerequisites
-
-- [OpenTofu](https://opentofu.org/) or [Terraform](https://www.terraform.io/)
-- [Terragrunt](https://terragrunt.gruntwork.io/)
-- A LXD cloud installed and configured
-
 ## How to run
 
 1. Create a `.env` file from [`.env.sample`](.env.sample) and fill in the values:

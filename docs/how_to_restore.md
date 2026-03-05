@@ -178,14 +178,14 @@ This is due to custom images not being fully backed up on regions, but they were
    sudo psql -U operator -h 10.237.137.164 -d maas_region_db
    ```
 
-1. Enter the operator password you obtained from step 1. Note this is may not be the same as the operator password used to restore.
-1. Identify the problematic custom image database id(s). If you have no access to any working regions, this will require to you look back at recently uploaded images in the `maasserver_bootresource` table:
+2. Enter the operator password you obtained from step 1. Note this may not be the same as the operator password used to restore.
+3. Identify the problematic custom image database id(s). If you have no access to any working regions, this will require to you look back at recently uploaded images in the `maasserver_bootresource` table:
 
    ```bash
    SELECT * FROM maasserver_bootresource ORDER BY updated DESC;
    ```
 
-1. Run the following statement for each problematic image, replacing the `BAD_RESOURCE_ID` with the image id:
+4. Run the following statement for each problematic image, replacing the `BAD_RESOURCE_ID` with the image id:
 
    ```sql
    BEGIN;
@@ -214,7 +214,7 @@ This is due to custom images not being fully backed up on regions, but they were
    COMMIT;
    ```
 
-1. On your Juju client, re-integrate `maas-region` and `postgresql` to re-initialize `maas-region`:
+5. On your Juju client, re-integrate `maas-region` and `postgresql` to re-initialize `maas-region`:
 
    ```bash
    juju remove-relation maas-region postgresql
