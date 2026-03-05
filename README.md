@@ -14,6 +14,8 @@ This repository is an collection of Terraform modules, Terragrunt units and Terr
 
 - [Terraform driven Charmed MAAS deployment](#terraform-driven-charmed-maas-deployment)
   - [Contents](#contents)
+  - [Getting started](#getting-started)
+  - [Prerequisites](#prerequisites)
   - [How to use this repository](#how-to-use-this-repository)
     - [Repository structure](#repository-structure)
   - [Architecture](#architecture)
@@ -22,7 +24,6 @@ This repository is an collection of Terraform modules, Terragrunt units and Terr
       - [HAProxy and Keepalived](#haproxy-and-keepalived)
       - [Juju Controller](#juju-controller)
       - [Cloud](#cloud)
-  - [Prerequisites](#prerequisites)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
 
 The full MAAS cluster deployment consists of: bootstrapping, one of two Deployment, and a recommended (but optional), Terraform modules that should be run in the following order:
@@ -31,6 +32,25 @@ The full MAAS cluster deployment consists of: bootstrapping, one of two Deployme
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the provided Juju controller (`juju-bootstrap` or external)
 - [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly recommended. You *can* configure your MAAS independently, but automation is the recommended pathway.
 
+## Getting started
+
+If you just want to deploy Charmed MAAS: 
+
+1. Review the [Prerequisites](#prerequisites) section.
+1. Follow the [LXD configuration guide](./docs/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
+1. Explore the [example stacks](./examples/stacks/) to deploy your first MAAS cluster.
+
+
+## Prerequisites
+
+To run the stacks and units in this repository, the following software must be installed in the local system:
+
+- OpenTofu/Terraform
+- Terragrunt
+- A LXD cloud that is initialized and configured. Please see [how_to_configure_lxd_for_juju_bootsrap.md](./docs/how_to_configure_lxd_for_juju_bootstrap.md) for more information on how to establish a network connection between Juju and your cloud.
+
+It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
+
 ## How to use this repository
 
 This repository provides Terraform modules for you to consume and deploy your own infrastructure. These modules can be consumed in several ways:
@@ -38,7 +58,7 @@ This repository provides Terraform modules for you to consume and deploy your ow
 - Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands. Use the example stacks provided in the `example/stacks` directory to get started with your first deployment. Read more about how to use them in the README in that directory.
 - Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the `example/units` directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
 
-Typically, you should create your own repository (e.g. `infrastructure-live` to hold your Terragrunt stack and unit files that are specific to your deployments. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) or their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
+Typically, you should create your own repository (e.g. `infrastructure-live`) to hold your Terragrunt stack and unit files that are specific to your deployments. When you do this, you will need to pin units and modules to specific tags or commit SHAs using the `source` argument to make your file an immutable definition of your infrastructure. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) and their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
 
 ### Repository structure
 
@@ -203,22 +223,6 @@ Provides the underlying virtual-machine infrastructure that Juju runs on.
 While the development and testing of this repository occurs on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
 
 LXD Containers and Virtual machines are deployed as Juju machines, which Juju uses to deploy charms in.
-
-## Prerequisites
-
-To run the stacks, the following software must be installed in the local system:
-
-- OpenTofu/Terraform
-- Terragrunt
-
-The Terraform modules also expect that network connectivity is established from local system to:
-
-- LXD cluster/server where Juju will be bootstrapped and MAAS will be deployed
-- Bootstrapped Juju controller
-- Deployed MAAS
-
-It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
-Juju bootstrap expects connectivity with the LXD API, and we presume connectivity with private addresses of the Juju machines for troubleshooting.
 
 ## Appendix - Backup and Restore
 
