@@ -17,9 +17,9 @@ This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/
 
 ## How to use
 
-All stacks depend on the [`root.hcl`](../root.hcl) file one directory up, which configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage). As written, it stores state locally in `.terragrunt-local-state/` — no remote backend setup is needed to get started.
+All stacks depend on the [`root.hcl`](../root.hcl) file one directory up, which configures the Terraform [backend](https://docs.terragrunt.com/reference/config-blocks-and-attributes/#remote_state) (state storage). 
 
-To run an example stack, either clone this repository or copy the `examples/` directory (including `root.hcl`), then follow the instructions in each stack's README.
+To try deploying an example stack, clone this repository, then follow the instructions in your chosen stack's README. For more information about using stacks, please see [How to use this Repository](../../README.md#how-to-use-this-repository) in the root README.
 
 ## Stacks vs. Units
 
