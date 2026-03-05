@@ -1,6 +1,6 @@
 # How to configure a LXD cloud for Juju bootstrap
 
-This document outlines how to configure your LXD backing cloud to create the credentials required for the `juju-bootstrap` unit. If running the stacks or units for the first time, you should follow these instructions first. 
+This document outlines how to configure your LXD backing cloud to create the inputs required for the `juju-bootstrap` module and unit. If running the stacks or units for the first time, you should follow these instructions first. 
 
 ## Prerequisites
 
@@ -33,6 +33,6 @@ This document outlines how to configure your LXD backing cloud to create the cre
 1. Add the address, trust token, and any other options to the relevant stack/unit file you'd like to deploy. See the `examples/` directory for more information.
    
 
-Next steps:
+## Next steps
 
-- [Deploy a MAAS cluster](./how_to_deploy_maas.md) atop your Juju controller.
+- See the `examples/` directory to start deploying using the provided stacks and units.
