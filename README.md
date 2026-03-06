@@ -6,14 +6,14 @@ This repository is a collection of Terraform modules, Terragrunt units and Terra
 
 The key modules contained in this catalog are:
 
-- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; optional if you already have an external Juju controller.
+- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps a Juju controller onto a cloud; optional if you already have an external Juju controller.
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS
-- [MAAS Config](./modules/maas-config) - Initially configures charmed MAAS
+- [MAAS Config](./modules/maas-config) - Performs initial configuration of charmed MAAS
 
 The deployment of these modules is driven by Terragrunt stacks.
 
 > [!NOTE]
-> The `juju-bootstrap` module and its respective unit are LXD cloud specific, and this catalog is tested with a LXD cloud. However, for the other modules and units, any machine cloud is a valid deployment target, but manual clouds are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
+> The `juju-bootstrap` module and its respective unit are LXD cloud specific, and this catalog is tested on a LXD cloud. However, for the other modules and units, any machine cloud is a valid deployment target, apart from manual clouds which are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
 
 > [!NOTE]
 > The content of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
@@ -66,8 +66,8 @@ Typically, you should create your own repository (e.g. `infrastructure-live`) to
 
 Each directory listed below contains a README with more details on how to use the contents of that directory.
 
-- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
 - `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
+- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
 - `docs/` - Contains supplementary documentation for the deployment, such as how to deploy to a bootstrapped controller, how to backup and restore your MAAS cluster, and more.
 - `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`.
 - `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory. Note that there are no tests for the example units in the `examples/units` directory.
