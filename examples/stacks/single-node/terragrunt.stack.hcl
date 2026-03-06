@@ -24,7 +24,17 @@ unit "juju_bootstrap" {
     // The LXD project that Juju should use for the controller resources
     // lxd_project = "charmed-maas"
     // Map of model configuration defaults to pass to juju bootstrap (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
-    // model_defaults = {}
+    // model_defaults = ...
+    // Example:
+    // model_defaults = {
+    //   http-proxy       = "http://squid:3128"
+    //   https-proxy      = "http://squid:3128"
+    //   no-proxy         = "localhost,127.0.0.1"
+    //   apt-http-proxy   = "http://squid:3128"
+    //   apt-https-proxy  = "http://squid:3128"
+    //   snap-http-proxy  = "http://squid:3128"
+    //   snap-https-proxy = "http://squid:3128"
+    // }
     // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
     // cloud_name = "maas-cloud"
   }
@@ -54,9 +64,17 @@ unit "maas_deploy" {
     // The LXD project in which to create the VMs for Juju
     lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
-    // model_config       = ...
+    // model_config = ...
+    // Example:
+    // model_config = {
+    //   juju-http-proxy  = "http://10.21.2.1:3128"
+    //   juju-https-proxy = "http://10.21.2.1:3128"
+    //   juju-no-proxy    = "10.0.0.1/24,10.21.2.0/24,localhost,127.0.0.1"
+    // }
     // Path to the SSH key to add to the MAAS Juju model
-    // path_to_ssh_key    = ...
+    // path_to_ssh_key = ...
+    // Example:
+    // path_to_ssh_key = "/home/ubuntu/.ssh/id_ed25519.pub"
 
     // -- Machines and constraints
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
@@ -85,7 +103,8 @@ unit "maas_deploy" {
     // Operator channel revision for PostgreSQL deployment
     // charm_postgresql_revision  = ...
     // Operator configuration for PostgreSQL deployment
-    // charm_postgresql_config    = ...
+    // charm_postgresql_config = ...
+
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
@@ -115,7 +134,13 @@ unit "maas_deploy" {
     // Operator channel revision for S3 Integrator deployment
     // charm_s3_integrator_revision = ...
     // Operator configuration for both S3 Integrator deployments. Configuration for `bucket`, `path`, and `tls-ca-chain` is skipped even if set, since it is handled by different Terraform variables.
-    // charm_s3_integrator_config   = ...
+    // charm_s3_integrator_config = ...
+    // Example:
+    // charm_s3_integrator_config = {
+    //   endpoint     = "https://127.0.0.1:9000"
+    //   region       = ""
+    //   s3-uri-style = "path"
+    // }
     // The file path of the S3 CA chain, used for HTTPS validation
     // s3_ca_chain_file_path        = ...
     // Access key used to access the S3 backup bucket

@@ -1,26 +1,23 @@
 # Single-node stack example
 
-This is the simplest example of a stack that runs the `juju-bootstrap`, `maas-deploy` and `maas-config` modules. It is an appropriate hello world example, and is a good starting point for users new to stacks.
+The simplest example stack. This is a good starting point for users new to Terragrunt stacks and Charmed MAAS.
 
-The stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) and postgresql charm, and configures MAAS with example resources.
+For general context on example stacks, see the [parent README](../README.md).
 
-For more context on running this stack, see the [README.md](../README.md) in the parent directory.
+## What this stack deploys
 
-## How to run the stack
+This stack deploys:
+- 1 Juju controller
+- 1 MAAS region unit (region+rack mode)
+- 1 PostgreSQL unit
+- Initial MAAS configuration with example resources
 
-1. Populate the required environment variables that will be used in the stack:
-    ```bash
-    # Specific to your backing cloud:
-    export LXD_ADDRESS="https://10.10.0.1:8443" 
-    export LXD_TRUST_TOKEN="eyJjbGllbnRfbmFtZSI6ImNoYXJtZ..."
+## Prerequisties
 
-    # MAAS specific:
-    export MAAS_ADMIN_PASSWORD="insecure"
-    ```
-1. In this directory, generate and apply the stack. Note that if prompted, you should grant sudo privileges to allow installation of the Juju snap:
-    ```bash
-    cd examples/stacks/single-node
-    terragrunt stack generate       #  Optional. Creates a collection of units in `./.terragrunt-stack` directory
-    terragrunt stack run apply      #  Applies the generated stack. 
-    ```
-1. After the stack completes, scroll up to see the output of the `maas-deploy` module to find the MAAS url. Access it to view the MAAS UI, login with the username found in the `maas-deploy` unit in the `terragrunt.stack.hcl` file and the password you set with the `MAAS_ADMIN_PASSWORD` environment variable, and check out your newly configured MAAS deployment!
+See full [prerequisites](../../../README.md#prerequisites) in the root README.
+
+## How to deploy
+
+For step-by-step deployment instructions, see [How to deploy a single-node stack](../../../docs/How-to%20guides/how_to_deploy_single_node_stack.md).
+
+For a more comprehensive tutorial that covers concepts and deployment, see [Getting started with stacks](../../../docs/Tutorials/Getting%20started%20with%20stacks.md).
