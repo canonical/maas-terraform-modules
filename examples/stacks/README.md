@@ -1,12 +1,12 @@
 # Example Stacks
 
-This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/features/stacks/) that deploy the full MAAS cluster in a single coordinated workflow. Each child directory contains a `terragrunt.stack.hcl` file — a complete configuration that orchestrates all modules and their dependencies together.
+This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/features/stacks/) that deploy the full MAAS cluster in a single coordinated workflow. Each child directory contains a `terragrunt.stack.hcl` file - a complete configuration that orchestrates all modules and their dependencies together.
 
 ## Available stacks
 
 | Stack | Description |
 |-------|-------------|
-| [single-node](./single-node) | Deploys a minimal single-unit MAAS region and PostgreSQL — a good starting point |
+| [single-node](./single-node) | Deploys a minimal single-unit MAAS region and PostgreSQL - a good starting point |
 | [multi-node](./multi-node) | Deploys a multi-unit HA MAAS with PostgreSQL, HAProxy, and optionally backup integration |
 
 ## Prerequisites

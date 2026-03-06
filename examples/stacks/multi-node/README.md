@@ -25,7 +25,7 @@ For general context on example stacks, see the [parent README](../README.md).
 
     ```bash
     cd examples/stacks/multi-node
-    terragrunt stack generate       # Optional — creates units in ./.terragrunt-stack
+    terragrunt stack generate       # Optional, creates units in ./.terragrunt-stack
     terragrunt stack run apply
     ```
 

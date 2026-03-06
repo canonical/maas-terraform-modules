@@ -1,6 +1,6 @@
 # Single-node stack example
 
-The simplest example stack — a good starting point for users new to Terragrunt stacks and Charmed MAAS.
+The simplest example stack. This is a good starting point for users new to Terragrunt stacks and Charmed MAAS.
 
 This stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) with a single PostgreSQL unit, and configures MAAS with example resources.
 
@@ -25,7 +25,7 @@ For general context on example stacks, see the [parent README](../README.md).
 
     ```bash
     cd examples/stacks/single-node
-    terragrunt stack generate       # Optional — creates units in ./.terragrunt-stack
+    terragrunt stack generate       # Optional, creates units in ./.terragrunt-stack
     terragrunt stack run apply
     ```
 
