@@ -3,13 +3,20 @@
 # Exit if any of the intermediate steps fail
 set -e
 
-# Extract "model" argument from the input into
-# MODEL shell variable.
+# Extract "model", "juju_controller_address", "juju_username", and "juju_password" arguments from the input into
+# MODEL, JUJU_CONTROLLER_ADDRESS, JUJU_USERNAME, and JUJU_PASSWORD shell variables.
 # jq will ensure that the values are properly quoted
 # and escaped for consumption by the shell.
-eval "$(jq -r '@sh "MODEL=\(.model)"')"
+eval "$(jq -r '@sh "MODEL=\(.model) JUJU_CONTROLLER_ADDRESS=\(.juju_controller_address) JUJU_USERNAME=\(.juju_username) JUJU_PASSWORD=\(.juju_password)"')"
 
-get_url_cmd=$(juju run -m $MODEL maas-region/leader get-api-endpoint --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
+# Login to Juju
+export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+
+get_url_cmd=$(/snap/juju/current/bin/juju run -m $MODEL maas-region/leader get-api-endpoint --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
+
+# Delete local Juju data to logout and clean up any cached credentials
+rm -rf $JUJU_DATA
 
 # Safely produce a JSON object containing the result value.
 # jq will ensure that the value is properly quoted
