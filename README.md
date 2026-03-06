@@ -41,7 +41,7 @@ If you just want to deploy Charmed MAAS:
 
 1. Review the [Prerequisites](#prerequisites) section.
 1. Follow the [LXD configuration guide](./docs/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
-1. Explore the [example stacks](./examples/stacks/) to deploy your first MAAS cluster.
+1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/Getting%20started%20with%20stacks.md).
 
 ## Prerequisites
 
@@ -57,20 +57,18 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 
 This repository provides Terraform modules for you to consume and deploy your own infrastructure. These modules can be consumed in several ways:
 
-- Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands. See the [examples/stacks](./examples/stacks/README.md) directory to get started.
+- Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands.
 - Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the [examples/units](./examples/units/README.md) directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
 
 Typically, you should create your own repository (e.g. `infrastructure-live`) to hold your Terragrunt stack and unit files that are specific to your deployments. When you do this, you will need to pin units and modules to specific tags or commit SHAs using the `source` argument to make your file an immutable definition of your infrastructure. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) and their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
 
 ### Repository structure
 
-Each directory listed below contains a README with more details on how to use the contents of that directory.
-
-- `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
-- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
 - `docs/` - Contains supplementary documentation for the deployment, such as how to deploy to a bootstrapped controller, how to backup and restore your MAAS cluster, and more.
+- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
+- `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
 - `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`.
-- `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory. Note that there are no tests for the example units in the `examples/units` directory.
+- `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory.
 
 ## Architecture
 

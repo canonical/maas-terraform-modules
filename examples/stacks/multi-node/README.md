@@ -1,37 +1,25 @@
 # Multi-node stack example
 
-A production-oriented example stack that deploys a full HA Charmed MAAS cluster. With the pre-populated constraints in `terragrunt.stack.hcl`, this requires at least 26 GB of RAM if running locally.
-
-The stack bootstraps a Juju controller, deploys 3 units of the maas-region charm (region+rack mode) and 3 units of the PostgreSQL charm, then configures MAAS with example resources.
+A production-oriented example stack that deploys a full HA Charmed MAAS cluster.
 
 For general context on example stacks, see the [parent README](../README.md).
 
-## How to run
+## What this stack deploys
 
-1. Create a `.env` file from [`.env.sample`](.env.sample) and fill in the values:
+This stack deploys a highly available MAAS cluster with:
+- 1 Juju controller
+- 3 MAAS region units (region+rack mode)
+- 3 PostgreSQL units
+<!-- - 3 HAProxy units with subordinate Keepalived for load balancing -->
+- (Optional) S3 integrator charms for backup functionality
+- Initial MAAS configuration with example resources
 
-    ```bash
-    cp .env.sample .env
-    # Edit .env with your values
-    source .env
-    ```
+## Prerequisites
 
-2. Review the configuration in `terragrunt.stack.hcl` and adjust any variables as needed.
+- At least 26 GB of RAM if running locally (with the pre-populated constraints in `terragrunt.stack.hcl`).
+- See full [prerequisites](../../../README.md#prerequisites) in the root README.
+- (Optional) S3-compatible storage for backup integration.
 
-    > [!Note]
-    > If you do not have S3-compatible storage available, set `enable_backup = false` to skip deploying the backup infrastructure.
+## How to deploy
 
-3. Generate and apply the stack. If prompted, grant sudo privileges to allow installation of the Juju snap:
-
-    ```bash
-    cd examples/stacks/multi-node
-    terragrunt stack generate       # Optional, creates units in ./.terragrunt-stack
-    terragrunt stack run apply
-    ```
-
-4. Once complete, run the following to obtain the MAAS URL:
-    ```bash
-    terragrunt stack output maas_deploy.maas_api_url
-    ```
-
-    Log in with the admin username specified in `terragrunt.stack.hcl` and the password you set earlier. You should have a functioning and configured MAAS!
+For step-by-step deployment instructions, see [How to deploy a multi-node stack](../../../docs/How-to%20guides/how_to_deploy_multi_node_stack.md).

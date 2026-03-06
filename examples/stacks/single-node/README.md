@@ -2,36 +2,22 @@
 
 The simplest example stack. This is a good starting point for users new to Terragrunt stacks and Charmed MAAS.
 
-This stack bootstraps a Juju controller, deploys a single unit of the maas-region charm (region+rack mode) with a single PostgreSQL unit, and configures MAAS with example resources.
-
 For general context on example stacks, see the [parent README](../README.md).
 
-## How to run
+## What this stack deploys
 
-1. Set the required environment variables:
+This stack deploys:
+- 1 Juju controller
+- 1 MAAS region unit (region+rack mode)
+- 1 PostgreSQL unit
+- Initial MAAS configuration with example resources
 
-    ```bash
-    # Specific to your backing cloud:
-    export LXD_ADDRESS="https://10.10.0.1:8443"
-    export LXD_TRUST_TOKEN="eyJjbGllbnRfbmFtZSI6ImNoYXJtZ..."  # lxc config trust add --name charmed-maas
+## Prerequisties
 
-    # MAAS specific:
-    export MAAS_ADMIN_PASSWORD="insecure"
-    ```
+See full [prerequisites](../../../README.md#prerequisites) in the root README.
 
-2. Review the configuration in `terragrunt.stack.hcl` and adjust any optional variables as needed.
+## How to deploy
 
-3. Generate and apply the stack. If prompted, grant sudo privileges to allow installation of the Juju snap:
+For step-by-step deployment instructions, see [How to deploy a single-node stack](../../../docs/How-to%20guides/how_to_deploy_single_node_stack.md).
 
-    ```bash
-    cd examples/stacks/single-node
-    terragrunt stack generate       # Optional, creates units in ./.terragrunt-stack
-    terragrunt stack run apply
-    ```
-
-4. Once complete, run the following to obtain the MAAS URL:
-    ```bash
-    terragrunt stack output maas_deploy.maas_api_url
-    ```
-
-    Log in with the admin username specified in `terragrunt.stack.hcl` and the password you set earlier. You should have a functioning and configured MAAS!
+For a more comprehensive tutorial that covers concepts and deployment, see [Getting started with stacks](../../../docs/Tutorials/Getting%20started%20with%20stacks.md).
