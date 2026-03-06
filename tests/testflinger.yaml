@@ -10,6 +10,8 @@ test_data:
       local: tests.tar.gz
     - agent: run_smoke_test.txt
       local: run_smoke_test.txt
+    - agent: install-terragrunt.sh
+      local: install-terragrunt.sh
   test_cmds: 'scp attachments/test/* ubuntu@$DEVICE_IP:
 
     ssh -t ubuntu@$DEVICE_IP -- chmod 755 *.sh

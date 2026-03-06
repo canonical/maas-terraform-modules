@@ -3,6 +3,10 @@ terraform/modules/juju-bootstrap/
 terraform/modules/maas-config/
 terraform/modules/maas-deploy/
 
+# Copied examples and units from root level
+terraform/examples/
+terraform/units/
+
 # Generated tarball
 tests.tar.gz
 

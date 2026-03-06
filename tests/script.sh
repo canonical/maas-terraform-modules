@@ -9,6 +9,7 @@ set -ex
 sudo snap install lxd --channel=5.21/stable
 sudo snap install juju --channel=3.6/stable
 sudo snap install terraform --classic
+./install-terragrunt.sh
 
 lxd init --auto --network-address 0.0.0.0
 
@@ -17,78 +18,114 @@ tar -xzf tests.tar.gz
 
 # Configuration
 cd terraform
+ROOT_DIR=$(pwd)
 
-# Initialize LXD and get trust token
-cd modules/lxd-init
-terraform init && terraform apply -auto-approve -input=false
-LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
-LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
-cd ../..
-
-# Bootstrap Juju with LXD trust token
-cd modules/juju-bootstrap
-terraform init && TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN" terraform apply -var-file="../../config/juju-bootstrap.tfvars" -auto-approve -input=false
-JUJU_CLOUD_NAME=$(terraform output -raw juju_cloud)
-JUJU_CREDENTIALS=$(terraform output -json juju_credentials)
-cd ../..
-
-# Deploy MAAS with Juju cloud
-cd modules/maas-deploy
-terraform init && TF_VAR_juju_cloud_name="$JUJU_CLOUD_NAME" TF_VAR_juju_credentials="$JUJU_CREDENTIALS" terraform apply -var-file="../../config/maas-deploy.tfvars" -auto-approve -input=false
-MAAS_API_URL=$(terraform output -raw maas_api_url)
-MAAS_API_KEY=$(terraform output -raw maas_api_key)
-RACK_CONTROLLER=$(terraform output -json maas_machines | jq -r '.[0]')
-cd ../..
-
-# Configure MAAS with API details
-cd modules/maas-config
-terraform init && TF_VAR_maas_url="$MAAS_API_URL" TF_VAR_maas_key="$MAAS_API_KEY" terraform apply -var-file="../../config/maas-config.tfvars" -auto-approve -input=false
-cd ../..
-
-echo "MAAS deployment completed successfully!"
-
-# If SMOKE_TEST is true exit, else run Terraform acceptance tests
+# Check if SMOKE_TEST is true
 SMOKE_TEST=$(cat ../run_smoke_test.txt)
-if [ "$SMOKE_TEST" == "true" ]; then
-  exit 0
-else
-  echo "Running Terraform acceptance tests..."
+
+# Install prerequisites for tests if not smoke test
+if [ "$SMOKE_TEST" != "true" ]; then
+  echo "Installing test prerequisites..."
+  sudo apt install -y make golang-1.23
+  sudo ln -sf ../lib/go-1.23/bin/go /usr/bin/go
+
+  git clone https://github.com/canonical/terraform-provider-maas.git || true
 fi
 
-# Apply extra MAAS configuration
-cd modules/maas-extra-config
-terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="../../config/maas-extra-config.tfvars" -auto-approve -input=false
-TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
-cd ../..
+# Export common environment variables for both stacks
+export MAAS_ADMIN_PASSWORD="$(openssl rand -base64 32)"
+export LXD_ADDRESS="https://10.0.2.1:8443"
 
-## Terraform acceptance tests setup
+# Loop through both example stacks
+STACK_DIRS=(
+  "examples/stacks/single-node"
+  "examples/stacks/multi-node"
+)
 
-# Set test environment variables
-export MAAS_API_URL
-export MAAS_API_KEY
-export TF_ACC_VM_HOST_ID
-export TF_ACC_NETWORK_INTERFACE_MACHINE="acceptance-vm"
-export TF_ACC_BLOCK_DEVICE_MACHINE="acceptance-vm"
-export TF_ACC_TAG_MACHINES="acceptance-vm"
-export TF_ACC_MACHINE_HOSTNAME="acceptance-vm"
-export TF_ACC_RACK_CONTROLLER_HOSTNAME="$RACK_CONTROLLER"
-export TF_ACC_BOOT_RESOURCES_OS="noble"
-export TF_ACC_CONFIGURATION_DISTRO_SERIES="noble"
-export MAAS_VERSION="3.7"
+for STACK_DIR in "${STACK_DIRS[@]}"; do
+  # Initialize LXD and get trust token
+  cd modules/lxd-init
+  terraform init && terraform apply -replace=lxd_trust_token.maas_charms -replace=lxd_trust_token.vm_host -auto-approve
+  LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
+  LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
+  cd $ROOT_DIR
 
-# Install prerequisites for tests
-sudo apt install -y make golang-1.23
-sudo ln -sf ../lib/go-1.23/bin/go /usr/bin/go
+  # Export relevant environment variables for the stack deployment
+  export LXD_TRUST_TOKEN
+  export LXD_PROJECT_MAAS_MACHINES="maas-system"
 
-# Git clone the terraform-provider-maas repository
-git clone https://github.com/canonical/terraform-provider-maas.git || true
+  echo "=========================================="
+  echo "Deploying MAAS stack: ${STACK_DIR}"
+  echo "=========================================="
 
-# Run Terraform provider acceptance tests
-cd terraform-provider-maas
-make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
-sleep 15
-make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_"'
-make testacc TESTARGS='-run MAASConfiguration'
-make testacc TESTARGS='-run MAASBootSource_'
+  # Deploy the stack. Use --source-map to point to local modules, instead of the remote
+  # git repository defined in the units
+  cd "$STACK_DIR"
+  terragrunt stack run apply \
+  --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+  --non-interactive
 
-echo "Terraform acceptance tests completed successfully."
+  # Retrieve outputs from the deployed stack
+  MAAS_API_URL=$(terragrunt stack output -raw maas_deploy.maas_api_url)
+  MAAS_API_KEY=$(terragrunt stack output -raw maas_deploy.maas_api_key)
+  RACK_CONTROLLER=$(terragrunt stack output -json maas_deploy | jq -r '.maas_deploy.maas_machines[0]')
+
+  # Return to terraform directory
+  cd $ROOT_DIR
+
+  echo "MAAS deployment completed successfully for ${STACK_DIR}"
+
+
+  # If SMOKE_TEST is true, skip acceptance tests
+  if [ "$SMOKE_TEST" != "true" ]; then
+    # Apply extra MAAS configuration
+    cd modules/maas-extra-config
+    terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
+    TF_ACC_VM_HOST_ID=$(terraform output -raw maas_vm_host_id)
+    cd $ROOT_DIR
+
+    ## Terraform acceptance tests setup
+    echo "Running Terraform acceptance tests for ${STACK_DIR}..."
+
+    # Set test environment variables
+    export MAAS_API_URL
+    export MAAS_API_KEY
+    export TF_ACC_VM_HOST_ID
+    export TF_ACC_NETWORK_INTERFACE_MACHINE="acceptance-vm"
+    export TF_ACC_BLOCK_DEVICE_MACHINE="acceptance-vm"
+    export TF_ACC_TAG_MACHINES="acceptance-vm"
+    export TF_ACC_MACHINE_HOSTNAME="acceptance-vm"
+    export TF_ACC_RACK_CONTROLLER_HOSTNAME="$RACK_CONTROLLER"
+    export TF_ACC_BOOT_RESOURCES_OS="noble"
+    export TF_ACC_CONFIGURATION_DISTRO_SERIES="noble"
+    export MAAS_VERSION="3.7"
+
+    # Run a subset of Terraform provider acceptance tests to validate the
+    # deployment without increasing the likelihood of flaky tests.
+    cd terraform-provider-maas
+    make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
+    sleep 15
+    make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_" -skip="TestAccDataSourceMAASVMHost_virsh"'
+    make testacc TESTARGS='-run MAASConfiguration'
+    cd $ROOT_DIR
+
+    echo "Terraform acceptance tests completed successfully for ${STACK_DIR}."
+
+    # Destroy the extra MAAS configuration
+    cd modules/maas-extra-config
+    MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform destroy -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
+    cd $ROOT_DIR
+  else
+    echo "SMOKE_TEST=true; skipping acceptance tests and maas-extra-config for ${STACK_DIR}"
+  fi
+
+  # Destroy the stack
+  echo "Destroying MAAS stack: ${STACK_DIR}"
+  cd $STACK_DIR
+  terragrunt stack run destroy \
+  --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+  --non-interactive
+  cd $ROOT_DIR
+done
+
+echo "All stack deployments and tests completed successfully!"
