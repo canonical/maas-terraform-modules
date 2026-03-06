@@ -119,11 +119,13 @@ unit "maas_deploy" {
     // Operator channel revision for Keepalived deployment
     // charm_keepalived_revision  = ...
     // Operator configuration for Keepalived deployment
-    charm_keepalived_config = {}
+    charm_keepalived_config = {
+      port = 80
+    }
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel = "3.7/edge"
+    charm_maas_region_channel = "latest/edge"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
