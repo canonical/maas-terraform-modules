@@ -35,15 +35,27 @@ locals {
     // --- Machines and constraints ---
     maas_constraints     = try(values.maas_constraints, null)
     postgres_constraints = try(values.postgres_constraints, null)
+    haproxy_constraints  = try(values.haproxy_constraints, null)
     zone_list            = try(values.zone_list, null)
     enable_postgres_ha   = try(values.enable_postgres_ha, null)
     enable_maas_ha       = try(values.enable_maas_ha, null)
+    enable_haproxy       = try(values.enable_haproxy, null)
     ubuntu_version       = try(values.ubuntu_version, null)
 
     // --- Workload: PostgreSQL ---
     charm_postgresql_channel  = try(values.charm_postgresql_channel, null)
     charm_postgresql_revision = try(values.charm_postgresql_revision, null)
     charm_postgresql_config   = try(values.charm_postgresql_config, null)
+
+    // --- Workload: HAProxy ---
+    charm_haproxy_channel  = try(values.charm_haproxy_channel, null)
+    charm_haproxy_revision = try(values.charm_haproxy_revision, null)
+    charm_haproxy_config   = try(values.charm_haproxy_config, null)
+
+    // --- Workload: Keepalived ---
+    charm_keepalived_channel  = try(values.charm_keepalived_channel, null)
+    charm_keepalived_revision = try(values.charm_keepalived_revision, null)
+    charm_keepalived_config   = try(values.charm_keepalived_config, null)
 
     // --- Workload: MAAS ---
     charm_maas_region_channel  = try(values.charm_maas_region_channel, null)
@@ -55,6 +67,13 @@ locals {
     admin_password   = try(values.admin_password, null)
     admin_email      = try(values.admin_email, null)
     admin_ssh_import = try(values.admin_ssh_import, null)
+
+    // --- MAAS API Configuration ---
+    maas_url        = try(values.maas_url, null)
+    virtual_ip      = try(values.virtual_ip, null)
+    ssl_cert_path   = try(values.ssl_cert_path, null)
+    ssl_key_path    = try(values.ssl_key_path, null)
+    ssl_cacert_path = try(values.ssl_cacert_path, null)
 
     // --- External integrations (backup/s3) ---
     enable_backup                = try(values.enable_backup, null)

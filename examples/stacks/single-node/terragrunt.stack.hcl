@@ -67,6 +67,8 @@ unit "maas_deploy" {
     // maas_constraints     = ...
     // Constraints for the PostgreSQL virtual machines
     // postgres_constraints = ...
+    // Constraints for the HAProxy Machines
+    // haproxy_constraints  = ...
     // List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
     // are distributed across these zones in round-robin fashion (for example, with 3 zones and
     // 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
@@ -76,6 +78,8 @@ unit "maas_deploy" {
     // enable_postgres_ha   = ...
     // Set this to true to run MAAS in high availability (HA), which will create three maas-region controller units
     // enable_maas_ha       = ...
+    // Set this to true to run MAAS with HAProxy, which will deploy HAProxy
+    // enable_haproxy       = ...
     // The Ubuntu operating system version to install on the virtual machines (VMs)
     // ubuntu_version       = ...
 
@@ -86,6 +90,14 @@ unit "maas_deploy" {
     // charm_postgresql_revision  = ...
     // Operator configuration for PostgreSQL deployment
     // charm_postgresql_config    = ...
+
+    // --- Workload: HAProxy ---
+    // Operator channel for HAProxy deployment
+    // charm_haproxy_channel = "2.8/edge"
+    // Operator channel revision for HAProxy deployment
+    // charm_haproxy_revision  = ...
+    // Operator configuration for HAProxy deployment
+    // charm_haproxy_config = {}
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
@@ -106,6 +118,16 @@ unit "maas_deploy" {
     admin_email = "admin@maas.io"
     // The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub. E.g. 'lp:my_launchpad_username'.
     // admin_ssh_import = ...
+
+    // --- MAAS API Configuration ---
+    // The MAAS URL to use for the MAAS API. If not given, will default to one derived from the HAProxy/MAAS Unit IPs
+    // maas_url        = ...
+    // SSL Certificate path, Required for MAAS TLS mode operations
+    // ssl_cert_path   = ...
+    // SSL Key path, Required for MAAS TLS mode operations
+    // ssl_key_path    = ...
+    // SSL CACert path, optionally used for MAAS TLS mode operations if the ssl_certificate is self signed
+    // ssl_cacert_path = ...
 
     // -- External integrations (backup/s3)
     // Whether to enable backup for MAAS and PostgreSQL

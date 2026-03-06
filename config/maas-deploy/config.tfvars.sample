@@ -93,6 +93,7 @@ charm_keepalived_channel = "latest/edge"
 charm_keepalived_revision = null
 # Operator configuration for Keepalived deployment
 charm_keepalived_config = {
+    port = 80
 }
 
 ###
