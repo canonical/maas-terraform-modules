@@ -1,54 +1,29 @@
 # Example Units
 
-This directory contains example [Terragrunt unit](https://docs.terragrunt.com/getting-started/terminology/#unit) configurations for each Terraform module in this repository. A Terragrunt unit is a single `terragrunt.hcl` file that wraps a Terraform module, letting you deploy it independently with Terragrunt.
-
-Each unit's `terragrunt.hcl` lists its required and optional input variables with descriptions, types, and example values. Use these as a starting point for your own configurations of individual modules.
+This directory contains example [Terragrunt unit](https://docs.terragrunt.com/getting-started/terminology/#unit) configurations for each Terraform module in this repository. A unit is a single `terragrunt.hcl` file that wraps a Terraform module for independent deployment.
 
 ## Available units
 
-| Unit | Description |
-|------|-------------|
-| [juju-bootstrap](./juju-bootstrap) | Bootstraps a Juju controller on a LXD server or cluster |
-| [maas-deploy](./maas-deploy) | Deploys Charmed MAAS using a Juju controller |
-| [maas-config](./maas-config) | Configures the deployed MAAS instance |
+- [juju-bootstrap](juju-bootstrap/) - Bootstraps a Juju controller
+- [maas-deploy](maas-deploy/) - Deploys charmed MAAS
+- [maas-config](maas-config/) - Configures MAAS with initial setup
 
-## Getting started
+Each unit's `terragrunt.hcl` includes variable descriptions, types, and example values.
 
-### Prerequisites
+## Requirements
 
-See the prerequisites in the root README.
+- See full [prerequisites](../../README.md#prerequisites) in the root README
+- A `root.hcl` file in the parent directory (see [example](../root.hcl))
 
-### Option 1: Scaffold units from the catalog (recommended)
+## Deployment order
 
-Terragrunt can browse and scaffold units from this repository interactively using [catalog](https://docs.terragrunt.com/features/catalog/) and [scaffold](https://docs.terragrunt.com/features/scaffold/):
+Units must be deployed in dependency order:
+1. `juju-bootstrap` (skip if using an existing controller)
+2. `maas-deploy`
+3. `maas-config`
 
-1. From a directory containing a `root.hcl` one level up (or create one based on the [example](../root.hcl)):
+## How to use
 
-```bash
-terragrunt catalog "https://github.com/canonical/maas-terraform-modules.git?ref=main" --root-file-name root.hcl
-```
+For deployment instructions, see [How to deploy with units](../../docs/How-to%20guides/how_to_deploy_with_units.md).
 
-2. Browse the available modules in the interactive UI and scaffold the ones you need. This generates a `terragrunt.hcl` pre-filled with the module's variables.
-
-3. Fill in the required values and apply. Accept the plan when prompted:
-
-```bash
-terragrunt run apply
-```
-
-### Option 2: Use the examples directly
-
-1. Copy this `examples/` directory (including the `root.hcl` one level up) to your working location. Alternatively, clone this repository to get the full example tree.
-
-2. Open the unit you want to deploy (e.g. `juju-bootstrap/terragrunt.hcl`), and fill in the required input values marked with `# TODO`, and any optional values as needed.
-
-3. Run the unit and approve the plan:
-
-```bash
-cd juju-bootstrap
-terragrunt run apply
-```
-
-## Units vs. Stacks
-
-Units deploy a single module at a time. If you want to deploy the full MAAS cluster (bootstrap, deploy, and configure) in one coordinated workflow, use the [example stacks](../stacks/) instead. Stacks handle the dependencies between modules automatically.
+For automatic dependency handling, use [example stacks](../stacks/) instead.
