@@ -1,6 +1,6 @@
 # How to deploy with units
 
-This guide walks through how to deploy individual Terraform modules using Terragrunt units. For a more comprehensive guide on how to work with units, see the [Terragrunt Documentation](https://docs.terragrunt.com/features/units).
+This guide walks through how to deploy individual Terraform modules using Terragrunt units. A unit is a single `terragrunt.hcl` file that wraps a Terraform module for individual deployments of modules. For a more comprehensive guide on how to work with units, see the [Terragrunt Documentation](https://docs.terragrunt.com/features/units).
 
 ## Prerequisites
 
