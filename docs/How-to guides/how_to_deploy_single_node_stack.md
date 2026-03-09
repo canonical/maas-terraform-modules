@@ -6,6 +6,17 @@ This guide shows you how to deploy a minimal single-node MAAS cluster using the 
 
 - Ensure you have met all [prerequisites](../../README.md#prerequisites) in the root README.
 
+## Clone the repository
+
+First, clone the repository to get access to the example configurations:
+
+```bash
+git clone https://github.com/canonical/maas-terraform-modules.git
+cd maas-terraform-modules
+```
+
+Alternatively, you can copy just the `examples` directory to your preferred location.
+
 ## Set environment variables
 
 Set the required environment variables for your deployment:

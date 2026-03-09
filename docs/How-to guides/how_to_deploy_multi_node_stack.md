@@ -8,6 +8,17 @@ This guide shows you how to deploy a production-ready, highly available MAAS clu
 - At least 26 GB of RAM available if running locally.
 - (Optional) S3-compatible storage for backup integration.
 
+## Clone the repository
+
+First, clone the repository to get access to the example configurations:
+
+```bash
+git clone https://github.com/canonical/maas-terraform-modules.git
+cd maas-terraform-modules
+```
+
+Alternatively, you can copy just the `examples` directory to your preferred location.
+
 ## Set environment variables
 
 The multi-node stack uses a `.env` file to manage environment variables.
