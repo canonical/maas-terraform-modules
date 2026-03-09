@@ -34,4 +34,4 @@ See the prerequisites in the root README.
 
 ## Next steps
 
-- See the [examples/stacks](../examples/stacks/README.md) directory to start deploying using the provided stacks.
+- See the [examples/stacks](../../examples/stacks/README.md) directory to start deploying using the provided stacks.

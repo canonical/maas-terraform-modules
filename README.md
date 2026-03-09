@@ -40,7 +40,7 @@ The deployment of these modules is driven by Terragrunt stacks.
 If you just want to deploy Charmed MAAS:
 
 1. Review the [Prerequisites](#prerequisites) section.
-1. Follow the [LXD configuration guide](./docs/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
+1. Follow the [LXD configuration guide](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
 1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/Getting%20started%20with%20stacks.md).
 
 ## Prerequisites
@@ -49,7 +49,7 @@ To run the stacks and units in this repository, the following software must be i
 
 - OpenTofu/Terraform
 - Terragrunt
-- A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/how_to_configure_lxd_for_juju_bootstrap.md))
+- A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md))
 
 It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
 
@@ -227,6 +227,6 @@ LXD Containers and Virtual machines are deployed as Juju machines, which Juju us
 
 ## Appendix - Backup and Restore
 
-There exist two supplementary documents for instructions on [How to Backup](./docs/how_to_backup.md) and [How to Restore](./docs/how_to_restore.md) your MAAS Cluster.
+There exist two supplementary documents for instructions on [How to Backup](./docs/How-to%20guides/how_to_backup.md) and [How to Restore](./docs/How-to%20guides/how_to_restore.md) your MAAS Cluster.
 
 It is recommended to take a backup of your cluster after initial setup.

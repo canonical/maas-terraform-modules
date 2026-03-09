@@ -12,7 +12,7 @@ This stack deploys:
 - 1 PostgreSQL unit
 - Initial MAAS configuration with example resources
 
-## Prerequisties
+## Prerequisites
 
 See full [prerequisites](../../../README.md#prerequisites) in the root README.
 

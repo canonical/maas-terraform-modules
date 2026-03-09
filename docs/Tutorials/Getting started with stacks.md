@@ -10,7 +10,7 @@ You'll also need the outputs from your LXD configuration, specifically:
 - LXD API endpoint address.
 - LXD trust token for authentication.
 
-If you haven't got these, follow the [LXD configuration guide](../how_to_configure_lxd_for_juju_bootstrap.md) first.
+If you haven't got these, follow the [LXD configuration guide](../How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) first.
 
 ### Understanding the repository
 
@@ -171,7 +171,7 @@ When you're finished experimenting, tear down the deployment:
 terragrunt stack run destroy
 ```
 
-This destroys each module in the reverse order it was deployed. 
+This destroys each module in the reverse order it was deployed.
 
 Confirm the removal when prompted.
 
@@ -181,6 +181,6 @@ Finally, remove the generated stack `./.terragrunt-stack/`:
 terragrunt stack clean
 ```
 
-### Troubleshooting`
+### Troubleshooting
 
 For more detailed troubleshooting, see the [troubleshooting guide](../troubleshooting.md).
