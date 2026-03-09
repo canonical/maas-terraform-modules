@@ -1,6 +1,6 @@
 # How to deploy with units
 
-This guide shows you how to deploy individual Terraform modules using Terragrunt units.
+This guide walks through how to deploy individual Terraform modules using Terragrunt units. For a more comprehensive guide on how to work with units, see the [Terragrunt Documentation](https://docs.terragrunt.com/features/units).
 
 ## Prerequisites
 
@@ -8,7 +8,15 @@ This guide shows you how to deploy individual Terraform modules using Terragrunt
 
 ## Option 1: Scaffold from the catalog (recommended)
 
-Navigate to a directory containing a `root.hcl` (or create one based on the [example](../../examples/root.hcl)):
+Create a directory structure that mirrors the one below. Populate `root.hcl`, you can use the one found in [example/root.hcl](../../examples/root.hcl): 
+
+```bash
+.
+├── my-unit/
+└── root.hcl
+```
+
+Navigate to your empty directory `my-unit` and run the following:
 
 ```bash
 terragrunt catalog "https://github.com/canonical/maas-terraform-modules.git?ref=main" --root-file-name root.hcl
