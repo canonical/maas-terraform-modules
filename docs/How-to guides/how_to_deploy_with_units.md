@@ -8,7 +8,7 @@ This guide walks through how to deploy individual Terraform modules using Terrag
 
 ## Option 1: Scaffold from the catalog (recommended)
 
-Create a directory structure that mirrors the one below. Populate `root.hcl`, you can use the one found in [example/root.hcl](../../examples/root.hcl): 
+Create a directory structure that mirrors the one below. Populate `root.hcl`, you can use the one found in [examples/root.hcl](../../examples/root.hcl): 
 
 ```bash
 .
