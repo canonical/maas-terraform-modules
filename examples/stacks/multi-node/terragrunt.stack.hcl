@@ -1,10 +1,10 @@
 locals {
-    // These are nullable values
-    maas_url        = trimspace(get_env("MAAS_URL", ""))
-    virtual_ip      = trimspace(get_env("VIRTUAL_IP", ""))
-    ssl_cert_path   = trimspace(get_env("SSL_CERT_PATH", ""))
-    ssl_key_path    = trimspace(get_env("SSL_KEY_PATH", ""))
-    ssl_cacert_path = trimspace(get_env("SSL_CACERT_PATH", ""))
+  // These are nullable values
+  maas_url        = trimspace(get_env("MAAS_URL", ""))
+  virtual_ip      = trimspace(get_env("VIRTUAL_IP", ""))
+  ssl_cert_path   = trimspace(get_env("SSL_CERT_PATH", ""))
+  ssl_key_path    = trimspace(get_env("SSL_KEY_PATH", ""))
+  ssl_cacert_path = trimspace(get_env("SSL_CACERT_PATH", ""))
 }
 
 unit "juju_bootstrap" {
@@ -82,7 +82,7 @@ unit "maas_deploy" {
     // Constraints for the PostgreSQL virtual machines
     postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
     // Constraints for the HAProxy Machines
-    haproxy_constraints  = "cores=1 mem=1G"
+    haproxy_constraints = "cores=1 mem=1G"
     // List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
     // are distributed across these zones in round-robin fashion (for example, with 3 zones and
     // 3 machines, each gets a different zone; with 2 zones and 3 machines, the pattern is
