@@ -7,17 +7,19 @@ This document contains references to common issues found when using or developin
 If you are seeing log messages such as `remaining connection slots are reserved for roles with the SUPERUSER attribute`, then your PostgreSQL charm does not have enough outgoing connections configured to handle all of the MAAS traffic.
 
 This typically occurs on a Multi-node setup with default instructions, as MAAS saturates the 100 connection default.
-To increase the connections, simply modify the PostgreSQL `experimental_max_connections` value to something larger, for example:
+To increase the connections, simply modify the PostgreSQL `experimental_max_connections` value in the postgresql config:
 
 ```bash
-❯ juju config postgresql experimental_max_connections=300
+charm_postgresql_config = {
+    experimental_max_connections = 400
+}
 ```
 
 To fetch the actual minimum connections required, refer to [this article](https://canonical.com/maas/docs/installation-requirements#p-12448-postgresql) on the MAAS docs.
 
 ## Out-Of-Memory
 
-To run a Multi-Node MAAS and/or PostgreSQL on a single machine, the default memory constraints require your host to have at least 32GB RAM. If you wish to reduce this, adjust the VM constraints variables in your `maas-deploy/config.tfvars` file:
+To run a Multi-Node MAAS and/or PostgreSQL on a single machine using LXD as your backing cloud, the default memory constraints require your host to have at least 26GB RAM. If you wish to reduce this, adjust the VM constraints variables:
 
 ```bash
 maas_constraints     = "cores=1 mem=2G virt-type=virtual-machine"
@@ -28,7 +30,7 @@ This would limit VMs to 1 core and 2GB of RAM. It is recommended to modify and t
 
 ## Troubleshooting HA mode
 
-In case any of the MAAS snaps is unconfigured after first deployment, you can `juju ssh` to its machine and manually run the maas init command as a workaround.
+In case any of the MAAS snaps is unconfigured after first deployment, you can `juju ssh` to its machine and manually run the maas init command as a workaround. You will need to have added your SSH key to the model first (see `path_to_ssh_key` in `maas_deploy`).
 
 ```bash
 # check if MAAS is Initialized
@@ -47,15 +49,11 @@ maas_url: http://10.10.0.28:5240/MAAS
 ❯ sudo maas init region+rack --maas-url "$maas_url" --database-uri "postgres:// $database_user:$database_pass@$database_host:$database_port/$database_name"
 ```
 
-## Missing SSH Access
-
-Please follow the instructions under [How to SSH to Juju machines](./docs/how_to_ssh_to_juju_machines.md) to add SSH access to all required Juju nodes.
-
 ## `Unable to connect... connect: connection refused` When Bootstrapping
 
-If you see this error during the bootstrapping process, it is likely that the LXD trust token is not valid. A LXD trust token is only valid once and must be created right before bootstrapping. To resolve this:
+If you see this error during the bootstrapping process, it is likely that the LXD trust token is not valid or that Juju credentials are outdated. A LXD trust token is only valid once and must be created right before bootstrapping. To resolve this:
 
-* Delete the `clouds.yaml` and `credentials.yaml` files in the `modules/juju-bootstrap` directory.
-* In the `$HOME/.local/share/juju` directory, remove `maas-charms` cloud object from `clouds.yaml` and the identically named `maas-charms` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only remove the ones associated with this deployment.
+* Delete the `clouds.yaml` and `credentials.yaml` files that are generated locally. These can be found in the `modules/juju-bootstrap` directory. If you are using stacks, you can just completely remove your stack with simply `terragrunt stack clean`.
+* In the `$HOME/.local/share/juju` directory, remove `maascloud` cloud object from `clouds.yaml` and the identically named `maascloud` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only remove the ones associated with this deployment.
 
-Now the old token has been removed, create another token as in the [bootstrapping Juju guide](./docs/how_to_bootstrap_juju.md), paste the new token into `config/juju-bootstrap/config.tfvars`, and re-run the Terraform plan.
+Now the old token has been removed, create another token as in the [how to configure LXD for Juju bootsrap doc](./How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) and redeploy your stack or unit. 
