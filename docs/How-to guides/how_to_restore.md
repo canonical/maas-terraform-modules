@@ -41,7 +41,7 @@ The restore is always performed with PostgreSQL deployed as a single-node (`enab
 
 ### Step 2: Staged deployment of a fresh environment
 
-Deploy the `maas-deploy` to your target configuration, but ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
+Deploy the `maas-deploy` to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
 
 When you've deployed your target configuration, re-run your `terraform apply` with `enable_backup=true` to deploy the necessary backup configuration.
 
