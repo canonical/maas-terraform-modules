@@ -20,3 +20,9 @@ lxd_trust_token = "1234lkjh..."
 #   snap-https-proxy = "http://squid:3128"
 # }
 
+# Controller destroy flags configuration (optional)
+# Uncomment and configure to pass flags to juju destroy-controller command when destroying the controller
+# destroy_flags = {
+#   destroy_all_models = true
+#   force              = true
+# }

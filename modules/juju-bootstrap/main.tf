@@ -30,9 +30,5 @@ resource "juju_controller" "controller" {
   }
 
   model_default = var.model_defaults
-
-  destroy_flags = {
-    destroy_all_models = true,
-    force              = true,
-  }
+  destroy_flags = var.destroy_flags
 }
