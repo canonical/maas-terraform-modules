@@ -49,4 +49,4 @@ Units must be deployed in dependency order:
 2. `maas-deploy`
 3. `maas-config`
 
-For automatic dependency handling, consider using [stacks](how_to_deploy_single_node_stack.md) instead.
+For automatic dependency handling, consider using stacks instead. Please see the example stacks in the [examples/stacks](../../examples/stacks/README.md) directory, or the [Getting started with stacks](../Tutorials/Getting%20started%20with%20stacks.md) tutorial.

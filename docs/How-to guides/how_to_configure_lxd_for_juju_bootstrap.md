@@ -4,7 +4,7 @@ This document outlines how to configure your LXD backing cloud to create the inp
 
 ## Prerequisites
 
-See the prerequisites in the root README.
+See the prerequisites in the root [README](../../README.md).
 
 ## Getting started
 
