@@ -53,7 +53,7 @@ maas_url: http://10.10.0.28:5240/MAAS
 
 If you see this error during the bootstrapping process, it is likely that the LXD trust token is not valid or that Juju credentials are outdated. A LXD trust token is only valid once and must be created right before bootstrapping. To resolve this:
 
-* Delete the `clouds.yaml` and `credentials.yaml` files that are generated locally. These can be found in the `modules/juju-bootstrap` directory. If you are using stacks, you can just completely remove your stack with simply `terragrunt stack clean`.
+* Delete the `clouds.yaml` and `credentials.yaml` files that are generated locally. These can be found in the `modules/juju-bootstrap` directory. If you are using stacks, they can be completely removed with `terragrunt stack clean`.
 * In the `$HOME/.local/share/juju` directory, remove `maascloud` cloud object from `clouds.yaml` and the identically named `maascloud` credential from `credentials.yaml`. There may be other credentials or clouds defined as part of your Juju setup; it's important to only remove the ones associated with this deployment.
 
 Now the old token has been removed, create another token as in the [how to configure LXD for Juju bootsrap doc](./How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) and redeploy your stack or unit. 
