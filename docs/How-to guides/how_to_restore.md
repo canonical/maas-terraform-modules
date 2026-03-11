@@ -104,7 +104,7 @@ Restore your backup data:
    juju integrate postgresql maas-region
    ```
 
-1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units), now you can set `enable_postgres_ha=true` in your stack/unit file, and re-run the relevant terragrunt apply step. Wait for its completion.
+1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units); set `enable_postgres_ha=true` in your stack/unit file, re-run the relevant terragrunt apply step, and wait for its completion.
 
    Otherwise, simply re-run the relevant terragrunt apply step for your stack/unit to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
 
