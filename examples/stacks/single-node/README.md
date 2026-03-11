@@ -20,4 +20,4 @@ See full [prerequisites](../../../README.md#prerequisites) in the root README.
 
 For step-by-step deployment instructions, see [How to deploy a single-node stack](../../../docs/How-to%20guides/how_to_deploy_single_node_stack.md).
 
-For a more comprehensive tutorial that covers concepts and deployment, see [Getting started with stacks](../../../docs/Tutorials/Getting%20started%20with%20stacks.md).
+For a more comprehensive tutorial that covers concepts and deployment, see [Getting started with stacks](../../../docs/Tutorials/getting_started_with_stacks.md).

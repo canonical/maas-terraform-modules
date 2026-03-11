@@ -41,7 +41,7 @@ If you just want to deploy Charmed MAAS:
 
 1. Review the [Prerequisites](#prerequisites) section.
 1. Follow the [LXD configuration guide](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
-1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/Getting%20started%20with%20stacks.md).
+1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/getting_started_with_stacks.md).
 
 ## Prerequisites
 
