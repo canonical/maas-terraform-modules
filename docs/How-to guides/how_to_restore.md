@@ -10,7 +10,7 @@ This is a guide on how to restore MAAS from an existing charmed MAAS backup as d
 It's important to understand the following:
 
 - The restore process outlined in this document is for a fresh install of MAAS and PostgreSQL.
-- The restore process outlined in this document will result in the modules `juju-bootstrap` and `maas-deploy` being fully managed under Terraform/Terragrunt. Getting `maas-config` under management with Terraform/Terragrunt is left to you, the user, as it will involve manually importing specific resources.
+- The restore process outlined in this document will result in the modules `juju-bootstrap` and `maas-deploy` being fully managed under Terraform/Terragrunt. Getting `maas-config` under management with Terraform/Terragrunt is left to you, the user, as you will need to backup and restore your Terraform state files for that module.  
 - When restoring, deploy the same MAAS and PostgreSQL channel versions that were used to create the backup. You can see the version of the maas-region charm used for a particular backup in `mybucket/mypath/backup/<backup-id>/backup_metadata.json`, and the version of PostgreSQL used in `mybucket/mypath/backup/<stanza-name>/backup.info`.
 
 ### Prerequisites
