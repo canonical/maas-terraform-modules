@@ -120,7 +120,7 @@ flowchart TB
         HAPROXY_H0 ~~~ HAPROXY_H1 ~~~ HAPROXY_H2
       end
 
-      %% MAAS collocated machines
+      %% MAAS co-located machines
       subgraph MAAS_MACHINES["MAAS machines"]
          subgraph MAAS_M0["VM-3"]
 
