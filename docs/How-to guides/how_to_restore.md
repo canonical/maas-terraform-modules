@@ -41,9 +41,9 @@ The restore is always performed with PostgreSQL deployed as a single-node (`enab
 
 ### Step 2: Staged deployment of a fresh environment
 
-Deploy the `maas-deploy` to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
+Deploy the `maas-deploy` module to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration. If you are using stacks, do not include the `maas-config` unit in your stack file, as it will be restored in a later step.
 
-When you've deployed your target configuration, re-run your `terraform apply` with `enable_backup=true` to deploy the necessary backup configuration.
+When you've deployed your target configuration, re-run your relevant `terragrunt apply` step with `enable_backup=true` to deploy the necessary backup configuration.
 
 After the final stage, Terraform should complete and your PostgreSQL unit should be in a blocked state with the message "the s3 repository has backups from another cluster". This is expected and you can proceed with the restore process.
 
@@ -106,7 +106,7 @@ Restore your backup data:
 
 1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units); set `enable_postgres_ha=true` in your stack/unit file, re-run the relevant terragrunt apply step, and wait for its completion.
 
-   Otherwise, simply re-run the relevant terragrunt apply step for your stack/unit to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
+   Otherwise, simply re-run the relevant terragrunt apply step for your stack/unit to ensure your configuration is now managed by Terraform. You may now include the MAAS config unit if you are using stacks. You should only observe a plan with modifications to the output:
 
    ```bash
    ❯ terragrunt stack run apply
