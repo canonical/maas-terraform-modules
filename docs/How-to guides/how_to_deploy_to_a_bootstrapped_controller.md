@@ -26,19 +26,17 @@ In this case, the Juju controller credentials must be provided by the user as en
     JUJU_CA_CERT="$(juju show-controller --format json | jq --arg controller "$CONTROLLER" -r '.[$controller].details.["ca-cert"]')"
     ```
 
-1. On the system where `maas-deploy` Terraform module is executed, [export](https://registry.terraform.io/providers/juju/juju/latest/docs#environment-variables) the extracted credentials:
+1. On the system where your unit/stack is executed, specify the relevant variables in your unit or stack file. Replace the `juju_bootstrap_path` variable with the following:
 
-    ```bash
-    export CONTROLLER="__extracted_values__"
-    export JUJU_CONTROLLER_ADDRESSES="__extracted_values__"
-    export JUJU_USERNAME="__extracted_values__"
-    export JUJU_PASSWORD="__extracted_values__"
-    export JUJU_CA_CERT=$(cat ./extracted-ca-cert)
+    ```diff
+     // Dependencies
+    - juju_bootstrap_path = "../juju-bootstrap"
+    + juju_cloud_name = "<cloud name>"
+    + juju_credentials = {
+    +   controller_addresses = [<controller address 1>, <controller address 2>, ...]
+    +   username             = <username>
+    +   password             = <password>
+    +   ca_certificate       = <ca certificate>
+    + }
     ```
-
-1. After exporting the credential environment variables, the Terraform execution of the `maas-deploy` module remains the same:
-
-    ```bash
-    cd modules/maas-deploy
-    terraform plan -var-file ../../config/maas-deploy/config.tfvars
-    ```
+    and apply with the relevant terragrunt apply command.
