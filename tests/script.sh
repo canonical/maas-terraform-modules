@@ -58,6 +58,11 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   echo "Deploying MAAS stack: ${STACK_DIR}"
   echo "=========================================="
 
+  # TODO: Deploy keepalived with HAProxy if multi-node
+#   if [ "$(basename "$PWD")" = "multi-node" ]; then
+#     export VIRTUAL_IP="..."
+#   fi
+
   # Deploy the stack. Use --source-map to point to local modules, instead of the remote
   # git repository defined in the units
   cd "$STACK_DIR"
