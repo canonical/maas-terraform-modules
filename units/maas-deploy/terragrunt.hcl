@@ -15,7 +15,7 @@ terraform {
 }
 
 dependency "juju_bootstrap" {
-  config_path = values.juju_bootstrap_path
+  config_path = try(values.juju_bootstrap_path, null)
 
   // If juju_cloud_name is specified, we assume someone is bootstrapping to an exisiting 
   // juju controller so this module dependency is not required.
