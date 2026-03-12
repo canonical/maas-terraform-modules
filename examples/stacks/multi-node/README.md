@@ -16,7 +16,7 @@ This stack deploys a highly available MAAS cluster with:
 
 ## Prerequisites
 
-- Approximately 26 GB of RAM if running locally (with the pre-populated constraints in `terragrunt.stack.hcl`).
+- Approximately 27GB of RAM to run successfully with the pre-populated constraints in `terragrunt.stack.hcl` (determined by summing the machine count and the machine constraints)
 - See full [prerequisites](../../../README.md#prerequisites) in the root README.
 - (Optional) S3-compatible storage for backup integration.
 
