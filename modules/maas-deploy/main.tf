@@ -1,3 +1,10 @@
+provider "juju" {
+  controller_addresses = join(",", var.juju_credentials.controller_addresses)
+  username             = var.juju_credentials.username
+  password             = var.juju_credentials.password
+  ca_certificate       = var.juju_credentials.ca_certificate
+}
+
 resource "juju_model" "maas_model" {
   name = "maas"
 
@@ -97,13 +104,26 @@ resource "terraform_data" "juju_wait_for_all" {
   }
 
   provisioner "local-exec" {
+    # We need to set JUJU_DATA to a unique directory to avoid conflicts with other juju commands that might be running in parallel,
+    # since juju CLI uses a shared state directory by default ($HOME/.local/share/juju).
+    # Link: https://documentation.ubuntu.com/juju/3.6/reference/juju-cli/juju-environment-variables/#juju-data
+    # We also need to execute the juju binary from the path /snap/juju/current/bin/juju to allow Juju to access JUJU_DATA in the /tmp directory.
+    # This is needed since snap packages are using /tmp/snap-private-tmp/snap.<snap-name>/tmp for their temporary files.
+    # If we execute the binary by simply calling "juju", Juju will create the JUJU_DATA directory in the snap's temporary directory, and we won't
+    # be able to delete it after running the command, which will cause conflicts with other juju commands that might be running in parallel.
     command = <<-EOT
-      MODEL_NAME=$(juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
-      juju wait-for model "$MODEL_NAME" --timeout 3600s \
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+      MODEL_NAME=$(/snap/juju/current/bin/juju show-model "$MODEL" --format json | jq -r '. | keys[0]')
+      /snap/juju/current/bin/juju wait-for model "$MODEL_NAME" --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "active" && unit.agent-status == "idle")'
+      rm -rf $JUJU_DATA
     EOT
     environment = {
-      MODEL = self.input.model
+      MODEL                   = self.input.model
+      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_credentials.username
+      JUJU_PASSWORD           = var.juju_credentials.password
     }
   }
 }
@@ -115,17 +135,30 @@ resource "terraform_data" "create_admin" {
   }
 
   provisioner "local-exec" {
+    # We need to set JUJU_DATA to a unique directory to avoid conflicts with other juju commands that might be running in parallel,
+    # since juju CLI uses a shared state directory by default ($HOME/.local/share/juju).
+    # Link: https://documentation.ubuntu.com/juju/3.6/reference/juju-cli/juju-environment-variables/#juju-data
+    # We also need to execute the juju binary from the path /snap/juju/current/bin/juju to allow Juju to access JUJU_DATA in the /tmp directory.
+    # This is needed since snap packages are using /tmp/snap-private-tmp/snap.<snap-name>/tmp for their temporary files.
+    # If we execute the binary by simply calling "juju", Juju will create the JUJU_DATA directory in the snap's temporary directory, and we won't
+    # be able to delete it after running the command, which will cause conflicts with other juju commands that might be running in parallel.
     command = <<-EOT
-      juju run -m "$MODEL" maas-region/leader create-admin \
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+      /snap/juju/current/bin/juju run -m "$MODEL" maas-region/leader create-admin \
         username="$USERNAME" password="$PASSWORD" \
         email="$EMAIL" ssh-import="$SSH_IMPORT"
+      rm -rf $JUJU_DATA
     EOT
     environment = {
-      MODEL      = self.input.model
-      USERNAME   = var.admin_username
-      PASSWORD   = var.admin_password
-      EMAIL      = var.admin_email
-      SSH_IMPORT = var.admin_ssh_import
+      MODEL                   = self.input.model
+      USERNAME                = var.admin_username
+      PASSWORD                = var.admin_password
+      EMAIL                   = var.admin_email
+      SSH_IMPORT              = var.admin_ssh_import
+      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_credentials.username
+      JUJU_PASSWORD           = var.juju_credentials.password
     }
   }
 }
@@ -134,8 +167,11 @@ data "external" "maas_get_api_key" {
   program = ["bash", "${path.module}/scripts/get-api-key.sh"]
 
   query = {
-    model    = terraform_data.create_admin.output.model
-    username = var.admin_username
+    model                   = terraform_data.create_admin.output.model
+    username                = var.admin_username
+    juju_controller_address = var.juju_credentials.controller_addresses[0]
+    juju_username           = var.juju_credentials.username
+    juju_password           = var.juju_credentials.password
   }
 }
 
@@ -143,6 +179,9 @@ data "external" "maas_get_api_url" {
   program = ["bash", "${path.module}/scripts/get-api-url.sh"]
 
   query = {
-    model = terraform_data.create_admin.output.model
+    model                   = terraform_data.create_admin.output.model
+    juju_controller_address = var.juju_credentials.controller_addresses[0]
+    juju_username           = var.juju_credentials.username
+    juju_password           = var.juju_credentials.password
   }
 }
