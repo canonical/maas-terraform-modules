@@ -61,13 +61,26 @@ resource "juju_application" "s3_integrator" {
     # This is needed until we move to 2/edge s3-integration where the access-key and secret-key are
     # set with a Juju secret. Currently the Juju provider does not either support wait-for
     # application or running Juju actions.
+
+    # We need to set JUJU_DATA to a unique directory to avoid conflicts with other juju commands that might be running in parallel,
+    # since juju CLI uses a shared state directory by default ($HOME/.local/share/juju).
+    # Link: https://documentation.ubuntu.com/juju/3.6/reference/juju-cli/juju-environment-variables/#juju-data
+    # We also need to execute the juju binary from the path /snap/juju/current/bin/juju to allow Juju to access JUJU_DATA in the /tmp directory.
+    # This is needed since snap packages are using /tmp/snap-private-tmp/snap.<snap-name>/tmp for their temporary files.
+    # If we execute the binary by simply calling "juju", Juju will create the JUJU_DATA directory in the snap's temporary directory, and we won't
+    # be able to delete it after running the command, which will cause conflicts with other juju commands that might be running in parallel.
     command = (startswith(var.charm_s3_integrator_channel, "2/") ? "/bin/true" : <<-EOT
-      juju wait-for application -m ${self.model_uuid} ${self.name} --timeout 3600s \
+      export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+
+      /snap/juju/current/bin/juju wait-for application -m ${self.model_uuid} ${self.name} --timeout 3600s \
         --query='forEach(units, unit => unit.workload-status == "blocked" && unit.agent-status=="idle")'
 
-      juju run -m ${self.model_uuid} ${self.name}/leader sync-s3-credentials \
+      /snap/juju/current/bin/juju run -m ${self.model_uuid} ${self.name}/leader sync-s3-credentials \
         access-key=${var.s3_access_key} \
         secret-key=${var.s3_secret_key}
+
+      rm -rf $JUJU_DATA
     EOT
     )
   }

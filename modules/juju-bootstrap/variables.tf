@@ -25,3 +25,18 @@ variable "model_defaults" {
   type        = map(string)
   default     = {}
 }
+
+variable "destroy_flags" {
+  description = "Additional flags for destroying the controller"
+  type = object({
+    destroy_all_models = optional(bool)
+    destroy_storage    = optional(bool)
+    force              = optional(bool)
+    model_timeout      = optional(number)
+    release_storage    = optional(bool)
+  })
+  default = {
+    destroy_all_models = true
+    force              = true
+  }
+}

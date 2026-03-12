@@ -24,7 +24,7 @@ unit "juju_bootstrap" {
     // The LXD project that Juju should use for the controller resources
     // lxd_project = "charmed-maas"
     // Map of model configuration defaults to pass to juju bootstrap (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
-    // model_defaults = ...
+    // model_defaults = {}
     // Example:
     // model_defaults = {
     //   http-proxy       = "http://squid:3128"
@@ -34,6 +34,10 @@ unit "juju_bootstrap" {
     //   apt-https-proxy  = "http://squid:3128"
     //   snap-http-proxy  = "http://squid:3128"
     //   snap-https-proxy = "http://squid:3128"
+    // Additional flags for destroying the controller
+    // destroy_flags = {
+    //   destroy_all_models = true
+    //   force              = true
     // }
     // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
     // cloud_name = "maas-cloud"
