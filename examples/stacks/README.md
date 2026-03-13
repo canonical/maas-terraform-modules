@@ -1,7 +1,11 @@
-# Example stacks
+# Example Stacks
 
-This directory contains example stacks that can be used as a reference when creating a stack file specific to a particular deployment. Each child directory contains a `terragrunt.stack.hcl` file, which is a complete configuration file that can be used to spin up an entire deployment of all modules included in that stack.
+This directory contains example [Terragrunt stacks](https://docs.terragrunt.com/getting-started/terminology/#stack) to deploy all the modules in this repository. A stack handles the dependencies between units.
 
-All stacks are dependent on the `root.hcl` file in this directory, which contains the common configuration for all example stacks. To run these example stacks, either copy this directory including the `root.hcl` file, or clone this repository, before following the instructions in each stack's `README.md`.
+## How to use
 
-The `root.hcl` file determines the location of the Terraform state file, which as written is configured to store state locally in `.terragrunt-local-state/` in this directory. This allows you to run the example stacks without needing to set up a remote backend for Terraform state management. For more information see Terragrunt's [docs](https://terragrunt.gruntwork.io/docs/features/stacks/#how-it-works).
+For deployment instructions, see [How to deploy single node stack](../../docs/How-to%20guides/how_to_deploy_single_node_stack.md) and [How to deploy multi node stack](../../docs/How-to%20guides/how_to_deploy_multi_node_stack.md). 
+
+For a tutorial on how to deploy these stacks, see [Getting started with stacks](../../docs/Tutorials/getting_started_with_stacks.md).
+
+For separate deployment of units, see [example units](../units/) instead.

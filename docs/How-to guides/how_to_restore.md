@@ -1,6 +1,6 @@
 # How to restore charmed MAAS
 
-This is a guide on how to restore from an existing charmed MAAS backup as detailed in [how_to_backup.md](how_to_backup.md).
+This is a guide on how to restore MAAS from an existing charmed MAAS backup as detailed in [how_to_backup.md](how_to_backup.md).
 
 > [!Note]
 > This backup and restore functionality is in an early release phase. We recommend testing these workflows in a non-production environment first to verify they meet your specific requirements before implementing in production.
@@ -10,6 +10,7 @@ This is a guide on how to restore from an existing charmed MAAS backup as detail
 It's important to understand the following:
 
 - The restore process outlined in this document is for a fresh install of MAAS and PostgreSQL.
+- Following this restore process will result in the modules `juju-bootstrap` and `maas-deploy` being fully managed under Terraform/Terragrunt. Getting `maas-config` under management with Terraform/Terragrunt is left to you, the user, as you will need to backup and restore your Terraform state files for that module.  
 - When restoring, deploy the same MAAS and PostgreSQL channel versions that were used to create the backup. You can see the version of the maas-region charm used for a particular backup in `mybucket/mypath/backup/<backup-id>/backup_metadata.json`, and the version of PostgreSQL used in `mybucket/mypath/backup/<stanza-name>/backup.info`.
 
 ### Prerequisites
@@ -41,9 +42,9 @@ The restore is always performed with PostgreSQL deployed as a single-node (`enab
 
 ### Step 2: Staged deployment of a fresh environment
 
-Deploy the `maas-deploy` as outlined in [README.md](../README.md) to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration.
+Deploy the `maas-deploy` module to your target configuration, ensuring both `enable_backup=false` and `enable_postgres_ha=false` regardless of your configuration. If you are using stacks, do not include the `maas-config` unit in your stack file.
 
-When you've deployed your target configuration, re-run your `terraform apply` with `enable_backup=true` to deploy the necessary backup configuration.
+When you've deployed your target configuration, re-run your relevant `terragrunt apply` step with `enable_backup=true` to deploy the necessary backup configuration. If you are using stacks, run `terragrunt stack generate` before `terragrunt stack run apply` to update the generated unit values in `.terragrunt-stack`.
 
 After the final stage, Terraform should complete and your PostgreSQL unit should be in a blocked state with the message "the s3 repository has backups from another cluster". This is expected and you can proceed with the restore process.
 
@@ -97,35 +98,21 @@ Restore your backup data:
    juju config s3-integrator-postgresql path=postgresql-restore-1
    ```
 
-1. Update the relevant variable in your `config.tfvars` to the path set in the previous step.
-1. Integrate `postgresql` and `maas-region`:
+1. Update the relevant variable in your stack/unit file to the path set in the previous step.
+   
+1. Integrate `postgresql` and `maas-region`, wait for all MAAS units to be active:
 
    ```bash
    juju integrate postgresql maas-region
    ```
 
-1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units), now you can re-run your `terraform apply` step for the `maas-deploy` module as detailed in [README.md](../README.md) with `enable_postgres_ha=true`, and wait for its completion.
+1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units); set `enable_postgres_ha=true` in your stack/unit file.
 
-   Otherwise, simply re-run the `terraform apply` step for the `maas-deploy` module to ensure your configuration is now managed by Terraform. You should only observe a plan with modifications to the output:
-
-   ```bash
-   ❯ terraform apply -var-file ../../config/maas-setup/config.tfvars
-   juju_model.maas_model: Refreshing state... [id=cada3a8b-9e2d-482f-81d7-9381bbc5e3ae]
-   ...
-
-   Changes to Outputs:
-      ~ maas_api_key  = "fresh-api-key-before-restore" -> "restored-api-key"
-
-   You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
-
-   Do you want to perform these actions?
-      Terraform will perform the actions described above.
-      Only 'yes' will be accepted to approve.
-
-      Enter a value:
-   ```
-
-You should now have a restored MAAS deployment, managed by Terraform.
+1. If you are using stacks, run `terragrunt stack generate` to update the generated unit values in `.terragrunt-stack`.
+   
+1. Finally, re-run the relevant terragrunt apply step, and wait for its completion.
+   
+You should now have a restored MAAS deployment, with `juju-bootstrap` and `maas-deploy` modules managed by Terraform.
 
 ### Step 5: Verify restore
 
@@ -178,7 +165,7 @@ This is due to custom images not being fully backed up on regions, but they were
    sudo psql -U operator -h 10.237.137.164 -d maas_region_db
    ```
 
-1. Enter the operator password you obtained from step 1. Note this is may not be the same as the operator password used to restore.
+1. Enter the operator password you obtained from step 1. Note this may not be the same as the operator password used to restore.
 1. Identify the problematic custom image database id(s). If you have no access to any working regions, this will require to you look back at recently uploaded images in the `maasserver_bootresource` table:
 
    ```bash
