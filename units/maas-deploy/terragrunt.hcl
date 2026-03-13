@@ -88,7 +88,7 @@ inputs = merge(
   },
   {
     // --- Dependencies ---
-    juju_cloud_name = try(values.juju_cloud_name, dependency.juju_bootstrap.outputs.juju_cloud)
+    juju_cloud_name  = try(values.juju_cloud_name, dependency.juju_bootstrap.outputs.juju_cloud)
     juju_credentials = try(values.juju_credentials, dependency.juju_bootstrap.outputs.juju_credentials)
   },
 )
