@@ -131,6 +131,10 @@ The deployment follows this order:
 
 This can take several minutes depending on your system. You'll see progress as each unit completes.
 
+### Log in to the Juju controller
+
+You can check the status of the deployment using the Juju CLI once the `juju_bootstrap` unit completes. Follow the instructions in the [login guide](../How-to%20guides/how_to_login_to_juju_controller.md) to extract credentials and log in to the controller.
+
 ### Verify your deployment
 
 Once deployment completes, verify everything is working.

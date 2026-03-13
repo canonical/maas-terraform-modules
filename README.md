@@ -64,7 +64,7 @@ Typically, you should create your own repository (e.g. `infrastructure-live`) to
 
 ### Repository structure
 
-- `docs/` - Contains supplementary documentation for the deployment, such as how to deploy to a bootstrapped controller, how to backup and restore your MAAS cluster, and more.
+- `docs/` - Contains supplementary documentation for the deployment, such as how to login to your newly deployed Juju controller, how to backup and restore your MAAS cluster, and more.
 - `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
 - `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
 - `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`.
