@@ -23,6 +23,14 @@ See the prerequisites in the root [README](../../README.md).
     ```bash
     lxc config trust list-tokens
     ```
+
+    > [!NOTE]
+    > In production settings, you may want to limit the scope of the trust token to specifc projects, and/or make it restricted:
+    > ```bash
+    > lxc config trust add --name maas-charms --projects "myproject" --restricted
+    > ```
+    > See the LXD documentation for more information on trust token options.
+
 1. Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is recommended to copy the default profile, and modify if needed.
 
     ```bash
