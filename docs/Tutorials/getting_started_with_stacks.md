@@ -4,7 +4,7 @@ In this tutorial you'll learn how to deploy Charmed MAAS using Terragrunt stacks
 
 ### Prerequisites
 
-Before starting, ensure you have met all [prerequisites](../../README.md#prerequisites) in the root README. You will need a LXD cloud, so consider using [LXD](https://canonical.com/lxd) or [Microcloud](https://canonical.com/microcloud).
+Before starting, ensure you have met all [prerequisites](../../README.md#prerequisites) in the root README. You will need a LXD cloud, so consider using [LXD](https://canonical.com/lxd) or [MicroCloud](https://canonical.com/microcloud).
 
 You'll also need the outputs from your LXD configuration, specifically:
 - LXD API endpoint address.
