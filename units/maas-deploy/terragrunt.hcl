@@ -85,7 +85,7 @@ inputs = merge(
   },
   {
     // --- Dependencies ---
-    juju_cloud_name  = try(values.juju_cloud_name, dependency.juju_bootstrap.outputs.juju_cloud)
-    juju_credentials = try(values.juju_credentials, dependency.juju_bootstrap.outputs.juju_credentials)
+    juju_cloud_name  = coalesce(values.juju_cloud_name, try(dependency.juju_bootstrap.outputs.juju_cloud, null))
+    juju_credentials = coalesce(values.juju_credentials, try(dependency.juju_bootstrap.outputs.juju_credentials, null))
   },
 )
