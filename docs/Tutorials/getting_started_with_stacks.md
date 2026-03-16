@@ -79,7 +79,7 @@ In the `single-node/` directory, the `terragrunt.stack.hcl` file defines the com
 3. **maas_config** - Configures MAAS with initial setup.
 
 Each unit has:
-- A `source` pointing to the unit definition. This is typically a git url, but in these examples you will see a relative path to the generic units.
+- A `source` pointing to the unit definition. This is typically a Git URL, but in these examples you will see a relative path to the generic units.
 - A `path` which is the relative path where this unit should be deployed within Terragrunt's auto-generated stack directory.
 - `values` containing configuration variables.
 
