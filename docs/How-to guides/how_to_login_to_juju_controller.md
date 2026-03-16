@@ -40,3 +40,13 @@ You can now run `juju` commands against your controller. If you've already run `
 ```bash
 juju status -m maas
 ```
+
+## Unregister the controller (optional)
+
+When you're finished experimenting, you can unregister the controller to remove local connection information:
+
+```bash
+juju unregister maas-controller --no-prompt
+```
+
+Note that this does not destroy the controller, instead it removes local connection information for the controller. Use this if you have manually destroyed the controller outside of Terragrunt and want to clean up old references to it.
