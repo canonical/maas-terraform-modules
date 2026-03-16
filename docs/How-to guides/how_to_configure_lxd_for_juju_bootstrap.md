@@ -27,7 +27,7 @@ See the prerequisites in the root [README](../../README.md).
     > [!NOTE]
     > In production settings, you may want to limit the scope of the trust token to specifc projects, and/or make it restricted:
     > ```bash
-    > lxc config trust add --name maas-charms --projects "myproject" --restricted
+    > lxc config trust add --name maas-charms --projects "default,myproject" --restricted
     > ```
     > See the LXD documentation for more information on trust token options.
 
