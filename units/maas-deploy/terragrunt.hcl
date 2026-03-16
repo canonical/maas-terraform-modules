@@ -17,9 +17,6 @@ terraform {
 dependency "juju_bootstrap" {
   config_path = try(values.juju_bootstrap_path, null)
 
-  // If juju_cloud_name is specified, we assume someone is bootstrapping to an exisiting 
-  // juju controller so this module dependency is not required.
-  enabled = try(values.juju_cloud_name, null) == null
 
   mock_outputs = {
     juju_cloud = "mock-cloud-name"

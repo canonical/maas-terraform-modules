@@ -58,7 +58,7 @@ It is recommended to create a jumphost/bastion LXD container on the LXD cluster/
 This repository provides Terraform modules for you to consume and deploy your own infrastructure. These modules can be consumed in several ways:
 
 - Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands.
-- Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the [examples/units](./examples/units/README.md) directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
+- Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the [examples/units](./examples/units/) directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
 
 Typically, you should create your own repository (e.g. `infrastructure-live`) to hold your Terragrunt stack and unit files that are specific to your deployments. When you do this, you will need to pin units and modules to specific tags or commit SHAs using the `source` argument to make your file an immutable definition of your infrastructure. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) and their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
 
