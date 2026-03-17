@@ -56,7 +56,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
 
   # If multi-node, reserve an ip address for the VIP.
   if [ "$(basename "$STACK_DIR")" = "multi-node" ]; then
-    export VIRTUAL_IP=$(./reserve-lxd-address.sh "lxdbr0")
+    export VIRTUAL_IP="10.0.2.210"
   fi
 
   echo "=========================================="
@@ -133,10 +133,6 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   cd $ROOT_DIR
 
   # If multi-node, remove the ip address container for the VIP.
-  if [ -z "$VIRTUAL_IP" ]; then
-    NAME="vip-reservation-${VIRTUAL_IP//./-}"
-    lxc delete "$NAME"
-  fi
 done
 
 echo "All stack deployments and tests completed successfully!"

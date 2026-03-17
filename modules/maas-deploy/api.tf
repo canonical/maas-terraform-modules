@@ -74,7 +74,7 @@ resource "juju_integration" "haproxy_keepalived" {
 
 resource "juju_integration" "maas_haproxy_http" {
   count      = var.enable_haproxy ? 1 : 0
-  model_uuid = terraform_data.juju_wait_for_all.output.model
+  model_uuid = juju_model.maas_model.uuid
 
   application {
     name     = juju_application.maas_region.name
@@ -89,7 +89,7 @@ resource "juju_integration" "maas_haproxy_http" {
 
 resource "juju_integration" "maas_haproxy_https" {
   count      = local.enable_tls ? 1 : 0
-  model_uuid = terraform_data.juju_wait_for_all.output.model
+  model_uuid = juju_model.maas_model.uuid
 
   application {
     name     = juju_application.maas_region.name

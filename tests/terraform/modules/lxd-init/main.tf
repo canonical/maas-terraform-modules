@@ -22,11 +22,12 @@ resource "lxd_network" "net_test" {
   type = "bridge"
 
   config = {
-    "ipv4.address" = "10.0.2.1/24"
-    "ipv4.dhcp"    = "false"
-    "ipv4.nat"     = "true"
-    "ipv6.address" = "none"
-    "ipv6.nat"     = "true"
+    "ipv4.address"     = "10.0.2.1/24"
+    "ipv4.dhcp"        = "true"
+    "ipv4.dhcp.ranges" = "10.0.2.10-10.0.2.200"
+    "ipv4.nat"         = "true"
+    "ipv6.address"     = "none"
+    "ipv6.nat"         = "true"
   }
 }
 
