@@ -30,7 +30,7 @@ This would limit VMs to 1 core and 2GB of RAM. It is recommended to modify and t
 
 ## Troubleshooting HA mode
 
-In case any of the MAAS snaps is unconfigured after first deployment, you can `juju ssh` to its machine and manually run the maas init command as a workaround. You will need to have added your SSH key to the model first (see `path_to_ssh_key` in `maas_deploy`).
+In case any of the MAAS snaps is unconfigured after first deployment, you can `juju ssh` to its machine and manually run the maas init command as a workaround. You will need to have added your SSH key to the model first (see `path_to_ssh_key` in `maas-deploy`).
 
 ```bash
 # check if MAAS is Initialized
