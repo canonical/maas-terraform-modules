@@ -15,7 +15,8 @@ terraform {
 }
 
 dependency "juju_bootstrap" {
-  config_path = values.juju_bootstrap_path
+  config_path = try(values.juju_bootstrap_path, null)
+
 
   mock_outputs = {
     juju_cloud = "mock-cloud-name"
@@ -84,7 +85,7 @@ inputs = merge(
   },
   {
     // --- Dependencies ---
-    juju_cloud_name  = dependency.juju_bootstrap.outputs.juju_cloud
-    juju_credentials = dependency.juju_bootstrap.outputs.juju_credentials
+    juju_cloud_name  = coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null))
+    juju_credentials = coalesce(try(values.juju_credentials, null), try(dependency.juju_bootstrap.outputs.juju_credentials, null))
   },
 )

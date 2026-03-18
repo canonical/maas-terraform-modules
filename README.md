@@ -2,41 +2,79 @@
 
 [![Nightly Tests](https://github.com/canonical/maas-terraform-modules/actions/workflows/full-test.yml/badge.svg?branch=main)](https://github.com/canonical/maas-terraform-modules/actions/workflows/full-test.yml?query=branch%3Amain)
 
-This repository exists as a deployment and configuration solution for a [Charmed](https://juju.is/docs) Multi-Node [MAAS](https://canonical.com/maas/docs) cluster with various topologies using up-to three [Terraform](https://developer.hashicorp.com/terraform/docs) Modules.
+This repository is a collection of Terraform modules, Terragrunt units and Terragrunt stacks that automate the deployment and configuration of high availability (HA) [Charmed](https://juju.is/docs) [MAAS](https://canonical.com/maas/docs). Using the provided Terragrunt stacks, you can go from a bare machine cloud to a deployed and configured MAAS cluster with just a few commands.
+
+The key modules contained in this catalog are:
+
+- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps a Juju controller onto a cloud; optional if you already have an external Juju controller.
+- [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS
+- [MAAS Config](./modules/maas-config) - Performs initial configuration of charmed MAAS
+
+The deployment of these modules is driven by Terragrunt stacks.
 
 > [!NOTE]
-> This repository has been tested on LXD cloud, and the documentation wording reflects that. Any machine cloud should be a valid deployment target, though manual cloud is unsupported.
+> The `juju-bootstrap` module and its respective unit are LXD cloud specific, and this catalog is tested on a LXD cloud. However, for the other modules and units, any machine cloud is a valid deployment target, apart from manual clouds which are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
 
 > [!NOTE]
-> The contents of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
+> The content of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
+
 
 ## Contents
 
 - [Terraform driven Charmed MAAS deployment](#terraform-driven-charmed-maas-deployment)
   - [Contents](#contents)
+  - [Getting started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [How to use this repository](#how-to-use-this-repository)
+    - [Repository structure](#repository-structure)
   - [Architecture](#architecture)
       - [MAAS Regions](#maas-regions)
       - [PostgreSQL](#postgresql)
+      - [HAProxy and Keepalived](#haproxy-and-keepalived)
       - [Juju Controller](#juju-controller)
-      - [LXD Cloud](#lxd-cloud)
-  - [Deployment Instructions](#deployment-instructions)
+      - [Cloud](#cloud)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
-  - [Appendix - Prerequisites](#appendix---prerequisites)
 
-The full MAAS cluster deployment consists of: one optional bootstrapping, one of two Deployment, and a recommended (but optional), Terraform modules that should be run in the following order:
+## Getting started
 
-- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps Juju on a provided LXD server or cluster; Optional if you already have an external Juju controller.
-- [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS at a Juju model of the provided Juju controller (`juju-bootstrap` or external)
-- [MAAS Config](./modules/maas-config) - Configures the charmed MAAS deployed by `maas-deploy`; Optional but highly recommended. You *can* configure your MAAS independently, but automation is the recommended pathway.
+If you just want to deploy Charmed MAAS:
+
+1. Review the [Prerequisites](#prerequisites) section.
+1. Follow the [LXD configuration guide](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
+1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/getting_started_with_stacks.md).
+
+## Prerequisites
+
+To run the stacks and units in this repository, the following software must be installed in the local system:
+
+- OpenTofu/Terraform
+- Terragrunt
+- A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md))
+
+It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
+
+## How to use this repository
+
+This repository provides Terraform modules for you to consume and deploy your own infrastructure. These modules can be consumed in several ways:
+
+- Using Terragrunt stacks - This is the recommended way to consume the modules in this repository. Terragrunt stacks simplify the deployment of the modules by handling the dependencies between them, allowing you to deploy all modules together with just a few commands.
+- Using Terragrunt units - Terragrunt units are thin wrappers around Terraform modules that allow you to run individual modules with Terragrunt. You can either use the provided units in the [examples/units](./examples/units/) directory, or explore the catalog with `terragrunt catalog <repo-url>` and scaffold your own.
+
+Typically, you should create your own repository (e.g. `infrastructure-live`) to hold your Terragrunt stack and unit files that are specific to your deployments. When you do this, you will need to pin units and modules to specific tags or commit SHAs using the `source` argument to make your file an immutable definition of your infrastructure. To read more about this, please see the [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/getting-started/) and their [example infrastructure-live repository](https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example).
+
+### Repository structure
+
+- `docs/` - Contains supplementary documentation for the deployment, such as how to login to your newly deployed Juju controller, how to backup and restore your MAAS cluster, and more.
+- `examples/` - Contains example Terragrunt stacks and units that you can use as a starting point for your own deployment. If you want to deploy MAAS, go here to see the examples. Note that example stacks are tested nightly, example units are not.
+- `modules/` - Contains the Terraform modules that the Terragrunt stacks and units deploy. Each module is responsible for a specific part of the deployment, and can be used independently or together with the other modules.
+- `units/` - Contains generic Terragrunt units that stacks pointing to this repository use to deploy the Terraform modules. These are **not** the same as the concrete example units in the `examples/units`.
+- `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory.
 
 ## Architecture
 
+
 ```mermaid
 flowchart TB
-  %% Styling for different concepts (not much right now!)
-  classDef unitOptional color:#888888,stroke-dasharray: 5 5
-  classDef multiNodeGroup stroke-dasharray: 5 5
-
   %% Terraform module colors
   classDef tfBootstrap fill:#4CAF50,stroke:#2E7D32
   classDef tfDeploy fill:#2196F3,stroke:#1565C0
@@ -45,6 +83,7 @@ flowchart TB
   %% Group outlines matching module colors
   classDef bootstrapManaged stroke:#4CAF50,stroke-width:2px
   classDef deployManaged stroke:#2196F3,stroke-width:2px
+  classDef configManaged stroke:#F44336,stroke-width:2px
 
   %% LXD Cloud
   subgraph CLOUD["☁️ LXD-based cloud"]
@@ -57,43 +96,46 @@ flowchart TB
 
     %% MAAS Model
     subgraph MODEL["Juju model - &quotmaas&quot"]
+      %% HAProxy dedicated containers
+      subgraph HAPROXY_CONTAINERS["HAProxy containers"]
+        subgraph HAPROXY_H0["Container-1"]
+          direction TB
+          HA0["🟢 haproxy/0"]
+          KA0["🟠 keepalived/0"]
+          HA0 ~~~ KA0
+        end
+        subgraph HAPROXY_H1["Container-2"]
+          direction TB
+          HA1["🟢 haproxy/1"]
+          KA1["🟠 keepalived/1"]
+          HA1 ~~~ KA1
+        end
+        subgraph HAPROXY_H2["Container-3"]
+          direction TB
+          HA2["🟢 haproxy/2"]
+          KA2["🟠 keepalived/2"]
+          HA2 ~~~ KA2
+        end
+        %% Force horizontal layout
+        HAPROXY_H0 ~~~ HAPROXY_H1 ~~~ HAPROXY_H2
+      end
 
-      %% MAAS collocated machines
+      %% MAAS co-located machines
       subgraph MAAS_MACHINES["MAAS machines"]
          subgraph MAAS_M0["VM-3"]
 
           R0["🟣 maas-region/0"]
         end
-         subgraph MAAS_MULTINODE["Multi-node deployment"]
-          subgraph MAAS_M1["VM-4"]
+        subgraph MAAS_M1["VM-4"]
 
-            R1["🟣 maas-region/1"]
-          end
-          subgraph MAAS_M2["VM-5"]
+          R1["🟣 maas-region/1"]
+        end
+        subgraph MAAS_M2["VM-5"]
 
-            R2["🟣 maas-region/2"]
-          end
-         end
+          R2["🟣 maas-region/2"]
+        end
         %% Force horizontal layout
         MAAS_M0 ~~~ MAAS_M1 ~~~ MAAS_M2
-      end
-
-      %% HAProxy dedicated containers
-      subgraph HAPROXY_CONTAINERS["HAProxy containers"]
-        subgraph HAPROXY_H0["Container-1"]
-          HA0["🟢 haproxy/0"]
-          KA0["🟠 keepalived/0"]
-        end
-        subgraph HAPROXY_H1["Container-2"]
-          HA1["🟢 haproxy/1"]
-          KA1["🟠 keepalived/1"]
-        end
-        subgraph HAPROXY_H2["Container-3"]
-          HA2["🟢 haproxy/2"]
-          KA2["🟠 keepalived/2"]
-        end
-        %% Force horizontal layout
-        HAPROXY_H0 ~~~ HAPROXY_H1 ~~~ HAPROXY_H2
       end
 
       %% PostgreSQL dedicated machines
@@ -101,25 +143,23 @@ flowchart TB
          subgraph PG_M0["VM-0"]
            PG0["🔵 postgresql/0"]
         end
-        subgraph PG_MULTINODE["Multi-node deployment"]
-          subgraph PG_M1["VM-1"]
-            PG1["🔵 postgresql/1"]
-          end
-          subgraph PG_M2["VM-2"]
-            PG2["🔵 postgresql/2"]
-          end
+        subgraph PG_M1["VM-1"]
+          PG1["🔵 postgresql/1"]
+        end
+        subgraph PG_M2["VM-2"]
+          PG2["🔵 postgresql/2"]
         end
         %% Force horizontal layout
         PG_M0 ~~~ PG_M1 ~~~ PG_M2
       end
 
       %% Force vertical group layout
-      MAAS_MACHINES ~~~ HAPROXY_CONTAINERS
-      HAPROXY_CONTAINERS ~~~ PG_MACHINES
+      HAPROXY_CONTAINERS ~~~ MAAS_MACHINES ~~~ PG_MACHINES
       PG_MACHINES ~~~ BACKUP_M0
 
-      %% Backup machine
-        subgraph BACKUP_M0["Container"]
+      %% Backup container
+
+      subgraph BACKUP_M0["Container"]
         S3_PG["🟡 s3-integrator-postgresql/0"]
         S3_MAAS["🟡 s3-integrator-maas/0"]
       end
@@ -135,11 +175,6 @@ flowchart TB
   S3_BUCKET_PG[("S3 Bucket<br/>Path: /postgresql")]
   S3_BUCKET_MAAS[("S3 Bucket<br/>Path: /maas")]
 
-  %% Application integrations
-  R0 ~~~ A0
-  R1 ~~~ A1
-  R2 ~~~ A2
-
   %% Terraform module relationships
   TF1 -.->|creates| CTRL
   TF2 -.->|creates| MODEL
@@ -149,10 +184,6 @@ flowchart TB
   S3_PG ==> S3_BUCKET_PG
   S3_MAAS ==>S3_BUCKET_MAAS
 
-  %% Apply styles
-  class A0,A1,A2,S3_PG,S3_MAAS,HAPROXY_CONTAINERS unitOptional
-  class PG_MULTINODE,MAAS_MULTINODE multiNodeGroup
-
   %% Terraform modules
   class TF1 tfBootstrap
   class TF2 tfDeploy
@@ -161,9 +192,10 @@ flowchart TB
   %% Module managed groups
   class CTRL bootstrapManaged
   class MODEL deployManaged
+  class MAAS_MACHINES configManaged
 ```
 
-This diagram describes the system architecture of infrastructure deployed by the three Terraform modules in this repository, on a LXD-based cloud, for both single and multi-node deployments. Distinct Juju applications are represented with colored markers (🟡🔵🟣🟢🟠) on each unit, and the parts of the architecture that are optional depending on your configuration are represented with dashed outlines.
+This diagram illustrates the most complete system architecture achievable when all Terraform modules are deployed and optional features are enabled, deployed on a LXD-based cloud. Depending on your configuration, some components may be omitted. Distinct Juju applications are represented with colored markers (🟡🔵🟣🟢🟠) on each unit.
 
 A charmed MAAS deployment consists of the following atomic components:
 
@@ -172,7 +204,7 @@ A charmed MAAS deployment consists of the following atomic components:
 Charmed deployment of the MAAS Snap, [learn more here](https://charmhub.io/maas-region)
 
 > [!Note]
-> If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left up to the user.
+> If running in Region only mode (rather than Region+Rack) the installation and configuration of the MAAS Agent is left up to you and is outside the scope of this deployment.
 
 #### PostgreSQL
 
@@ -186,42 +218,15 @@ Charmed deployment of the HAProxy Deb, [learn more here](https://github.com/hapr
 
 Orchestrates the lifecycle of the deployed charmed applications, [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/controller/)
 
-#### LXD Cloud
+#### Cloud
 
 Provides the underlying virtual-machine infrastructure that Juju runs on.
-While the development of this repository occurred on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
+While the development and testing of this repository occurs on LXD clouds, Juju does support others too: [learn more here](https://documentation.ubuntu.com/juju/3.6/reference/cloud/)
 
 LXD Containers and Virtual machines are deployed as Juju machines, which Juju uses to deploy charms in.
 
-## Deployment Instructions
-
-Before beginning the deployment process, please make sure that [prerequisites](#appendix---prerequisites) are met.
-
-These instructions provide step-by-step guidance for deploying from a bare LXD cloud to a fully operational MAAS cluster. The deployment includes bootstrapping a Juju controller (unless using an [external controller](./docs/how_to_deploy_to_a_bootstrapped_controller.md)), a MAAS cluster configured with one or three MAAS Regions, and one or three PostgreSQL database instances.
-
-1. [Connect to a Juju controller](./docs/how_to_deploy_to_a_bootstrapped_controller.md) or [Bootstrap a Juju controller](./docs/how_to_bootstrap_juju.md)
-2. [Deploy Charmed MAAS](./docs/how_to_deploy_maas.md) in either a single or multi-node configuration, with optional HA
-3. [Configure](./docs/how_to_configure_maas.md) your running MAAS instance
-
 ## Appendix - Backup and Restore
 
-There exist two supplementary documents for instructions on [How to Backup](./docs/how_to_backup.md) and [How to Restore](./docs/how_to_restore.md) your MAAS Cluster.
+There exist two supplementary documents for instructions on [How to Backup](./docs/How-to%20guides/how_to_backup.md) and [How to Restore](./docs/How-to%20guides/how_to_restore.md) your MAAS Cluster.
 
 It is recommended to take a backup of your cluster after initial setup.
-
-## Appendix - Prerequisites
-
-To run the Terraform modules, the following software must be installed in the local system:
-
-- Juju 3.6 LTS `snap install juju --channel 3.6/stable`
-- OpenTofu/Terraform
-
-The Terraform modules also expect that network connectivity is established from local system to:
-
-- LXD cluster/server where Juju will be bootstrapped and MAAS will be deployed
-- Bootstrapped Juju controller
-- Deployed MAAS
-
-It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, git clone this repository, and apply the Terraform modules from there.
-Juju bootstrap expects connectivity with the LXD API, and we presume connectivity with private addresses of the Juju machines for troubleshooting.
-The `maas-config` module also requires access to MAAS via the same private machine addresses, until a time as to which a load balancer is introduced to these steps.
