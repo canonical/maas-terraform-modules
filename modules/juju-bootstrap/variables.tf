@@ -27,7 +27,7 @@ variable "model_defaults" {
 }
 
 variable "destroy_flags" {
-  description = "Additional flags for destroying the controller"
+  description = "Additional flags for destroying the controller. See the [docs](https://documentation.ubuntu.com/terraform-provider-juju/v1.3.0-rc1/reference/terraform-provider/resources/controller/#nested-schema-for-destroy-flags) for details on available flags."
   type = object({
     destroy_all_models = optional(bool)
     destroy_storage    = optional(bool)

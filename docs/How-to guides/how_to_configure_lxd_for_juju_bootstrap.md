@@ -14,6 +14,13 @@ See the prerequisites in the root [README](../../README.md).
     ```
     As described in the docs, find an available address to use to connect to your cloud.
 
+1. Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is recommended to copy the default profile, and modify if needed.
+
+    ```bash
+    lxc project create maas-charms
+    lxc profile copy default default --target-project maas-charms --refresh
+    ```
+
 1. Create a trust token for your LXD server/cluster
 
     ```bash
@@ -25,21 +32,14 @@ See the prerequisites in the root [README](../../README.md).
     ```
 
     > [!NOTE]
-    > In production settings, you may want to limit the scope of the trust token to specifc projects, and/or make it restricted:
+    > In production settings, you may want to limit the scope of the trust token to specific projects, and/or make it restricted. If you created a new project in the preceding step, you can scope the token to that project:
     > ```bash
-    > lxc config trust add --name maas-charms --projects "default,myproject" --restricted
+    > lxc config trust add --name maas-charms --projects "default,maas-charms" --restricted
     > ```
-    > See the LXD documentation for more information on trust token options.
-
-1. Optionally, create a new LXD project to isolate cluster resources from preexisting resources. It is recommended to copy the default profile, and modify if needed.
-
-    ```bash
-    lxc project create maas-charms
-    lxc profile copy default default --target-project maas-charms --refresh
-    ```
+    > Note that the default project needs to be included until this [bug](https://github.com/juju/juju/issues/21998) is resolved. See the LXD documentation for more information on trust token options.
 
 1. Add the address, trust token, and any other options to the relevant stack/unit file you'd like to deploy. See the `examples/` directory for more information.
 
 ## Next steps
 
-- See the [examples/stacks](../../examples/stacks/README.md) directory to start deploying using the provided stacks.
+- See the [examples/stacks](../../examples/stacks/) directory to start deploying using the provided stacks.

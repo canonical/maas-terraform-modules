@@ -49,4 +49,4 @@ When you're finished experimenting, you can unregister the controller to remove 
 juju unregister maas-controller --no-prompt
 ```
 
-Note that this does not destroy the controller, instead it removes local connection information for the controller. Use this if you have manually destroyed the controller outside of Terragrunt and want to clean up old references to it.
+Note that this does not destroy the controller, instead it removes local connection information for the controller.
