@@ -39,7 +39,7 @@ inputs = {
   # Type: map
   # model_defaults = {}
 
-  # Description: Additional flags for destroying the controller. See the [docs](https://documentation.ubuntu.com/terraform-provider-juju/v1.3.0-rc1/reference/terraform-provider/resources/controller/#nested-schema-for-destroy-flags) for details on available flags.
+  # Description: Additional flags for destroying the controller. See the [Juju provider docs](https://documentation.ubuntu.com/terraform-provider-juju/v1.3.0-rc1/reference/terraform-provider/resources/controller/#nested-schema-for-destroy-flags) for details on available flags or the [Juju docs](https://documentation.ubuntu.com/juju/3.6/howto/manage-controllers/#destroy-a-controller) for more information.
   # Type: object
   # destroy_flags = {"destroy_all_models":true,"force":true}
 
