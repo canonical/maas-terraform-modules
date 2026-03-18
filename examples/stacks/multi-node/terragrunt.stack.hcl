@@ -133,7 +133,7 @@ unit "maas_deploy" {
     // Operator channel revision for HAProxy deployment
     // charm_haproxy_revision  = ...
     // Operator configuration for HAProxy deployment
-    charm_haproxy_config = {}
+    // charm_haproxy_config = {}
 
     // --- Workload: Keepalived ---
     // Operator channel for Keepalived deployment
@@ -147,7 +147,7 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel = "latest/edge"
+    charm_maas_region_channel = "3.7/edge"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment

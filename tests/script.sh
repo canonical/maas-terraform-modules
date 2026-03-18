@@ -131,8 +131,6 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
   --non-interactive
   cd $ROOT_DIR
-
-  # If multi-node, remove the ip address container for the VIP.
 done
 
 echo "All stack deployments and tests completed successfully!"
