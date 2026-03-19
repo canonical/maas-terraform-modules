@@ -75,10 +75,11 @@ resource "juju_integration" "haproxy_keepalived" {
 resource "juju_integration" "maas_haproxy_http" {
   count      = var.enable_haproxy ? 1 : 0
   model_uuid = juju_model.maas_model.uuid
+  for_each   = toset(["ingress-tcp", "ingress-tcp-temporal", "ingress-tcp-internal-http-api"])
 
   application {
     name     = juju_application.maas_region.name
-    endpoint = "ingress-tcp"
+    endpoint = each.key
   }
 
   application {
