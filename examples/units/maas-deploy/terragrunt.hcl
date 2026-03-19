@@ -39,7 +39,7 @@ inputs = {
   #       hosts but this is untested
   #       NOTE: if you set up the project with juju-bootstrap your
   #             controller will work with VMs
-  #   
+  #
   # Type: string
   # maas_constraints = "cores=2 mem=4G virt-type=virtual-machine"
 
@@ -56,7 +56,7 @@ inputs = {
   #       are distributed across these zones in round-robin fashion (for example, with 3 zones and 3
   #       machines, each gets a different zone; with 2 zones and 3 machines, the pattern is zone1, zone2,
   #       zone1).
-  #   
+  #
   # Type: list
   # zone_list = []
 
@@ -98,7 +98,7 @@ inputs = {
 
   # Description: Operator channel for MAAS Region Controller deployment
   # Type: string
-  # charm_maas_region_channel = "3.7/edge"
+  # charm_maas_region_channel = "latest/edge"
 
   # Description: Operator channel revision for MAAS Region Controller deployment
   # Type: number
@@ -147,7 +147,7 @@ inputs = {
   # Description:
   #       The MAAS admin SSH key source. Valid sources include 'lp' for Launchpad and 'gh' for GitHub.
   #       E.g. 'lp:my_launchpad_username'.
-  #   
+  #
   # Type: string
   # admin_ssh_import = ""
 
@@ -188,7 +188,7 @@ inputs = {
   #       Configuration for `bucket`, `path`, and `tls-ca-chain` is
   #       skipped even if set, since it is handled by different
   #       Terraform variables
-  #   
+  #
   # Type: map
   # charm_s3_integrator_config = {}
 
