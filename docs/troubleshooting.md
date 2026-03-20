@@ -19,7 +19,7 @@ To fetch the actual minimum connections required, refer to [this article](https:
 
 ## Out-Of-Memory
 
-To run a Multi-Node MAAS and/or PostgreSQL on a single machine using LXD as your backing cloud, the default memory constraints require your host to have approximately 26 GB RAM. If you wish to reduce this, adjust the VM constraints variables:
+To run a Multi-Node MAAS and/or PostgreSQL on a single machine using LXD as your backing cloud, the default memory constraints require your host to have approximately 27 GB RAM. If you wish to reduce this, adjust the VM constraints variables:
 
 ```bash
 maas_constraints     = "cores=1 mem=2G virt-type=virtual-machine"
@@ -51,7 +51,7 @@ maas_url: http://10.10.0.28:5240/MAAS
 
 ## Bootstrap error: `No matching certificate add operation found`
 
-You may encounter this error after failing to bootstrap your Juju controller on a LXD cloud: 
+You may encounter this error after failing to bootstrap your Juju controller on a LXD cloud:
 
 ```bash
 * Failed to execute "terraform apply" in ./.terragrunt-cache/QJnJbu1m8zuRirT-x50tnf50ehg/CaDIqhv3BMsCZkX8Dtn8dtqrEts
@@ -90,9 +90,9 @@ examples/units/juju-bootstrap on  docs/terragrunt-docs [$!] took 2s
 ───────┴─────────────────────────────────────────────────
 ```
 
-A likely root cause is that you have already bootstrapped a Juju controller on the same LXD cloud, using a token of the same name. This results in the client name still existing in LXD's trust store. 
+A likely root cause is that you have already bootstrapped a Juju controller on the same LXD cloud, using a token of the same name. This results in the client name still existing in LXD's trust store.
 
-To resolve this, identify the token fingerprint of the existing token: 
+To resolve this, identify the token fingerprint of the existing token:
 
 ```bash
 ❯ lxc config trust list
@@ -103,7 +103,7 @@ To resolve this, identify the token fingerprint of the existing token:
 ```
 
 
-Remove the client old certificate: 
+Remove the client old certificate:
 
 ```bash
 lxc config trust remove <fingerprint>

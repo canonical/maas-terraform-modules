@@ -54,6 +54,11 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   export LXD_TRUST_TOKEN
   export LXD_PROJECT_MAAS_MACHINES="maas-system"
 
+  # If multi-node, reserve an ip address for the VIP.
+  if [ "$(basename "$STACK_DIR")" = "multi-node" ]; then
+    export VIRTUAL_IP="10.0.2.210"
+  fi
+
   echo "=========================================="
   echo "Deploying MAAS stack: ${STACK_DIR}"
   echo "=========================================="

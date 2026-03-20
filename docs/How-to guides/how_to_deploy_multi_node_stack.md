@@ -5,7 +5,7 @@ This guide shows you how to deploy a production-ready, highly available MAAS clu
 ## Prerequisites
 
 - Ensure you have met all [prerequisites](../../README.md#prerequisites) in the root README.
-- Approximately 26 GB of RAM available if running locally.
+- Approximately 27GB of RAM available if running locally (determined by summing the machine count and the machine constraints).
 - (Optional) S3-compatible storage for backup integration.
 
 ## Clone the repository
