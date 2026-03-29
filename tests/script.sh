@@ -83,6 +83,14 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
 
   # If SMOKE_TEST is true, skip acceptance tests
   if [ "$SMOKE_TEST" != "true" ]; then
+
+    # Log in to Juju controller using credentials from Terragrunt stack output
+    JUJU_CREDS=$(terragrunt stack output -working-dir $STACK_DIR -json juju_bootstrap.juju_credentials | jq -r '.juju_bootstrap.juju_credentials')
+    JUJU_CONTROLLER_ADDRESS=$(echo "$JUJU_CREDS" | jq -r '.controller_addresses[0]')
+    JUJU_USERNAME=$(echo "$JUJU_CREDS" | jq -r '.username')
+    JUJU_PASSWORD=$(echo "$JUJU_CREDS" | jq -r '.password')
+    echo "$JUJU_PASSWORD" | juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
+
     # Apply extra MAAS configuration
     cd modules/maas-extra-config
     terraform init && MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform apply -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
@@ -120,6 +128,9 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     cd modules/maas-extra-config
     MAAS_API_URL="$MAAS_API_URL" MAAS_API_KEY="$MAAS_API_KEY" TF_VAR_lxd_trust_token="$LXD_TRUST_TOKEN_VM_HOST" TF_VAR_rack_controller="$RACK_CONTROLLER" terraform destroy -var-file="$ROOT_DIR/config/maas-extra-config.tfvars" -auto-approve
     cd $ROOT_DIR
+
+    # Unregistering Juju controller
+    juju unregister maas-controller --no-prompt
   else
     echo "SMOKE_TEST=true; skipping acceptance tests and maas-extra-config for ${STACK_DIR}"
   fi
