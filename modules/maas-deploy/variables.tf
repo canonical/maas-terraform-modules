@@ -51,6 +51,12 @@ variable "haproxy_constraints" {
   default     = "cores=1 mem=1G"
 }
 
+variable "s3_constraints" {
+  description = "Constraints for the S3 Integrator Machines"
+  type        = string
+  default     = "cores=1 mem=1G"
+}
+
 variable "zone_list" {
   type        = list(string)
   description = <<EOF

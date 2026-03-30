@@ -1,9 +1,10 @@
 resource "juju_machine" "backup" {
   count = var.enable_backup ? 1 : 0
 
-  model_uuid = juju_model.maas_model.uuid
-  base       = startswith(var.charm_s3_integrator_channel, "2/") ? "ubuntu@24.04" : "ubuntu@22.04"
-  name       = "backup"
+  model_uuid  = juju_model.maas_model.uuid
+  base        = startswith(var.charm_s3_integrator_channel, "2/") ? "ubuntu@24.04" : "ubuntu@22.04"
+  name        = "backup"
+  constraints = var.s3_constraints
 }
 
 resource "juju_secret" "s3_credentials" {
