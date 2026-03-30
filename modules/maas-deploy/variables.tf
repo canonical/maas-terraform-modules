@@ -52,7 +52,7 @@ variable "haproxy_constraints" {
 }
 
 variable "s3_constraints" {
-  description = "Constraints for the S3 Integrator Machines"
+  description = "Constraints for the S3 Integrator machine"
   type        = string
   default     = "cores=1 mem=1G"
 }

@@ -51,7 +51,7 @@ inputs = {
   # Type: string
   # haproxy_constraints = "cores=1 mem=1G"
 
-  # Constraints for the S3 Integrator Machines
+  # Constraints for the S3 Integrator machine
   # Type: string
   # s3_constraints = "cores=1 mem=1G"
 

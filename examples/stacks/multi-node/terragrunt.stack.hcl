@@ -100,7 +100,7 @@ unit "maas_deploy" {
     postgres_constraints = "cores=2 mem=4G virt-type=virtual-machine"
     // Constraints for the HAProxy Machines
     haproxy_constraints = "cores=1 mem=1G"
-    // Constraints for the S3 Integrator Machines
+    // Constraints for the S3 Integrator machine
     s3_constraints = "cores=1 mem=1G"
     // List of target zones for deploying MAAS and PostgreSQL machines. If provided, machines
     // are distributed across these zones in round-robin fashion (for example, with 3 zones and
