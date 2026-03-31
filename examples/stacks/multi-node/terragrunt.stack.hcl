@@ -49,12 +49,7 @@ unit "juju_bootstrap" {
     //   force              = true
     // }
     // Constraints to apply to the controller
-    // bootstrap_constraints = {
-    //   "cores"     = "2"
-    //   "mem"       = "4G"
-    //   "root-disk" = "10G"
-    //   "arch"      = "amd64"
-    // }
+    // bootstrap_constraints = "cores=1 mem=2G virt-type=virtual-machine"
     // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
     // cloud_name = "maas-cloud"
   }

@@ -43,16 +43,6 @@ variable "destroy_flags" {
 
 variable "bootstrap_constraints" {
   description = "Constraints for the controller machine"
-  type = object({
-    cores     = optional(string)
-    mem       = optional(string)
-    root-disk = optional(string)
-    arch      = optional(string)
-  })
-  default = {
-    cores     = "2"
-    mem       = "4G"
-    root-disk = "10G"
-    arch      = "amd64"
-  }
+  type        = string
+  default     = "cores=1 mem=2G virt-type=virtual-machine"
 }

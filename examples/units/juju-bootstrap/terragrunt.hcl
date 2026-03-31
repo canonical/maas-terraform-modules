@@ -45,6 +45,6 @@ inputs = {
 
   # Description: Constraints for the controller machine
   # Type: object
-  # bootstrap_constraints = {"cores":"2", "mem":"4G", "root-disk":"10G", "arch":"amd64"}
+  # bootstrap_constraints = "cores=1 mem=2G virt-type=virtual-machine"
 
 }
