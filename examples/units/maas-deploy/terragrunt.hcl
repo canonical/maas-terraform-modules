@@ -51,6 +51,10 @@ inputs = {
   # Type: string
   # haproxy_constraints = "cores=1 mem=1G"
 
+  # Constraints for the S3 Integrator machine
+  # Type: string
+  # s3_constraints = "cores=1 mem=1G"
+
   # Description:
   #       List of target zones allowed for deploying MAAS PostgreSQL, and HAProxy machines. If provided, machines
   #       are distributed across these zones in round-robin fashion (for example, with 3 zones and 3
