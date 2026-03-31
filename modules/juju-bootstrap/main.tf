@@ -29,7 +29,10 @@ resource "juju_controller" "controller" {
     project = var.lxd_project,
   }
 
-  model_default         = var.model_defaults
-  destroy_flags         = var.destroy_flags
-  bootstrap_constraints = var.bootstrap_constraints
+  model_default = var.model_defaults
+  destroy_flags = var.destroy_flags
+  bootstrap_constraints = tomap({
+    for key_pair in split(" ", var.bootstrap_constraints) :
+    split("=", key_pair)[0] => split("=", key_pair)[1]
+  })
 }
