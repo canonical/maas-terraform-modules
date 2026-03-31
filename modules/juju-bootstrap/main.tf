@@ -29,6 +29,7 @@ resource "juju_controller" "controller" {
     project = var.lxd_project,
   }
 
-  model_default = var.model_defaults
-  destroy_flags = var.destroy_flags
+  model_default         = var.model_defaults
+  destroy_flags         = var.destroy_flags
+  bootstrap_constraints = var.bootstrap_constraints
 }

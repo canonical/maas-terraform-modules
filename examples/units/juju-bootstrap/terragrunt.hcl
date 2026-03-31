@@ -43,4 +43,8 @@ inputs = {
   # Type: object
   # destroy_flags = {"destroy_all_models":true,"force":true}
 
+  # Description: Constraints for the controller machine
+  # Type: object
+  # bootstrap_constraints = {"cores":"2", "mem":"4G", "root-disk":"10G", "arch":"amd64"}
+
 }

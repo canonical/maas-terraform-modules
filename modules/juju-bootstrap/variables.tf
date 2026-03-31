@@ -40,3 +40,19 @@ variable "destroy_flags" {
     force              = true
   }
 }
+
+variable "bootstrap_constraints" {
+  description = "Constraints for the controller machine"
+  type = object({
+    cores     = optional(string)
+    mem       = optional(string)
+    root-disk = optional(string)
+    arch      = optional(string)
+  })
+  default = {
+    cores     = "2"
+    mem       = "4G"
+    root-disk = "10G"
+    arch      = "amd64"
+  }
+}

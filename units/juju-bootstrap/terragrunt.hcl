@@ -24,10 +24,11 @@ terraform {
 
 locals {
   optional_inputs = {
-    cloud_name     = try(values.cloud_name, null)
-    lxd_project    = try(values.lxd_project, null)
-    model_defaults = try(values.model_defaults, null)
-    destroy_flags  = try(values.destroy_flags, null)
+    cloud_name            = try(values.cloud_name, null)
+    lxd_project           = try(values.lxd_project, null)
+    model_defaults        = try(values.model_defaults, null)
+    destroy_flags         = try(values.destroy_flags, null)
+    bootstrap_constraints = try(values.bootstrap_constraints, null)
   }
 
 }
