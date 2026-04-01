@@ -6,7 +6,7 @@ on:
 
 jobs:
   run-full-test:
-    runs-on: self-hosted-linux-amd64-noble-private-endpoint-medium
+    runs-on: self-hosted-linux-amd64-noble-private-endpoint-small
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

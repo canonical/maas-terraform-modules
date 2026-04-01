@@ -9,7 +9,7 @@ on:
 
 jobs:
   run-smoke:
-    runs-on: self-hosted-linux-amd64-noble-private-endpoint-medium
+    runs-on: self-hosted-linux-amd64-noble-private-endpoint-small
     steps:
       # Validate commit SHA format
       - name: Validate commit SHA format
