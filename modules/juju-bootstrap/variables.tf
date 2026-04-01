@@ -40,3 +40,12 @@ variable "destroy_flags" {
     force              = true
   }
 }
+
+variable "bootstrap_constraints" {
+  description = "Constraints for the controller machine, map of strings"
+  type        = map(string)
+  default = {
+    "cores" = "1",
+    "mem"   = "2G"
+  }
+}
