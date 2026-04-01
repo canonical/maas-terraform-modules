@@ -27,6 +27,19 @@ jobs:
       - name: terraform fmt
         run: terraform fmt -recursive -diff -check || (echo "Terraform files aren't formatted. Run 'terraform fmt -recursive'"; exit 1;)
 
+  terraform_validate:
+    name: terraform validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+      - name: terraform validate
+        run: |
+          for module in modules/*/ tests/terraform/modules/*/; do
+            echo "Validating $module"
+            (cd "$module" && terraform init -backend=false && terraform validate)
+          done
+
   terragrunt_hcl_fmt:
     name: terragrunt hcl fmt
     runs-on: ubuntu-latest
