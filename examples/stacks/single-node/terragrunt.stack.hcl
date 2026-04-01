@@ -39,8 +39,11 @@ unit "juju_bootstrap" {
     //   destroy_all_models = true
     //   force              = true
     // }
-    // Constraints to apply to the controller
-    // bootstrap_constraints = "cores=1 mem=2G"
+    // Constraints for the controller machine, map of strings
+    // bootstrap_constraints = {
+    //    "cores" = "1"
+    //    "mem"   = "2G"
+    // }
     // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
     // cloud_name = "maas-cloud"
   }

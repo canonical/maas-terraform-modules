@@ -31,8 +31,5 @@ resource "juju_controller" "controller" {
 
   model_default = var.model_defaults
   destroy_flags = var.destroy_flags
-  bootstrap_constraints = tomap({
-    for key_pair in split(" ", var.bootstrap_constraints) :
-    split("=", key_pair)[0] => split("=", key_pair)[1]
-  })
+  bootstrap_constraints = var.bootstrap_constraints
 }

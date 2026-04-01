@@ -42,7 +42,10 @@ variable "destroy_flags" {
 }
 
 variable "bootstrap_constraints" {
-  description = "Constraints for the controller machine"
-  type        = string
-  default     = "cores=1 mem=2G"
+  description = "Constraints for the controller machine, map of strings"
+  type        = map(string)
+  default = {
+    "cores" = "1",
+    "mem"   = "2G"
+  }
 }
