@@ -26,8 +26,20 @@ resource "lxd_network" "net_test" {
     "ipv4.dhcp"        = "true"
     "ipv4.dhcp.ranges" = "10.0.2.10-10.0.2.200"
     "ipv4.nat"         = "true"
-    "ipv6.address"     = "none"
+    "ipv6.address"     = "fd42:75b8:489e:5629::1/64"
     "ipv6.nat"         = "true"
+  }
+}
+
+resource "lxd_network" "net_test_dhcp" {
+  name = "net-test-dhcp"
+  type = "bridge"
+
+  config = {
+    "ipv4.address" = "10.0.3.1/24"
+    "ipv4.dhcp"    = "false"
+    "ipv4.nat"     = "true"
+    "ipv6.address" = "none"
   }
 }
 
@@ -70,7 +82,7 @@ resource "lxd_profile" "maas_system_default" {
     type = "nic"
     properties = {
       name    = "enp5s0"
-      network = "lxdbr0"
+      network = lxd_network.net_test.name
     }
   }
 
@@ -80,7 +92,7 @@ resource "lxd_profile" "maas_system_default" {
     properties = {
       name    = "enp6s0"
       nictype = "bridged"
-      parent  = lxd_network.net_test.name
+      parent  = lxd_network.net_test_dhcp.name
     }
   }
 
