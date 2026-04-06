@@ -91,6 +91,12 @@ variable "enable_haproxy" {
   default     = false
 }
 
+variable "enable_advanced_routing" {
+  description = "Whether to enable advanced routing subordinate charm on MAAS region controllers"
+  type        = bool
+  default     = false
+}
+
 variable "lxd_project" {
   description = "The LXD project in which to create the VMs for Juju"
   type        = string
@@ -192,6 +198,45 @@ variable "charm_keepalived_revision" {
 
 variable "charm_keepalived_config" {
   description = "Operator configuration for Keepalived deployment"
+  type        = map(string)
+  default     = {}
+}
+
+###
+## Advanced Routing configuration
+###
+
+variable "charm_advanced_routing_channel" {
+  description = "Operator channel for Advanced Routing deployment"
+  type        = string
+  default     = "latest/stable"
+}
+
+variable "charm_advanced_routing_revision" {
+  description = "Operator channel revision for Advanced Routing deployment"
+  type        = number
+  default     = null
+}
+
+variable "charm_advanced_routing_config" {
+  description = <<EOF
+    Operator configuration for Advanced Routing deployment.
+    The 'advanced-routing-config' should be a JSON string containing routing tables, routes, and rules.
+    Example configuration with policy routing:
+    {
+      "advanced-routing-config": jsonencode([
+        { "type": "table", "table": "1" },
+        { "type": "table", "table": "main" },
+        { "type": "route", "net": "10.241.0.0/16", "gateway": "10.239.8.1", "device": "enp6s0" },
+        { "type": "route", "net": "10.239.8.0/24", "gateway": "10.239.8.1", "table": "1", "metric": 0, "device": "enp6s0" },
+        { "type": "route", "default_route": true, "gateway": "10.239.8.1", "table": "1", "device": "enp6s0" },
+        { "type": "rule", "from-net": "10.239.8.0/24", "table": "1", "priority": 100 },
+        { "type": "rule", "from-net": "10.239.8.0/24", "to-net": "10.239.8.0/24", "table": "main" }
+      ]),
+      "enable-advanced-routing": "true",
+      "action-managed-update": "false",
+    }
+  EOF
   type        = map(string)
   default     = {}
 }
