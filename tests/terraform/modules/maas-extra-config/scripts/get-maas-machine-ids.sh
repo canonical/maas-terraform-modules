@@ -16,7 +16,7 @@ get_status_cmd=$(juju status -m "$MODEL" --format json)
 if [ "$IS_MAAS" = "true" ]; then
   get_machine_ids_cmd=$(echo "$get_status_cmd" | jq -r '.applications | to_entries[] | select(.value["charm-name"] == "maas-region") | .value.units | to_entries[] | .value.machine')
 else
-  get_machine_ids_cmd=$(echo "$get_status_cmd" | jq -r '.applications | to_entries[] | select(.value["charm-name"] != "maas-region") | .value.units | to_entries[] | .value.machine')
+  get_machine_ids_cmd=$(echo "$get_status_cmd" | jq -r '.applications | to_entries[] | select(.value["charm-name"] != "maas-region" and (.value | has("subordinate-to") | not)) | .value.units | to_entries[] | .value.machine')
 fi
 
 machine_ids=""

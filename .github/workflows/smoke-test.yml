@@ -51,7 +51,7 @@ jobs:
           echo "true" > run_smoke_test.txt
 
       - name: Run on Testflinger
-        uses: canonical/testflinger/.github/actions/submit@987fd7ab1467065217a9c6496eb2c3d85a250509
+        uses: canonical/testflinger/.github/actions/submit@2204c3c7bd237be5848e048b0f5f9f0fce0a0111
         with:
           poll: true
           job-path: ./tests/testflinger.yaml

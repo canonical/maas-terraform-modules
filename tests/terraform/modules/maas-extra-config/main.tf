@@ -53,7 +53,7 @@ resource "terraform_data" "maas_static_ip_on_pxe" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      juju exec -m "${var.juju_model}" --machine "${each.value}" -- sudo netplan set --origin-hint=999-custom 'network.ethernets.enp6s0={addresses: [${cidrhost(var.pxe_subnet_cidr, tonumber(each.value) + 2)}/${split("/", var.pxe_subnet_cidr)[1]}]}'
+      juju exec -m "${var.juju_model}" --machine "${each.value}" -- sudo netplan set --origin-hint=999-custom 'network.ethernets.enp6s0={dhcp4: false, addresses: [${cidrhost(var.pxe_subnet_cidr, tonumber(each.value) + 2)}/${split("/", var.pxe_subnet_cidr)[1]}]}'
       juju exec -m "${var.juju_model}" --machine "${each.value}" -- sudo netplan apply
       juju exec -m "${var.juju_model}" --machine "${each.value}" -- sudo systemctl restart jujud-machine-"${each.value}"
       juju exec -m "${var.juju_model}" --machine "${each.value}" -- sudo snap restart maas
