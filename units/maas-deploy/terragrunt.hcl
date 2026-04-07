@@ -29,6 +29,10 @@ dependency "juju_bootstrap" {
   }
 }
 
+dependencies {
+  paths = try(values.dependencies, [])
+}
+
 locals {
   optional_inputs = {
     // --- Environment ---

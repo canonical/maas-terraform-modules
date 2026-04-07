@@ -15,12 +15,16 @@ terraform {
 }
 
 dependency "maas_deploy" {
-  config_path = values.maas_deploy_path
+  config_path = try(values.maas_deploy_path, null)
 
   mock_outputs = {
-    maas_api_url = "url"
-    maas_api_key = "key"
+    maas_api_url = "http://mock-maas"
+    maas_api_key = "mock-password"
   }
+}
+
+dependencies {
+  paths = try(values.dependencies, [])
 }
 
 locals {
@@ -45,8 +49,8 @@ inputs = merge({
   },
   {
     // Dependent variables
-    maas_url = dependency.maas_deploy.outputs.maas_api_url
-    maas_key = dependency.maas_deploy.outputs.maas_api_key
+    maas_url = coalesce(try(values.maas_url, null), try(dependency.maas_deploy.outputs.maas_api_url, null))
+    maas_key = coalesce(try(values.maas_key, null), try(dependency.maas_deploy.outputs.maas_api_key, null))
 
     // Required variables
     // (none)
