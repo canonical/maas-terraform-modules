@@ -41,6 +41,10 @@ resource "lxd_network" "net_test_dhcp" {
     "ipv4.nat"     = "true"
     "ipv6.address" = "none"
   }
+
+  # Ensure this network is created after net_test to avoid race conditions
+  # Related LXD bug: https://github.com/canonical/lxd/issues/18023
+  depends_on = [lxd_network.net_test]
 }
 
 # Create MAAS system project
