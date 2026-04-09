@@ -97,9 +97,6 @@ locals {
     s3_path_postgresql           = try(values.s3_path_postgresql, null)
     s3_bucket_maas               = try(values.s3_bucket_maas, null)
     s3_path_maas                 = try(values.s3_path_maas, null)
-    wait_for_images_sync         = try(values.wait_for_images_sync, null)
-    images_sync_timeout_seconds  = try(values.images_sync_timeout_seconds, null)
-    images_sync_poll_interval_seconds = try(values.images_sync_poll_interval_seconds, null)
   }
 }
 
