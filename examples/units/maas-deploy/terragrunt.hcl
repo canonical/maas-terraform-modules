@@ -224,4 +224,16 @@ inputs = {
   # Type: string
   # s3_path_maas = "/maas"
 
+  # Description: Whether to wait for MAAS boot resources (Synced images) to finish downloading before module completion
+  # Type: bool
+  # wait_for_images_sync = true
+
+  # Description: Maximum time to wait for MAAS images to finish syncing
+  # Type: number
+  # images_sync_timeout_seconds = 3600
+
+  # Description: Polling interval while waiting for MAAS images to finish syncing
+  # Type: number
+  # images_sync_poll_interval_seconds = 15
+
 }

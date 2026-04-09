@@ -338,3 +338,21 @@ variable "s3_path_maas" {
   type        = string
   default     = "/maas"
 }
+
+variable "wait_for_images_sync" {
+  description = "Whether to wait for MAAS boot resources (Synced images) to finish downloading before module completion"
+  type        = bool
+  default     = true
+}
+
+variable "images_sync_timeout_seconds" {
+  description = "Maximum time to wait for MAAS images to finish syncing"
+  type        = number
+  default     = 1800
+}
+
+variable "images_sync_poll_interval_seconds" {
+  description = "Polling interval while waiting for MAAS images to finish syncing"
+  type        = number
+  default     = 10
+}
