@@ -197,10 +197,10 @@ resource "terraform_data" "wait_for_images_sync" {
   provisioner "local-exec" {
     command = "bash ${path.module}/scripts/wait-images-sync.sh"
     environment = {
-      MAAS_API_URL           = self.input.maas_api_url
-      MAAS_API_KEY           = self.input.maas_api_key
-      TIMEOUT_SECONDS        = tostring(var.images_sync_timeout_seconds)
-      POLL_INTERVAL_SECONDS  = tostring(var.images_sync_poll_interval_seconds)
+      MAAS_API_URL          = self.input.maas_api_url
+      MAAS_API_KEY          = self.input.maas_api_key
+      TIMEOUT_SECONDS       = tostring(var.images_sync_timeout_seconds)
+      POLL_INTERVAL_SECONDS = tostring(var.images_sync_poll_interval_seconds)
     }
   }
 }
