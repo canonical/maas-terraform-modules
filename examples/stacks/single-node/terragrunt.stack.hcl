@@ -210,7 +210,7 @@ unit "maas_config" {
     // Optional variables
     // The URL of the boot source to synchronize OS images from. This needs to be a simple streams server
     image_server_url = "http://images.maas.io/ephemeral-v3/stable/"
-    // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures
+    // Configure MAAS to download these images immediately. Each key is the release name and the value is a map of architectures and - optionally - sub-architectures. You must specify all images used in your deployment here, including the automatically synced default commissioning image.
     boot_selections = {
       noble = {
         arches    = ["amd64"]
@@ -224,7 +224,7 @@ unit "maas_config" {
         arches = ["amd64", "arm64"]
       }
     }
-    // A map of MAAS configuration settings, where key is the setting name and value is the setting desired value
+    // A map of MAAS configuration settings, where key is the setting name and value is the setting desired value. Note that some settings such as `commissioning_distro_series` and `default_distro_series` require images to be synced before they can be configured. The values for these settings must match images defined in `boot_selections`, including the automatically synced default commissioning image.
     maas_config = {
       "default_osystem" = "ubuntu"
     }

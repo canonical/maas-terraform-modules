@@ -25,7 +25,9 @@ variable "boot_selections" {
   description = <<EOF
     Configure MAAS to download these images immediately.
     Each key is the release name and the value is a map of
-    architectures and - optionally - sub-architectures
+    architectures and - optionally - sub-architectures.
+    You must specify all images used in your deployment here, 
+    including the automatically synced default commissioning image.
   EOF
   type = map(object({
     arches    = set(string)
@@ -38,7 +40,11 @@ variable "boot_selections" {
 variable "maas_config" {
   description = <<EOF
     A map of MAAS configuration settings, where key is the setting name and
-    value is the setting desired value
+    value is the setting desired value. Note that some settings such as
+    `commissioning_distro_series` and `default_distro_series` require images 
+    to be synced before they can be configured. The values for these settings 
+    must match images defined in `boot_selections`, including the automatically 
+    synced default commissioning image.
   EOF
   type        = map(any)
 
