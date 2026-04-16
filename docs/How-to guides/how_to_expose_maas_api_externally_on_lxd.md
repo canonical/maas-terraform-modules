@@ -2,7 +2,7 @@
 
 This document describes how to expose the MAAS API externally when deploying on a LXD cloud when using a private internal network, for example an [OVN network](https://documentation.ubuntu.com/lxd/default/reference/network_ovn/). This common for deployments on MicroCloud. 
 
-If you are deploying on a LXD cloud with a private internal network, you will need to setup a network forward to access the MAAS API externally on the uplink network. This is because the MAAS API will only be accessible from within the private network by default, but you likely want to access the API from the uplink network as well. For cases where a virtual IP address is used to access MAAS, you will also need to reserve the VIP on your private network to ensure no other machines are assigned it. 
+If you are deploying on a LXD cloud with a private internal network, you will need to setup a network forward to access the MAAS API externally on the uplink network. This is because the MAAS API will only be accessible from within the private network by default, but you likely want to access the API from the uplink network as well. For cases where a virtual IP address is used to access MAAS, you will also need to reserve the VIP on your private network to ensure no other machines are assigned it. Follow this guide before running your `maas-deploy` unit if you want to ensure IP address reservation of a virtual IP address. 
 
 ### Reserve the VIP
 
@@ -27,4 +27,4 @@ To forward the MAAS API accessible at `10.176.2.100` from the private network to
 lxc network forward create ovn-network-name 10.239.7.100 target_address=10.176.2.100
 ```
 
-You should now be able to access the MAAS API from the uplink network. 
+You should now be able access the MAAS API from the specified IP on the uplink network. 
