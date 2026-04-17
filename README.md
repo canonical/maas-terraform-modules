@@ -51,7 +51,9 @@ To run the stacks and units in this repository, the following software must be i
 - Terragrunt
 - A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md))
 
-It is recommended to create a jumphost/bastion LXD container on the LXD cluster/server, install the pre-requisites, and run the relevant stacks or units from there.
+If you plan to deploy to a cloud that deploys machines on a private network (for example, OVN on MicroCloud), you must create a LXD container on the cloud first to use as a bastion. On the bastion, install the pre-requisites listed above, and run the relevant stacks or units from there.
+
+In this case, the MAAS API will only be accessible from within the private network, i.e. from the bastion and not on the uplink network. To solve this and make your MAAS API accessible on the uplink network, you need to setup a network forward. Please see [How to expose MAAS API externally on LXD](./docs/How-to%20guides/how_to_expose_maas_api_externally_on_lxd.md) before deploying a unit or stack.
 
 ## How to use this repository
 
