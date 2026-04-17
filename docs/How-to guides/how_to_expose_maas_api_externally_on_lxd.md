@@ -23,6 +23,7 @@ lxc config device add vip-holder eth0 nic network=ovn-network-name name=eth0 ipv
 ### Setup network forward
 
 To forward the MAAS API accessible at `10.176.2.100` from the private network to the uplink network, on your LXD cloud, run the following and specify the relevant uplink and private IP addresses and network name:
+
 ```bash
 lxc network forward create ovn-network-name 10.239.7.99 target_address=10.176.2.100
 ```
@@ -33,5 +34,7 @@ lxc network forward create ovn-network-name 10.239.7.99 target_address=10.176.2.
 > lxc network set UPLINK ipv4.routes=10.239.7.99/32
 > ```
 > Replace `UPLINK` with your actual uplink network name.
+
+For more details on network forwards on LXD, see [the docs](https://documentation.ubuntu.com/lxd/latest/howto/network_forwards/). 
 
 You can now deploy your unit or stack, specifying your `virtual_ip` in the `maas-deploy` unit if required. 
