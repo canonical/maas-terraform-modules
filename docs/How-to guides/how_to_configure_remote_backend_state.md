@@ -20,11 +20,13 @@ remote_state {
   // For more details on the S3 backend configuration, see https://developer.hashicorp.com/terraform/language/backend/s3#configuration .
   config = {
     bucket   = "my-state"
+    use_lockfile     = true
     key      = "${path_relative_to_include()}/terraform.tfstate"
     region   = "us-east-1"
     endpoints = {
       s3 = get_env("S3_ENDPOINT_URL")
     }
+
 
     // Credentials — set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your environment.
     access_key = get_env("S3_ACCESS_KEY")
@@ -34,7 +36,7 @@ remote_state {
     custom_ca_bundle = get_env("S3_CA_CHAIN_FILE_PATH")
 
     // S3 compatible storage options. 
-    use_path_style             = true
+    use_path_style               = true
     skip_credentials_validation  = true
     skip_requesting_account_id   = true
     skip_region_validation       = true
@@ -56,7 +58,7 @@ Apply your stack. Your state files should be stored in your S3 compatible storag
 
 ## S3 storage on MicroCloud with MicroCeph and RadosGW
 
-When deploying on MicroCloud, it is possible to use RadosGW included with MicroCeph to act as an S3 compatible storage backend for Terraform state. This is recommended over local state files. This section outlines 
+When deploying on MicroCloud, it is possible to use RadosGW included with MicroCeph to act as an S3 compatible storage backend for Terraform state. This is recommended over local state files. This requires some additional configuration steps outlined below.
 
 #### Prerequisites:
 1. You have a running MicroCloud deployment with MicroCeph, and RadosGW is configured and running. 
@@ -96,7 +98,7 @@ remote_state {
       s3 = get_env("S3_ENDPOINT_URL")
     }
 
-    // Credentials — set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your environment.
+    // Credentials
     access_key = get_env("S3_ACCESS_KEY")
     secret_key = get_env("S3_SECRET_KEY")
 
@@ -110,9 +112,8 @@ remote_state {
       "object:type" : "lock"
     }
 
+    // S3 compatible storage options. 
     use_path_style            = true
-
-    // S3compatible storage options. 
     skip_region_validation             = true
     skip_credentials_validation        = true
     skip_metadata_api_check            = true
