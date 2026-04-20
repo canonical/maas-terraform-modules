@@ -40,6 +40,7 @@ remote_state {
     skip_credentials_validation  = true
     skip_requesting_account_id   = true
     skip_region_validation       = true
+    skip_metadata_api_check      = true
   }
 }
 ```
@@ -105,17 +106,18 @@ remote_state {
     // TLS configuration for connecting to S3 storage via HTTPS.
     custom_ca_bundle = get_env("S3_CA_CHAIN_FILE_PATH")
 
-    // S3 compatible storage options. 
-    use_path_style            = true
-    skip_region_validation             = true
-    skip_credentials_validation        = true
-    skip_metadata_api_check            = true
-    skip_requesting_account_id         = true
+    // S3 compatible storage options (same as the generic block above).
+    use_path_style              = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true
+    skip_region_validation      = true
+    skip_metadata_api_check     = true
+
+    // Additional flags for RadosGw.
     skip_bucket_root_access            = true
     skip_bucket_ssencryption           = true
     skip_bucket_public_access_blocking = true
     skip_bucket_enforced_tls           = true
-
   }
 }
 
