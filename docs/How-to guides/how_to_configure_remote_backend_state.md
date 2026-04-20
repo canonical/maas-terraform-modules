@@ -19,10 +19,10 @@ remote_state {
 
   // For more details on the S3 backend configuration, see https://developer.hashicorp.com/terraform/language/backend/s3#configuration .
   config = {
-    bucket   = "my-state"
-    use_lockfile     = true
-    key      = "${path_relative_to_include()}/terraform.tfstate"
-    region   = "us-east-1"
+    bucket       = "my-state"
+    use_lockfile = true
+    key          = "${path_relative_to_include()}/terraform.tfstate"
+    region       = "us-east-1"
     endpoints = {
       s3 = get_env("S3_ENDPOINT_URL")
     }
@@ -36,13 +36,14 @@ remote_state {
     custom_ca_bundle = get_env("S3_CA_CHAIN_FILE_PATH")
 
     // S3 compatible storage options. 
-    use_path_style               = true
-    skip_credentials_validation  = true
-    skip_requesting_account_id   = true
-    skip_region_validation       = true
-    skip_metadata_api_check      = true
+    use_path_style              = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true
+    skip_region_validation      = true
+    skip_metadata_api_check     = true
   }
 }
+
 ```
 See the [Terraform documentation](https://developer.hashicorp.com/terraform/language/backend/s3) for more details on these flags and their implications. 
 
@@ -91,10 +92,10 @@ remote_state {
 
   // For more details on the S3 backend configuration, see https://developer.hashicorp.com/terraform/language/backend/s3#configuration .
   config = {
-    bucket   = "my-state"
-    use_lockfile     = true
-    key      = "${path_relative_to_include()}/terraform.tfstate"
-    region   = "us-east-1"
+    bucket       = "my-state"
+    use_lockfile = true
+    key          = "${path_relative_to_include()}/terraform.tfstate"
+    region       = "us-east-1"
     endpoints = {
       s3 = get_env("S3_ENDPOINT_URL")
     }
