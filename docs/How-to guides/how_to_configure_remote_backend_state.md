@@ -6,7 +6,7 @@ This guide details examples of `remote_state` configurations and any additional 
 
 ## S3 compatible storage
 
-Edit the `remote_state` configuration in `root.hcl` to match the following. Note that for S3 compatible storage, some skip flags are required to prevent Terraform from attempting to validate the endpoint as an actual AWS S3 endpoint:
+Edit the `remote_state` configuration in `root.hcl` to match the following. Note that for S3 compatible storage, some skip flags are required to prevent Terraform from attempting to validate the endpoint as an actual AWS S3 endpoint: 
 
 ```hcl
 remote_state {
@@ -41,6 +41,7 @@ remote_state {
   }
 }
 ```
+See the [Terraform documentation](https://developer.hashicorp.com/terraform/language/backend/s3) for more details on these flags and their implications. 
 
 Populate your environment with the relevant variables/secrets: 
 
@@ -60,6 +61,7 @@ When deploying on MicroCloud, it is possible to use RadosGW included with MicroC
 #### Prerequisites:
 1. You have a running MicroCloud deployment with MicroCeph, and RadosGW is configured and running. 
 2. You have the credentials for a RadosGW user.
+3. You have generated a TLS certificate for RadosGW and have copied it to the machine where you are running Terragrunt (e.g. your bastion).
 
 On one of your MicroCloud nodes, create the following directory and file. Fill out the access key and secret key with the credentials for your RadosGW user: 
 
@@ -73,27 +75,7 @@ aws_secret_access_key = <secret-key>
 __EOF
 ```
 
-Create a TLS certificate for RadosGW. Specify the relevant IP addresses of your MicroCloud nodes in the `subjectAltName` and `CN` fields: 
-
-```bash
-openssl req -x509 -nodes -days 3650 -keyout radosgw.key -subj /CN=<micro1-ip> -addext "subjectAltName=IP:<micro1-ip>, IP:<micro2-ip>, IP:<micro3-ip>" -out radosgw.crt
-```
-
-The below example is for a single MicroCloud node:
-
-```shell
-root@micro1:~# openssl req -x509 -nodes -days 3650 -keyout radosgw.key \
--subj "/CN=10.1.123.10" \
--addext "subjectAltName=IP:10.1.123.10" \
--out radosgw.crt
-...........+....+........+......+.+..............+......+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.....+...........+....+..+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.............+..+....+......+............+..+.+...+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-.+...+..........+......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*....+.+...+......+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.......................+.......+...........+......+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
------
-```
-
-Copy the generated `radosgw.crt` file to the bastion or wherever you are running Terragrunt from. 
-
-Populate `root.hcl` with the following: 
+Populate `root.hcl` with the following `remote_state` configuration, some skip flags are required to prevent Terraform from attempting to validate the endpoint as an actual AWS S3 endpoint: 
 
 ```hcl
 remote_state {
@@ -143,13 +125,8 @@ remote_state {
   }
 }
 
-// Configure what repositories to search when you run 'terragrunt catalog' in this directory.
-catalog {
-  urls = [
-    "git::https://github.com/canonical/maas-terraform-modules?ref=main",
-  ]
-}
 ```
+See the [Terraform documentation](https://developer.hashicorp.com/terraform/language/backend/s3) for more details on these flags and their implications. 
 
 Populate your environment with the relevant variables/secrets: 
 
