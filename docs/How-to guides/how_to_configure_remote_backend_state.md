@@ -104,13 +104,6 @@ remote_state {
 
     // TLS configuration for connecting to S3 storage via HTTPS.
     custom_ca_bundle = get_env("S3_CA_CHAIN_FILE_PATH")
-    
-    state_tags = {
-      "object:type" : "state"
-    }
-    lock_tags = {
-      "object:type" : "lock"
-    }
 
     // S3 compatible storage options. 
     use_path_style            = true
