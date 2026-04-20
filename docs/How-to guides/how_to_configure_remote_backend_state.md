@@ -67,7 +67,7 @@ When deploying on MicroCloud, it is possible to use RadosGW included with MicroC
 2. You have the credentials for a RadosGW user.
 3. You have generated a TLS certificate for RadosGW and have copied it to the machine where you are running Terragrunt (e.g. your bastion).
 
-On one of your MicroCloud nodes, create the following directory and file. Fill out the access key and secret key with the credentials for your RadosGW user: 
+On the node where you are running Terragrunt (e.g. your bastion), create the following directory and file. Fill out the access key and secret key with the credentials for your RadosGW user: 
 
 ```bash
 mkdir -p ~/.aws
