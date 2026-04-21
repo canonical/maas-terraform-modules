@@ -114,7 +114,7 @@ remote_state {
     skip_region_validation      = true
     skip_metadata_api_check     = true
 
-    // Additional flags for RadosGw.
+    // Additional flags for RadosGW.
     skip_bucket_root_access            = true
     skip_bucket_ssencryption           = true
     skip_bucket_public_access_blocking = true
