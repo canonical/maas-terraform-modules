@@ -43,7 +43,7 @@ On the machine you want to enroll as a rack controller, run:
 sudo maas init rack --maas-url http://maas.internal/MAAS --secret <cluster-secret>
 ```
 
-Replace `<cluster-secret>` with the value obtained in the previous step.
+Replace `<cluster-secret>` and the maas-url with the values obtained in the previous steps.
 
 For full details on adding a rack controller, see the [MAAS HA documentation](https://canonical.com/maas/docs/how-to-manage-high-availability#p-9026-enable-ha-for-rack-controllers).
 
