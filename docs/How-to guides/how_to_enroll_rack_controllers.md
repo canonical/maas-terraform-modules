@@ -5,7 +5,7 @@ Charmed MAAS manages controllers in region and region+rack mode as part of the c
 ## Prerequisites
 
 - A running Charmed MAAS deployment.
-- A machine to use as the rack controller, with maas installed, and with network access to the region controllers.
+- A machine to use as the rack controller, with MAAS installed, and with network access to the region controllers.
 
 ## Get the cluster secret
 
