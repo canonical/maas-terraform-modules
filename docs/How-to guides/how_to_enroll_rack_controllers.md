@@ -19,21 +19,23 @@ For more details, see the [get-maas-secret action documentation](https://charmhu
 
 ## Determine the MAAS URL
 
-The MAAS URL used for rack controller registration should point to the MAAS API URL. This can be obtained with:
+The MAAS URL used for rack controller registration should point to the MAAS API URL. Obtain it with:
 
 ```bash
 juju run maas-region/leader get-api-endpoint
 ```
 
-For clouds where a LXD network forward has been setup, you should use the LXD network forward IP (or its DNS record), for example:
+> [!IMPORTANT]
+> When MAAS serves the API over TLS, `get-api-endpoint` will output an `https` URL. For later steps, use the same host and path outputted in that URL, but set the scheme to `http`. Rack-to-region communication for enrollment requires `HTTP`, not `HTTPS`. For HA deployments, this URL should be the HAProxy endpoint but on port 80.
+
+For clouds where a LXD network forward has been set up to expose the MAAS API, you should use the LXD network forward IP (or its DNS record) instead, for example:
 
 ```
 http://maas.internal/MAAS
 ```
 
 > [!IMPORTANT]
-> - For HA deployments, the URL should target the HAProxy endpoint on port 80.
-> - Do **not** use `https`, even if MAAS TLS is enabled. The rack to region communication requires HTTP.
+> The hostname for the MAAS API URL must be resolvable and reachable by the rack controller to be registered over the network.
 
 ## Register the rack controller
 
