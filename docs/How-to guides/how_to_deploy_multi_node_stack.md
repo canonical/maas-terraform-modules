@@ -103,3 +103,8 @@ Confirm the removal when prompted. Finally, remove the generated stack directory
 ```bash
 terragrunt stack clean
 ```
+
+## Relevant guides
+
+- [How to enroll rack controllers](./how_to_enroll_rack_controllers.md)
+- [How to expose the MAAS API externally on LXD](./how_to_expose_maas_api_externally_on_lxd.md)
