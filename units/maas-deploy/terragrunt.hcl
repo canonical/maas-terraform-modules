@@ -42,15 +42,16 @@ locals {
     path_to_ssh_key   = try(values.path_to_ssh_key, null)
 
     // --- Machines and constraints ---
-    maas_constraints     = try(values.maas_constraints, null)
-    postgres_constraints = try(values.postgres_constraints, null)
-    haproxy_constraints  = try(values.haproxy_constraints, null)
-    s3_constraints       = try(values.s3_constraints, null)
-    zone_list            = try(values.zone_list, null)
-    enable_postgres_ha   = try(values.enable_postgres_ha, null)
-    enable_maas_ha       = try(values.enable_maas_ha, null)
-    enable_haproxy       = try(values.enable_haproxy, null)
-    ubuntu_version       = try(values.ubuntu_version, null)
+    maas_constraints        = try(values.maas_constraints, null)
+    postgres_constraints    = try(values.postgres_constraints, null)
+    haproxy_constraints     = try(values.haproxy_constraints, null)
+    s3_constraints          = try(values.s3_constraints, null)
+    zone_list               = try(values.zone_list, null)
+    enable_postgres_ha      = try(values.enable_postgres_ha, null)
+    enable_maas_ha          = try(values.enable_maas_ha, null)
+    enable_haproxy          = try(values.enable_haproxy, null)
+    enable_advanced_routing = try(values.enable_advanced_routing, null)
+    ubuntu_version          = try(values.ubuntu_version, null)
 
     // --- Workload: PostgreSQL ---
     charm_postgresql_channel  = try(values.charm_postgresql_channel, null)
@@ -66,6 +67,11 @@ locals {
     charm_keepalived_channel  = try(values.charm_keepalived_channel, null)
     charm_keepalived_revision = try(values.charm_keepalived_revision, null)
     charm_keepalived_config   = try(values.charm_keepalived_config, null)
+
+    // --- Workload: Advanced Routing ---
+    charm_advanced_routing_channel  = try(values.charm_advanced_routing_channel, null)
+    charm_advanced_routing_revision = try(values.charm_advanced_routing_revision, null)
+    charm_advanced_routing_config   = try(values.charm_advanced_routing_config, null)
 
     // --- Workload: MAAS ---
     charm_maas_region_channel  = try(values.charm_maas_region_channel, null)
