@@ -27,7 +27,7 @@ In particular, installing [Packer](https://developer.hashicorp.com/packer/instal
 
 ### Build the MAAS image
 
-The exact steps depend on the image you want to build.
+The [exact steps](https://canonical.com/maas/docs/how-to-build-custom-images) depend on the image you want to build.
 
 Refer to the relevant example, such as the [Ubuntu configuration](https://github.com/canonical/packer-maas/tree/main/ubuntu), and run the appropriate `make` or `packer build` command as described in the target instructions.
 
