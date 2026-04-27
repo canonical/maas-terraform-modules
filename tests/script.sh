@@ -118,7 +118,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
     cd terraform-provider-maas
     make testacc TESTARGS='-skip="MAASBootSource_|MAASConfiguration|MAASVMHost_|MAASInstance_"'
     sleep 15
-    make testacc TESTARGS='-run="MAASVMHost_|MAASInstance_" -skip="TestAccDataSourceMAASVMHost_virsh"'
+    make testacc TESTARGS='-run="MAASInstance_basic"'
     make testacc TESTARGS='-run MAASConfiguration'
     cd $ROOT_DIR
 
