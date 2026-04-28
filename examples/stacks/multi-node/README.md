@@ -23,3 +23,8 @@ This stack deploys a highly available MAAS cluster with:
 ## How to deploy
 
 For step-by-step deployment instructions, see [How to deploy a multi-node stack](../../../docs/How-to%20guides/how_to_deploy_multi_node_stack.md).
+
+> [!NOTE] When uploading images through HAProxy:
+>
+> * Connections are sticky by default; A client will continue to connect to the same backend server unless that server becomes unavailable.
+> * Due to MAAS limitations, image uploads will fail (as part of the image content has been sent to two seperate MAAS regions) and will need to be re-uploaded.

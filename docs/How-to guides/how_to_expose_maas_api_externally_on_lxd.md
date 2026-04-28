@@ -39,15 +39,17 @@ For more details on network forwards on LXD, see [the docs](https://documentatio
 
 ### Uploading custom images
 
-You can now login to your MAAS instance with the `virtual_ip`, for example [this cli setup guide](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-cli-setup)
+<!-- TODO, Update this link after we move items -->
+
+You can now login to your MAAS instance using your forwarded IP as the `MAAS_URL`, as outlined in [this cli setup guide](https://canonical.com/maas/docs/how-to-get-maas-up-and-running#p-9034-cli-setup)
 
 You will need sufficient resources to meet the `packer-maas` [prerequisites](https://github.com/canonical/packer-maas/blob/main/README.md#prerequisites).
 
 You can [build and upload your desired image](https://canonical.com/maas/docs/how-to-build-custom-images)
 
-> **Note:** When uploading through HAProxy:
+> [!NOTE] When uploading through HAProxy:
 >
-> * Connections are sticky by default
-> * A client will continue to connect to the same backend server unless that server becomes unavailable
+> * Connections are sticky by default; A client will continue to connect to the same backend server unless that server becomes unavailable.
+> * Due to MAAS limitations, the image upload will fail (as part of the image content has been sent to two seperate MAAS regions) and will need to be re-uploaded.
 
 then continue with further operations.
