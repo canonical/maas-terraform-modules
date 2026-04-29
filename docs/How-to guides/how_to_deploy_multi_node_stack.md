@@ -86,6 +86,11 @@ Access the URL in your browser and log in with:
 
 You should see the MAAS web UI with pre-configured resources.
 
+> [!NOTE]
+> When uploading images through HAProxy:
+> * Connections are sticky by default; A client will continue to connect to the same backend server unless that server becomes unavailable.
+> * Due to MAAS limitations, image uploads will fail (as part of the image content has been sent to two seperate MAAS regions) and will need to be re-uploaded.
+
 ## Set up backups (if enabled)
 
 If you deployed with backup functionality, see the [backup guide](how_to_backup.md) for detailed instructions on scheduling and managing backups.
