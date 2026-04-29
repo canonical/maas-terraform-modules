@@ -48,7 +48,6 @@ You will need sufficient resources to meet the `packer-maas` [prerequisites](htt
 You can [build and upload your desired image](https://canonical.com/maas/docs/how-to-build-custom-images)
 
 > [!NOTE] When uploading through HAProxy:
->
 > * Connections are sticky by default; A client will continue to connect to the same backend server unless that server becomes unavailable.
 > * Due to MAAS limitations, the image upload will fail (as part of the image content has been sent to two seperate MAAS regions) and will need to be re-uploaded.
 
