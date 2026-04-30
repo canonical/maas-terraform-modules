@@ -18,30 +18,37 @@ The deployment of these modules is driven by Terragrunt stacks.
 > [!NOTE]
 > The content of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
 
-
 ## Contents
 
 - [Terraform driven Charmed MAAS deployment](#terraform-driven-charmed-maas-deployment)
   - [Contents](#contents)
   - [Getting started](#getting-started)
+    - [Fresh deployment](#fresh-deployment)
+    - [Migrating from an existing MAAS deployment](#migrating-from-an-existing-maas-deployment)
   - [Prerequisites](#prerequisites)
   - [How to use this repository](#how-to-use-this-repository)
     - [Repository structure](#repository-structure)
   - [Architecture](#architecture)
-      - [MAAS Regions](#maas-regions)
-      - [PostgreSQL](#postgresql)
-      - [HAProxy and Keepalived](#haproxy-and-keepalived)
-      - [Juju Controller](#juju-controller)
-      - [Cloud](#cloud)
+    - [MAAS Regions](#maas-regions)
+    - [PostgreSQL](#postgresql)
+    - [HAProxy and Keepalived](#haproxy-and-keepalived)
+    - [Juju Controller](#juju-controller)
+    - [Cloud](#cloud)
   - [Appendix - Backup and Restore](#appendix---backup-and-restore)
 
 ## Getting started
+
+### Fresh deployment
 
 If you just want to deploy Charmed MAAS:
 
 1. Review the [Prerequisites](#prerequisites) section.
 1. Follow the [LXD configuration guide](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md) to get your required inputs to the stacks.
 1. Follow the [Getting started with stacks tutorial](./docs/Tutorials/getting_started_with_stacks.md).
+
+### Migrating from an existing MAAS deployment
+
+If you're migrating from an existing MAAS deployment (maas-anvil, manual installation, or other deployment methods), follow the [How to migrate an existing MAAS deployment](./docs/How-to%20guides/how_to_migrate_existing_maas.md) guide.
 
 ## Prerequisites
 
@@ -73,7 +80,6 @@ Typically, you should create your own repository (e.g. `infrastructure-live`) to
 - `tests/` - Contains tests that validate the example Terragrunt stacks in the `examples/stacks` directory.
 
 ## Architecture
-
 
 ```mermaid
 flowchart TB
@@ -229,6 +235,8 @@ LXD Containers and Virtual machines are deployed as Juju machines, which Juju us
 
 ## Appendix - Backup and Restore
 
-There exist two supplementary documents for instructions on [How to Backup](./docs/How-to%20guides/how_to_backup.md) and [How to Restore](./docs/How-to%20guides/how_to_restore.md) your MAAS Cluster.
+There exist supplementary documents for instructions on [How to Backup](./docs/How-to%20guides/how_to_backup.md) and [How to Restore](./docs/How-to%20guides/how_to_restore.md) your MAAS Cluster.
+
+For migrating from an existing MAAS deployment (maas-anvil, manual installation, or other methods), which involves both backup and restore operations, see [How to migrate an existing MAAS deployment](./docs/How-to%20guides/how_to_migrate_existing_maas.md).
 
 It is recommended to take a backup of your cluster after initial setup.
