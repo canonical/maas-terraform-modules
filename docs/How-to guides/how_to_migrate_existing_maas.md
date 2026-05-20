@@ -40,6 +40,56 @@ Before starting the migration, ensure you have:
 - The prerequisites listed in the root [README](../../README.md)
 - Familiarity with your current MAAS deployment architecture (HA setup, number of region controllers, etc.)
 
+## Pre-Migration Preparation
+
+Before starting, complete the following preparation steps to establish your maintenance window and a rollback safety net.
+
+### Schedule a Maintenance Window
+
+Agree on a maintenance window with your team and stakeholders before proceeding. During migration:
+
+- **MAAS will be unavailable** — all MAAS controllers (region, rack, and combined region+rack) will be stopped throughout the process
+- **Deployed machines remain running** — however, they will lose access to MAAS services during migration: hardware sync, DNS, HTTP proxy, and DHCP lease renewal. Machines with short DHCP leases may lose network connectivity if the migration extends beyond the lease expiry
+- **Estimated time**: 2–4 hours (see [Overview](#overview))
+
+Allow additional buffer time for unexpected issues. Do not start the migration without a confirmed window.
+
+### Validate Your Current Deployment
+
+Confirm MAAS is in a stable state before stopping it:
+
+- All rack controllers are connected and healthy
+- No machines are actively commissioning, testing, or deploying *(best effort — in-flight operations will be interrupted but can be retried on the new deployment)*
+- Sufficient disk space is available at your backup destination (`df -h /backup/maas`)
+
+For charm-based deployments, `juju status -m maas` should show all units as **active/idle**.
+
+### Stop MAAS
+
+Stop MAAS on all controllers (region, rack, and combined region+rack) before taking backups. This ensures a consistent database snapshot with no in-flight writes.
+
+**For charm-based deployments:**
+
+```bash
+juju exec --application maas-region -- sudo snap stop maas
+```
+
+**For manual/snap deployments** (run on each region controller):
+
+```bash
+sudo snap stop maas
+```
+
+### Preserve the Old Deployment as a Rollback Safety Net
+
+> [!IMPORTANT]
+> **Do not tear down your existing MAAS deployment.** The stopped MAAS controllers, PostgreSQL, and all associated infrastructure are your rollback safety net. If the migration cannot complete within your maintenance window, simply restart the old MAAS — managed machines will reconnect automatically and your existing deployment recovers immediately with no data loss.
+
+Keep the old MAAS controllers stopped (as done in the previous step) but do not destroy them until the new deployment is fully verified.
+
+> [!NOTE]
+> **To roll back**: Restart the old MAAS (`sudo snap start maas` or `juju exec --application maas-region -- sudo snap start maas`). Tear down the old deployment only after you are fully satisfied with the migration.
+
 ## Migration Steps
 
 ### Step 1: Understanding Your Current Deployment
@@ -577,6 +627,9 @@ ls -l /var/snap/maas/common/maas/image-storage/
 
 #### Connect MAAS to the restored database
 
+> [!WARNING]
+> **Point of no return.** Once MAAS connects to the new database and starts running, the new database will diverge from your backup. Rolling back after this point requires restoring the backup again from scratch. Ensure you are confident in the restoration before proceeding.
+
 ```bash
 juju integrate maas-region postgresql
 
@@ -736,6 +789,21 @@ juju exec --unit maas-region/0 -- maas version
 echo -e "\n=== PostgreSQL Cluster Status ==="
 juju run postgresql/leader get-cluster-status
 ```
+
+## Post-Migration Cleanup
+
+Once you have completed the [Verification](#verification) checks and are confident the new deployment is fully operational, decommission the old infrastructure.
+
+**For charm-based deployments (maas-anvil, Juju):**
+
+```bash
+# Destroy the old Juju model and all its machines
+juju destroy-model <old-model-name> --destroy-storage
+```
+
+**For manual/snap deployments**: stop and remove the VMs or physical machines hosting the old MAAS controllers and PostgreSQL.
+
+Retain your migration backups for a reasonable period (e.g., 30 days) before deleting them, in case issues surface after migration.
 
 ## Troubleshooting
 
