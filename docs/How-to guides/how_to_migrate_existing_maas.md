@@ -805,6 +805,16 @@ juju destroy-model <old-model-name> --destroy-storage
 
 Retain your migration backups for a reasonable period (e.g., 30 days) before deleting them, in case issues surface after migration.
 
+## Network Migration Considerations
+
+If the new deployment uses the same VIP or DNS name as the old one, most clients will reconnect without extra work. If the endpoint changes, update the following before cutover:
+
+- MAAS DNS records and any load balancer or virtual IP references
+- Firewall rules and security groups that allow access to the MAAS API, DNS, DHCP, and proxy services
+- Any external automation or client configuration that points at the old MAAS URL or IP address
+
+Keep the old deployment available until you have confirmed that machines, controllers, and automation are using the new endpoint.
+
 ## Troubleshooting
 
 For common issues, see the [troubleshooting guide](../troubleshooting.md).
