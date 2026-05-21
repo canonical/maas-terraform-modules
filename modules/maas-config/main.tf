@@ -3,6 +3,18 @@ provider "maas" {
   api_url = var.maas_url
 }
 
+locals {
+  pre_image_sync_config_keys = toset([
+    "enable_http_proxy",
+    "http_proxy",
+    "https_proxy",
+    "boot_images_no_proxy",
+  ])
+
+  pre_image_sync_config  = { for k, v in var.maas_config : k => v if contains(local.pre_image_sync_config_keys, k) }
+  post_image_sync_config = { for k, v in var.maas_config : k => v if !contains(local.pre_image_sync_config_keys, k) }
+}
+
 # 1
 # Set boot source
 resource "maas_boot_source" "image_server" {
@@ -20,19 +32,29 @@ resource "maas_boot_source_selection" "images" {
   release     = each.key
   arches      = each.value.arches
   subarches   = each.value.subarches
+
+  depends_on = [maas_configuration.pre_image_sync_config]
 }
 
-# 3
-# Set MAAS config options
-resource "maas_configuration" "config" {
-  for_each = var.maas_config
+# 3a
+# Set MAAS config options that must be applied before boot source selections
+# (e.g. proxy settings that affect image downloads)
+resource "maas_configuration" "pre_image_sync_config" {
+  for_each = local.pre_image_sync_config
+
+  key   = each.key
+  value = each.value
+}
+
+# 3b
+# Set MAAS config options that must be applied after boot source selections
+# (e.g. commissioning_distro_series, default_distro_series)
+resource "maas_configuration" "post_image_sync_config" {
+  for_each = local.post_image_sync_config
 
   key   = each.key
   value = each.value
 
-  # This ensures that the boot source selections are created before the configuration is applied,
-  # as some configuration options may depend on the boot resources being available.
-  # e.g., commissioning_distro_series, default_distro_series, etc.
   depends_on = [maas_boot_source_selection.images]
 }
 
