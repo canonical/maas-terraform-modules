@@ -85,7 +85,7 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   if [ "$SMOKE_TEST" != "true" ]; then
 
     # Log in to Juju controller using credentials from Terragrunt stack output
-    JUJU_CREDS=$(terragrunt stack output -working-dir $STACK_DIR -json juju_bootstrap.juju_credentials | jq -r '.juju_bootstrap.juju_credentials')
+    JUJU_CREDS=$(terragrunt stack output -working-dir $STACK_DIR -json juju_bootstrap.juju_controller | jq -r '.juju_bootstrap.juju_controller')
     JUJU_CONTROLLER_ADDRESS=$(echo "$JUJU_CREDS" | jq -r '.controller_addresses[0]')
     JUJU_USERNAME=$(echo "$JUJU_CREDS" | jq -r '.username')
     JUJU_PASSWORD=$(echo "$JUJU_CREDS" | jq -r '.password')

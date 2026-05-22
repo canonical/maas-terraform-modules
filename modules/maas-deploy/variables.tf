@@ -4,7 +4,7 @@ variable "ubuntu_version" {
   default     = "24.04"
 }
 
-variable "juju_credentials" {
+variable "juju_controller" {
   description = "The credentials to use when authenticating to the Juju controller."
   type = object({
     controller_addresses = list(string)

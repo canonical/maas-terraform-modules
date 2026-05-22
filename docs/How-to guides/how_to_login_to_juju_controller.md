@@ -15,7 +15,7 @@ Navigate to your unit or stack directory and run the appropriate command to extr
 Run this from the unit directory (for example, `units/maas-deploy`):
 
 ```bash
-CREDS=$(terragrunt output -json juju_credentials | jq -r '[.controller_addresses[0], .username, .password] | @tsv')
+CREDS=$(terragrunt output -json juju_controller | jq -r '[.controller_addresses[0], .username, .password] | @tsv')
 ```
 
 ### From a stack
@@ -23,7 +23,7 @@ CREDS=$(terragrunt output -json juju_credentials | jq -r '[.controller_addresses
 Run this from the stack directory (for example, `examples/stacks/single-node`):
 
 ```bash
-CREDS=$(terragrunt stack output juju_bootstrap.juju_credentials --json | jq -r '.juju_bootstrap.juju_credentials | [.controller_addresses[0], .username, .password] | @tsv')
+CREDS=$(terragrunt stack output juju_bootstrap.juju_controller --json | jq -r '.juju_bootstrap.juju_controller | [.controller_addresses[0], .username, .password] | @tsv')
 ```
 
 ## Log in to the controller
