@@ -70,7 +70,14 @@ unit "maas_deploy" {
 
     // Optional variables
     // Uncomment and complete to customize. Defaults are shown where defined in variables.tf.
-    // The LXD project in which to create the VMs for Juju
+    // Input modes:
+    // - Managed model mode: leave model_uuid unset and provide juju_cloud_name, juju_cloud_region, and lxd_project.
+    // - Existing model mode: set model_uuid and skip model creation inputs.
+    // UUID of an existing Juju model to deploy into. When set, the module will not create a new model.
+    // model_uuid = "00000000-0000-0000-0000-000000000000"
+    // Juju cloud region used when the module manages model creation.
+    juju_cloud_region = "default"
+    // The LXD project in which to create the VMs for Juju (managed model mode).
     lxd_project = get_env("LXD_PROJECT_MAAS_MACHINES", "default")
     // Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
     // model_config = ...
