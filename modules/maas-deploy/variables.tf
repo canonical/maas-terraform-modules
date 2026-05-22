@@ -33,14 +33,26 @@ variable "juju_controller" {
 }
 
 variable "juju_cloud_name" {
-  description = "The Juju cloud name to deploy the charmed MAAS model on"
+  description = "Juju cloud name used when the module manages model creation. Required when model_uuid is null."
   type        = string
+  default     = null
 }
 
 variable "juju_cloud_region" {
-  description = "The Juju cloud region to deploy charmed MAAS model on"
+  description = "Juju cloud region used when the module manages model creation. Ignored when model_uuid is set."
   type        = string
   default     = "default"
+}
+
+variable "model_uuid" {
+  description = "UUID of an existing Juju model to deploy into. When set, the module reuses that model. When null, juju_cloud_name and lxd_project are required so the module can create and manage a model."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.model_uuid != null || (var.juju_cloud_name != null && var.lxd_project != null)
+    error_message = "In managed model mode (model_uuid unset), juju_cloud_name and lxd_project are required."
+  }
 }
 
 variable "maas_constraints" {
@@ -108,9 +120,9 @@ variable "enable_haproxy" {
 }
 
 variable "lxd_project" {
-  description = "The LXD project in which to create the VMs for Juju"
+  description = "LXD project used when the module manages model creation. Required when model_uuid is null."
   type        = string
-  default     = "default"
+  default     = null
 }
 
 variable "model_config" {

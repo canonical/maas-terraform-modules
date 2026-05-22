@@ -35,8 +35,17 @@ dependencies {
 }
 
 locals {
+  // juju_cloud_name is only relevant in managed model mode. In existing model
+  // mode (model_uuid set) it is unused, so don't derive it from the
+  // juju_bootstrap dependency, which would otherwise inject a mock/stale value
+  // and trigger the module's "inputs ignored" warning. Otherwise resolve it
+  // from the unit values or the dependency, tolerating the case where neither
+  // is available instead of failing on coalesce.
+  juju_cloud_name = try(values.model_uuid, null) != null ? null : try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), null)
+
   optional_inputs = {
     // --- Environment ---
+    model_uuid        = try(values.model_uuid, null)
     juju_cloud_region = try(values.juju_cloud_region, null)
     lxd_project       = try(values.lxd_project, null)
     model_config      = try(values.model_config, null)
@@ -111,9 +120,12 @@ inputs = merge(
     k => v
     if v != null
   },
+  # juju_cloud_name is only needed in managed model mode. Inject it only when it
+  # resolves (from values or the juju_bootstrap dependency); in existing model
+  # mode it may be absent, which is fine.
+  local.juju_cloud_name != null ? { juju_cloud_name = local.juju_cloud_name } : {},
   {
     // --- Dependencies ---
-    juju_cloud_name = coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null))
     juju_controller = coalesce(try(values.juju_controller, null), try(dependency.juju_bootstrap.outputs.juju_controller, null))
   },
 )
