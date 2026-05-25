@@ -1,22 +1,24 @@
 # How to migrate an existing MAAS deployment to maas-terraform-modules
 
-This guide describes how to migrate an existing MAAS deployment to maas-terraform-modules managed infrastructure.
+> [!IMPORTANT]
+> **Version gate (read first):** This migration path assumes your existing MAAS deployment is already on **MAAS 3.5 or 3.6**.
+> To complete this guide, you will upgrade to **MAAS 3.7** (the supported target in this document).
+> If your current deployment is **older than 3.5**, first upgrade it to **3.5** (or 3.6) before following this guide.
+
+This guide covers migrating an existing MAAS deployment to maas-terraform-modules while preserving data, configuration, and deployed machines.
 
 ## Overview
 
-This migration guide is applicable to any existing MAAS deployment, regardless of how it was originally deployed:
+This guide applies to any existing MAAS deployment, regardless of how it was originally deployed:
 
 - **[maas-anvil](https://github.com/canonical/maas-anvil)** - Previously the recommended deployment method, now deprecated in favor of maas-terraform-modules
 - **Manual deployments** - MAAS installed directly via snaps or packages
 - **Custom automation** - MAAS deployed with custom scripts or other IaC tools
 - **Legacy Terraform modules** - Older Terraform-based deployments
 
-> [!NOTE]
-> The [maas-anvil project](https://github.com/canonical/maas-anvil) is no longer under active development. Users are encouraged to migrate to maas-terraform-modules for continued support, updates, and new features.
+It moves the deployment under Terragrunt management while keeping your MAAS data and deployed machines intact.
 
-This guide provides a step-by-step migration path that preserves your existing MAAS data, configuration, and deployed machines, transitioning them to maas-terraform-modules for better infrastructure-as-code practices, improved scalability, and enhanced deployment flexibility.
-
-**Assumptions**: This guide assumes you are migrating from a **3-node MAAS cluster with high availability (HA) API**. If your deployment differs (single node, different HA configuration), you may need to adjust the steps accordingly, particularly around region controller and HAProxy configuration.
+This migration targets MAAS 3.7 and expects the source deployment to already be on MAAS 3.5 or 3.6. maas-terraform-modules does not support MAAS versions earlier than 3.7, and at the time this guide was written, 3.7 was the only supported MAAS version.
 
 The migration process involves:
 
@@ -24,6 +26,8 @@ The migration process involves:
 2. Deploying a new MAAS environment using maas-terraform-modules
 3. Restoring your data to the new deployment
 4. Upgrading MAAS to the target version
+
+**Assumptions**: This guide assumes you are migrating from a **3-node MAAS cluster with high availability (HA) API**. If your deployment differs (single node, different HA configuration), you may need to adjust the steps accordingly, particularly around region controller and HAProxy configuration.
 
 **Estimated migration time**: 2-4 hours (varies with database and image sizes)
 
@@ -60,6 +64,7 @@ Confirm MAAS is in a stable state before stopping it:
 
 - All rack controllers are connected and healthy
 - No machines are actively commissioning, testing, or deploying *(best effort — in-flight operations will be interrupted but can be retried on the new deployment)*
+- No image import/sync operations are in progress; wait for image sync to complete across all regions before proceeding
 - Sufficient disk space is available at your backup destination (`df -h /backup/maas`)
 
 For charm-based deployments, `juju status -m maas` should show all units as **active/idle**.
@@ -104,6 +109,8 @@ Before starting, document your current MAAS deployment architecture and version 
 - PostgreSQL version (e.g., 14.11)
   - charm: postgresql channel and revision
 
+These can be obtained by the output of `juju status`.
+
 **For manual/snap deployments:**
 
 - MAAS snap version and channel (e.g., `maas --version`)
@@ -113,7 +120,6 @@ Before starting, document your current MAAS deployment architecture and version 
 **For all deployments:**
 
 - Number of region controllers
-- High availability configuration (if any)
 - Network architecture (load balancers, virtual IPs, DNS)
 - Custom configurations or integrations
 
@@ -244,12 +250,16 @@ cd maas-terraform-modules
 For migration scenarios, we recommend starting with the multi-node stack for HA deployments. Copy the example stack:
 
 ```bash
-cp -r examples/stacks/multi-node my-migration-stack
-cd my-migration-stack
+mkdir -p my-migration-stack
+cp examples/root.hcl my-migration-stack/root.hcl
+cp -r examples/stacks/multi-node/. my-migration-stack/
 ```
 
 > [!NOTE]
 > For detailed instructions on using Terragrunt stacks, see the [Getting started with stacks tutorial](../Tutorials/getting_started_with_stacks.md).
+
+> [!NOTE]
+> Do not include `maas-config` in the migration stack. After restoration, extend the stack to include `maas-config` and import the existing MAAS resources into it.
 
 #### Configure environment variables
 
@@ -299,7 +309,7 @@ For all available configuration options, refer to the [example multi-node stack]
 #### Deploy the stack
 
 > [!NOTE]
-> This deployment uses the maas-region charm 3.7 track for its automation features (HAProxy, VIP configuration, backup support). Don't worry if this is newer than your current MAAS deployment - the charm version and MAAS snap version are independent. In Step 6, you'll manually install the MAAS snap version that matches your backup for compatibility during restoration.
+> This deployment uses the maas-region charm 3.7 track, the earlier supported track by maas-terraform-modules. Don't worry if this is newer than your current MAAS deployment - the charm version and MAAS snap version are independent. In Step 6, you'll manually install the MAAS snap version that matches your backup for compatibility during restoration. In Step 7, you will refresh the snap channel to match the track of the maas-region charm, which is 3.7/stable.
 
 > [!IMPORTANT]
 > Deploy initially with a **single PostgreSQL instance** (not HA). This follows a modified version of the [official Charmed PostgreSQL migration procedure](https://canonical-charmed-postgresql.readthedocs-hosted.com/16/how-to/data-migration/migrate-data-from-14-to-16), adapted for MAAS deployments. The official procedure requires deploying one unit for data restoration. After restoration is complete, you'll scale to 3 PostgreSQL units for high availability in Step 8.
@@ -320,7 +330,7 @@ unit "maas_deploy" {
 Then deploy:
 
 ```bash
-terragrunt run-all apply --terragrunt-non-interactive
+terragrunt stack run apply --non-interactive
 ```
 
 The deployment will:
@@ -353,17 +363,17 @@ Save these values for use in restoration commands:
 
 ```bash
 # Container names from juju status "Inst id" column
-POSTGRES_CONTAINER="juju-20162c-3"      # Replace with your actual value
-MAAS_CONTAINER_0="juju-20162c-0"        # Replace with your actual value
-MAAS_CONTAINER_1="juju-20162c-1"        # Replace with your actual value
-MAAS_CONTAINER_2="juju-20162c-2"        # Replace with your actual value
+POSTGRES_VM="juju-20162c-3"      # Replace with your actual value
+MAAS_CONTAINER_0="juju-20162c-0" # Replace with your actual value
+MAAS_CONTAINER_1="juju-20162c-1" # Replace with your actual value
+MAAS_CONTAINER_2="juju-20162c-2" # Replace with your actual value
 
 # PostgreSQL IP from juju status "Public address" column
-NEW_POSTGRESQL_IP="10.176.2.6"          # Replace with your actual value
+NEW_POSTGRESQL_IP="10.176.2.6"   # Replace with your actual value
 
 # LXD project and remote name from your environment
 LXD_PROJECT=$(echo ${LXD_PROJECT_MAAS_MACHINES:-default})
-LXD_REMOTE="local"                      # LXD remote name (use 'lxc remote list' to check)
+LXD_REMOTE="local"               # LXD remote name (use 'lxc remote list' to check)
 ```
 
 ### Step 5: Restore PostgreSQL
@@ -383,7 +393,7 @@ Now that you have a fresh MAAS deployment, restore your PostgreSQL database back
 NEW_POSTGRESQL_IP="10.240.246.6"
 
 # PostgreSQL container name (from previous step, e.g., juju-20162c-3)
-POSTGRES_CONTAINER="juju-20162c-3"
+POSTGRES_VM="juju-20162c-3"
 
 # PostgreSQL operator username
 POSTGRES_USER="operator"
@@ -408,8 +418,8 @@ PGPASSWORD=$(juju show-secret --reveal $secret_id --format=json | jq '.[].conten
 juju ssh postgresql/0
 PGPASSWORD="${PGPASSWORD}" charmed-postgresql.psql -h ${NEW_POSTGRESQL_IP} -U ${POSTGRES_USER} -d postgres
 
-# Push the dump to the PostgreSQL container
-lxc file push ${BACKUP_DIR}/maasdb.dump ${LXD_REMOTE}:${POSTGRES_CONTAINER}/home/ubuntu/ --project ${LXD_PROJECT}
+# Push the dump to the PostgreSQL VM
+lxc file push ${BACKUP_DIR}/maasdb.dump ${LXD_REMOTE}:${POSTGRES_VM}/home/ubuntu/ --project ${LXD_PROJECT}
 juju ssh postgresql/0
 sudo mv maasdb.dump /tmp/snap-private-tmp/snap.charmed-postgresql/tmp/
 
@@ -436,7 +446,7 @@ sudo PGPASSWORD="${NEW_PASSWORD}" charmed-postgresql.pg-restore -h "${NEW_IP}" -
 
 #### Fix database roles
 
-After restoration, fix the database ownership:
+After restoration, fix the database ownership, by connecting to the restored database on the fresh PostgreSQL VM:
 
 ```bash
 PGPASSWORD="${NEW_PASSWORD}" charmed-postgresql.psql -h "${NEW_IP}" -U "${NEW_USER}" -d "${DB_NAME}"
@@ -528,7 +538,7 @@ With the database restored, now restore the MAAS-specific data.
 
 #### Prepare MAAS installation
 
-The deployment uses the maas-region charm 3.7 track (which provides HA features like HAProxy and VIP configuration). However, we can manually control the MAAS snap version. For restoration, install the MAAS snap version that matches your backup:
+The maas-region charm track stays on the current 3.7 line for the HA features used in this guide. For restoration, install the MAAS snap version that matches your backup:
 
 ```bash
 # Install the MAAS snap version from your backup (documented in Step 1)
@@ -634,7 +644,7 @@ ls -l /var/snap/maas/common/maas/image-storage/
 juju integrate maas-region postgresql
 
 # Wait for the integration to stabilize
-# Monitor with: juju status -m maas
+# Monitor with: juju status -m maas --watch 5s
 # If errors occur, check: juju debug-log -m maas --include=maas-region
 
 # Run database migrations to ensure all schema updates are applied
@@ -648,7 +658,7 @@ sudo snap run --shell maas -c "maas-region dbupgrade"
 
 #### Fix Temporal schemas (if needed)
 
-If the charm failed to apply Temporal schema permissions, fix them manually:
+If the charm failed to apply Temporal schema permissions during `maas-region dbupgrade`, fix them manually:
 
 ```bash
 # Use the PostgreSQL IP and password from Step 5
@@ -687,18 +697,18 @@ ORDER BY n.nspname;
 
 ### Step 7: Upgrade MAAS to 3.7
 
-After successful restoration, upgrade MAAS to version 3.7 to match the deployment's HA configuration:
+After successful restoration, upgrade MAAS to version 3.7 to match the deployment's supported baseline:
 
 ```bash
 # Wait for MAAS to sync images and stabilize
-# Monitor with: juju status -m maas
+# Monitor with: juju status -m maas --watch 5s
 
 # Stop MAAS on all nodes
 juju exec --application maas-region -- sudo snap stop maas
 
 # Upgrade each node sequentially to 3.7
 juju exec --unit maas-region/0 -- sudo snap refresh maas --channel 3.7/stable
-# Wait for MAAS to settle (check with: juju status)
+# Wait for MAAS to settle
 
 juju exec --unit maas-region/1 -- sudo snap refresh maas --channel 3.7/stable
 # Wait for MAAS to settle
@@ -728,11 +738,15 @@ cd my-migration-stack
 # enable_postgres_ha = true
 
 # Remove the admin creation state
-terragrunt run-all state rm terraform_data.create_admin
+# From the generated maas-deploy unit directory under .terragrunt-stack/
+terragrunt state rm terraform_data.create_admin
 
 # Apply the configuration to scale PostgreSQL to 3 units
-terragrunt run-all apply --terragrunt-non-interactive
+terragrunt stack run apply --non-interactive
 ```
+
+> [!NOTE]
+> If there is already an admin user with the same username in the restored data, the stack apply will error out. If this is the case, either delete the user from MAAS prior to re-applying the stack, or pick up a new username for a user managed by Terragrunt.
 
 Terragrunt will:
 
@@ -822,7 +836,7 @@ For common issues, see the [troubleshooting guide](../troubleshooting.md).
 ### Common migration issues
 
 - **Database permissions errors**: Ensure you ran the role ownership fix SQL commands in Step 5
-- **Missing images**: Verify image permissions are correct (`root:root`) and sync has completed
+- **Missing or out-of-sync images**: Verify image permissions are correct (`root:root`), re-run the image restore steps in Step 6, and if custom images still fail to initialize see the restore guide troubleshooting section in [How to restore charmed MAAS](./how_to_restore.md#troubleshooting). **Do NOT use** the restore guide in any other way though as it applies only to future restorations after migrating to maas-terraform-modules.
 - **MAAS regions not forming cluster**: Check that system IDs were correctly restored on all nodes
 - **PostgreSQL connection failures**: Verify the new PostgreSQL IP address and credentials
 
@@ -839,9 +853,10 @@ Congratulations! You've successfully migrated your existing MAAS deployment to m
 
 1. **Commit your stack configuration** to version control for reproducibility
 2. **Set up automated backups** using the S3 integration (see [How to Backup](./how_to_backup.md))
-3. **Review and customize** your stack configuration for your specific needs
-4. **Test MAAS functionality** by commissioning and deploying a test machine
-5. **Monitor your deployment** with Juju and ensure all units remain healthy
+3. **Extend the stack to include `maas-config`** and import the existing MAAS resources into it
+4. **Review and customize** your stack configuration for your specific needs
+5. **Test MAAS functionality** by commissioning and deploying a test machine
+6. **Monitor your deployment** with Juju and ensure all units remain healthy
 
 ## Related documentation
 
