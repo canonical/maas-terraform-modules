@@ -32,7 +32,7 @@ In this case, the Juju controller credentials must be provided by the user as en
      // Dependencies
     - juju_bootstrap_path = "../juju-bootstrap"
     + juju_cloud_name = "<cloud name>"
-    + juju_credentials = {
+    + juju_controller = {
     +   controller_addresses = [<controller address 1>, <controller address 2>, ...]
     +   username             = <username>
     +   password             = <password>

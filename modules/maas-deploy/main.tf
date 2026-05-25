@@ -1,8 +1,8 @@
 provider "juju" {
-  controller_addresses = join(",", var.juju_credentials.controller_addresses)
-  username             = var.juju_credentials.username
-  password             = var.juju_credentials.password
-  ca_certificate       = var.juju_credentials.ca_certificate
+  controller_addresses = join(",", var.juju_controller.controller_addresses)
+  username             = var.juju_controller.username
+  password             = var.juju_controller.password
+  ca_certificate       = var.juju_controller.ca_certificate
 }
 
 resource "juju_model" "maas_model" {
@@ -121,9 +121,9 @@ resource "terraform_data" "juju_wait_for_all" {
     EOT
     environment = {
       MODEL                   = self.input.model
-      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
-      JUJU_USERNAME           = var.juju_credentials.username
-      JUJU_PASSWORD           = var.juju_credentials.password
+      JUJU_CONTROLLER_ADDRESS = var.juju_controller.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_controller.username
+      JUJU_PASSWORD           = var.juju_controller.password
     }
   }
 }
@@ -156,9 +156,9 @@ resource "terraform_data" "create_admin" {
       PASSWORD                = var.admin_password
       EMAIL                   = var.admin_email
       SSH_IMPORT              = var.admin_ssh_import
-      JUJU_CONTROLLER_ADDRESS = var.juju_credentials.controller_addresses[0]
-      JUJU_USERNAME           = var.juju_credentials.username
-      JUJU_PASSWORD           = var.juju_credentials.password
+      JUJU_CONTROLLER_ADDRESS = var.juju_controller.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_controller.username
+      JUJU_PASSWORD           = var.juju_controller.password
     }
   }
 }
@@ -169,9 +169,9 @@ data "external" "maas_get_api_key" {
   query = {
     model                   = terraform_data.create_admin.output.model
     username                = var.admin_username
-    juju_controller_address = var.juju_credentials.controller_addresses[0]
-    juju_username           = var.juju_credentials.username
-    juju_password           = var.juju_credentials.password
+    juju_controller_address = var.juju_controller.controller_addresses[0]
+    juju_username           = var.juju_controller.username
+    juju_password           = var.juju_controller.password
   }
 }
 
@@ -180,8 +180,8 @@ data "external" "maas_get_api_url" {
 
   query = {
     model                   = terraform_data.create_admin.output.model
-    juju_controller_address = var.juju_credentials.controller_addresses[0]
-    juju_username           = var.juju_credentials.username
-    juju_password           = var.juju_credentials.password
+    juju_controller_address = var.juju_controller.controller_addresses[0]
+    juju_username           = var.juju_controller.username
+    juju_password           = var.juju_controller.password
   }
 }
