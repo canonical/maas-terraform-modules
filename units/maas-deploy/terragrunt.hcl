@@ -17,6 +17,8 @@ terraform {
 dependency "juju_bootstrap" {
   config_path = try(values.juju_bootstrap_path, null)
 
+  mock_outputs_merge_strategy_with_state = "shallow"
+
   mock_outputs = {
     juju_cloud = "mock-cloud-name"
     juju_controller = {
