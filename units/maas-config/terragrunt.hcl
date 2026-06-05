@@ -17,6 +17,8 @@ terraform {
 dependency "maas_deploy" {
   config_path = try(values.maas_deploy_path, null)
 
+  mock_outputs_merge_strategy_with_state = "shallow"
+
   mock_outputs = {
     maas_api_url = "http://mock-maas"
     maas_api_key = "mock-password"
