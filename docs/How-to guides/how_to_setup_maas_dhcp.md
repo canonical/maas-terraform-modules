@@ -65,7 +65,7 @@ __EOF
 
 Because this setup is specific to your infrastructure, DHCP configuration is not part of the shared modules. Instead, create a small local module in your deployment repo and add it as a unit in your existing stack.
 
-1. In your deployment repo, create the following files:
+1. In your deployment repo, create the following files and copy the contents into them below:
 
    `modules/maas-dhcp/variables.tf`
    ```hcl
@@ -165,7 +165,7 @@ Because this setup is specific to your infrastructure, DHCP configuration is not
    }
    ```
 
-2. Add the following unit to your `terragrunt.stack.hcl`, after the `maas_config` unit. Replace `<$NAME>` with the rack controller hostname (e.g. `juju-2c9858-1`) and adjust the subnet if needed:
+2. Add the following unit to your `terragrunt.stack.hcl`, after the `maas_config` unit. Update the `source` path to point to your local `maas-dhcp` module you've just created, `<$NAME>` with the rack controller hostname (e.g. `juju-2c9858-1`) and adjust the subnet if needed:
 
    ```hcl
    unit "maas_dhcp" {
