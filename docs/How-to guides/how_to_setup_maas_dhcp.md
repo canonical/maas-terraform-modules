@@ -143,7 +143,7 @@ Because this setup is specific to your infrastructure, DHCP configuration is not
    }
 
    terraform {
-     source = "${get_terragrunt_dir()}//"
+     source = "${get_terragrunt_dir()}"
    }
 
    dependency "maas_deploy" {
