@@ -58,7 +58,7 @@ __EOF
    netplan apply
    ```
    > [!NOTE]
-   > The above addresses assumes you may want to set a gateway as 10.20.0.1, which is outside of the scope of this document.
+> The above addresses assume you may want to set a gateway as 10.20.0.1, which is outside of the scope of this document.
 5. After a few moments, you should be able to see the relevant subnet discovered in MAAS, if network discovery is enabled. You can now use this network to enable DHCP using Terragrunt.
 
 ## Enable DHCP on the discovered subnet with Terragrunt
