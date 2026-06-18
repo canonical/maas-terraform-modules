@@ -76,6 +76,10 @@ inputs = {
   # Type: bool
   # enable_haproxy = false
 
+  # Description: Whether to enable advanced routing subordinate charm on MAAS region controllers
+  # Type: bool
+  # enable_advanced_routing = false
+
   # Description: The LXD project in which to create the VMs for Juju
   # Type: string
   # lxd_project = "default"
@@ -135,6 +139,35 @@ inputs = {
   # Description: Operator configuration for Keepalived deployment
   # Type: map
   # charm_keepalived_config = {}
+
+  # Description: Operator channel for Advanced Routing deployment
+  # Type: string
+  # charm_advanced_routing_channel = "latest/stable"
+
+  # Description: Operator channel revision for Advanced Routing deployment
+  # Type: number
+  # charm_advanced_routing_revision = null
+
+  # Description:
+  #       Operator configuration for Advanced Routing deployment.
+  #       The 'advanced-routing-config' should be a JSON string containing routing tables, routes, and rules.
+  #       Example configuration with policy routing:
+  #       {
+  #         "advanced-routing-config": jsonencode([
+  #           { "type": "table", "table": "1" },
+  #           { "type": "table", "table": "main" },
+  #           { "type": "route", "net": "10.241.0.0/16", "gateway": "10.239.8.1", "device": "enp6s0" },
+  #           { "type": "route", "net": "10.239.8.0/24", "gateway": "10.239.8.1", "table": "1", "metric": 0, "device": "enp6s0" },
+  #           { "type": "route", "default_route": true, "gateway": "10.239.8.1", "table": "1", "device": "enp6s0" },
+  #           { "type": "rule", "from-net": "10.239.8.0/24", "table": "1", "priority": 100 },
+  #           { "type": "rule", "from-net": "10.239.8.0/24", "to-net": "10.239.8.0/24", "table": "main" }
+  #         ]),
+  #         "enable-advanced-routing": "true",
+  #         "action-managed-update": "false"
+  #       }
+  #
+  # Type: map
+  # charm_advanced_routing_config = {}
 
   # Description: The MAAS admin username
   # Type: string
