@@ -1,5 +1,17 @@
-variable "ubuntu_version" {
-  description = "The Ubuntu operating system version to install on the virtual machines (VMs)"
+variable "maas_ubuntu_version" {
+  description = "The Ubuntu operating system version to install on the MAAS region controller machines"
+  type        = string
+  default     = "24.04"
+}
+
+variable "postgres_ubuntu_version" {
+  description = "The Ubuntu operating system version to install on the PostgreSQL machines"
+  type        = string
+  default     = "24.04"
+}
+
+variable "haproxy_ubuntu_version" {
+  description = "The Ubuntu operating system version to install on the HAProxy machines"
   type        = string
   default     = "24.04"
 }

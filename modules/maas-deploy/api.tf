@@ -18,7 +18,7 @@ locals {
 resource "juju_machine" "haproxy_machines" {
   count       = var.enable_haproxy ? (var.virtual_ip != null ? 3 : 1) : 0
   model_uuid  = juju_model.maas_model.uuid
-  base        = "ubuntu@${var.ubuntu_version}"
+  base        = "ubuntu@${var.haproxy_ubuntu_version}"
   name        = "haproxy-${count.index}"
   constraints = var.haproxy_constraints
   placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
@@ -34,7 +34,7 @@ resource "juju_application" "haproxy" {
     name     = "haproxy"
     channel  = var.charm_haproxy_channel
     revision = var.charm_haproxy_revision
-    base     = "ubuntu@${var.ubuntu_version}"
+    base     = "ubuntu@${var.haproxy_ubuntu_version}"
   }
 
   config = var.charm_haproxy_config
@@ -49,7 +49,7 @@ resource "juju_application" "keepalived" {
     name     = "keepalived"
     revision = var.charm_keepalived_revision
     channel  = var.charm_keepalived_channel
-    base     = "ubuntu@${var.ubuntu_version}"
+    base     = "ubuntu@${var.haproxy_ubuntu_version}"
   }
 
   config = merge(var.charm_keepalived_config, {
