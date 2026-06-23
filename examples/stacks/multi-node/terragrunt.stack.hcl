@@ -118,8 +118,12 @@ unit "maas_deploy" {
     enable_maas_ha = true
     // Set this to true to run MAAS with HAProxy, which will deploy HAProxy
     enable_haproxy = true
-    // The Ubuntu operating system version to install on the virtual machines (VMs)
-    ubuntu_version = "24.04"
+    // The Ubuntu operating system version to install on the MAAS region controller machines
+    maas_ubuntu_version = "24.04"
+    // The Ubuntu operating system version to install on the PostgreSQL machines
+    postgres_ubuntu_version = "24.04"
+    // The Ubuntu operating system version to install on the HAProxy machines
+    haproxy_ubuntu_version = "24.04"
 
     // -- Workload: PostgreSQL
     // Operator channel for PostgreSQL deployment

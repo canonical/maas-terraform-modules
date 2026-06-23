@@ -30,7 +30,7 @@ resource "juju_ssh_key" "model_ssh_key" {
 resource "juju_machine" "postgres_machines" {
   count       = var.enable_postgres_ha ? 3 : 1
   model_uuid  = juju_model.maas_model.uuid
-  base        = "ubuntu@${var.ubuntu_version}"
+  base        = "ubuntu@${var.postgres_ubuntu_version}"
   name        = "postgres-${count.index}"
   constraints = var.postgres_constraints
   placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
@@ -39,7 +39,7 @@ resource "juju_machine" "postgres_machines" {
 resource "juju_machine" "maas_machines" {
   count             = var.enable_maas_ha ? 3 : 1
   model_uuid        = juju_model.maas_model.uuid
-  base              = "ubuntu@${var.ubuntu_version}"
+  base              = "ubuntu@${var.maas_ubuntu_version}"
   name              = "maas-${count.index}"
   constraints       = var.maas_constraints
   placement         = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
@@ -55,7 +55,7 @@ resource "juju_application" "postgresql" {
     name     = "postgresql"
     channel  = var.charm_postgresql_channel
     revision = var.charm_postgresql_revision
-    base     = "ubuntu@${var.ubuntu_version}"
+    base     = "ubuntu@${var.postgres_ubuntu_version}"
   }
 
   config = merge(var.charm_postgresql_config, )
@@ -70,7 +70,7 @@ resource "juju_application" "maas_region" {
     name     = "maas-region"
     channel  = var.charm_maas_region_channel
     revision = var.charm_maas_region_revision
-    base     = "ubuntu@${var.ubuntu_version}"
+    base     = "ubuntu@${var.maas_ubuntu_version}"
   }
 
   config = merge(var.charm_maas_region_config, {

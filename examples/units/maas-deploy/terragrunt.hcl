@@ -23,9 +23,17 @@ inputs = {
   # Uncomment the ones you wish to set
   # --------------------------------------------------------------------------------------------------------------------
 
-  # Description: The Ubuntu operating system version to install on the virtual machines (VMs)
+  # Description: The Ubuntu operating system version to install on the MAAS region controller machines
   # Type: string
-  # ubuntu_version = "24.04"
+  # maas_ubuntu_version = "24.04"
+
+  # Description: The Ubuntu operating system version to install on the PostgreSQL machines
+  # Type: string
+  # postgres_ubuntu_version = "24.04"
+
+  # Description: The Ubuntu operating system version to install on the HAProxy machines
+  # Type: string
+  # haproxy_ubuntu_version = "24.04"
 
   # Description: The Juju cloud region to deploy charmed MAAS model on
   # Type: string
@@ -51,7 +59,7 @@ inputs = {
   # Type: string
   # haproxy_constraints = "cores=1 mem=1G"
 
-  # Constraints for the S3 Integrator machine
+  # Description: Constraints for the S3 Integrator machine
   # Type: string
   # s3_constraints = "cores=1 mem=1G"
 

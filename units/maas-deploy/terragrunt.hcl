@@ -43,15 +43,17 @@ locals {
     path_to_ssh_key   = try(values.path_to_ssh_key, null)
 
     // --- Machines and constraints ---
-    maas_constraints     = try(values.maas_constraints, null)
-    postgres_constraints = try(values.postgres_constraints, null)
-    haproxy_constraints  = try(values.haproxy_constraints, null)
-    s3_constraints       = try(values.s3_constraints, null)
-    zone_list            = try(values.zone_list, null)
-    enable_postgres_ha   = try(values.enable_postgres_ha, null)
-    enable_maas_ha       = try(values.enable_maas_ha, null)
-    enable_haproxy       = try(values.enable_haproxy, null)
-    ubuntu_version       = try(values.ubuntu_version, null)
+    maas_constraints        = try(values.maas_constraints, null)
+    postgres_constraints    = try(values.postgres_constraints, null)
+    haproxy_constraints     = try(values.haproxy_constraints, null)
+    s3_constraints          = try(values.s3_constraints, null)
+    zone_list               = try(values.zone_list, null)
+    enable_postgres_ha      = try(values.enable_postgres_ha, null)
+    enable_maas_ha          = try(values.enable_maas_ha, null)
+    enable_haproxy          = try(values.enable_haproxy, null)
+    maas_ubuntu_version     = try(values.maas_ubuntu_version, null)
+    postgres_ubuntu_version = try(values.postgres_ubuntu_version, null)
+    haproxy_ubuntu_version  = try(values.haproxy_ubuntu_version, null)
 
     // --- Workload: PostgreSQL ---
     charm_postgresql_channel  = try(values.charm_postgresql_channel, null)
