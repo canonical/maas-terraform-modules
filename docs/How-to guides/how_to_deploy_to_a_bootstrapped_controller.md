@@ -39,4 +39,31 @@ In this case, the Juju controller credentials must be provided by the user as en
     +   ca_certificate       = <ca certificate>
     + }
     ```
+
     and apply with the relevant terragrunt apply command.
+
+### Optional: deploy into an already existing Juju model
+
+The module supports two model input modes:
+
+- Managed model mode: leave `model_uuid` unset and provide `juju_cloud_name`, `juju_cloud_region`, and `lxd_project`. The module creates and manages a Juju model.
+- Existing model mode: set `model_uuid` and leave `juju_cloud_name`, `juju_cloud_region`, and `lxd_project` unset. The module deploys into that model and does not create a new one.
+
+By default, `maas-deploy` uses managed model mode and creates a model named `maas`.
+
+You can get the model UUID from a system authenticated to the target controller:
+
+```bash
+juju show-model <model-name> --format json | jq -r '.[]."model-uuid"'
+```
+
+Then set it in your unit/stack:
+
+```hcl
+values = {
+    # ...other values...
+    model_uuid = "<existing-model-uuid>"
+}
+```
+
+When `model_uuid` is set, the module does not create a new Juju model and deploys resources into the existing one. In this mode, `juju_cloud_name`, `juju_cloud_region`, and `lxd_project` must be left unset.

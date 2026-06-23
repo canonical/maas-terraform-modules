@@ -17,7 +17,7 @@ locals {
 
 resource "juju_machine" "haproxy_machines" {
   count       = var.enable_haproxy ? (var.virtual_ip != null ? 3 : 1) : 0
-  model_uuid  = juju_model.maas_model.uuid
+  model_uuid  = local.maas_model_uuid
   base        = "ubuntu@${var.ubuntu_version}"
   name        = "haproxy-${count.index}"
   constraints = var.haproxy_constraints
@@ -27,7 +27,7 @@ resource "juju_machine" "haproxy_machines" {
 resource "juju_application" "haproxy" {
   count      = var.enable_haproxy ? 1 : 0
   name       = "haproxy"
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
   machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
 
   charm {
@@ -43,7 +43,7 @@ resource "juju_application" "haproxy" {
 resource "juju_application" "keepalived" {
   count      = local.enable_keepalived ? 1 : 0
   name       = "keepalived"
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
 
   charm {
     name     = "keepalived"
@@ -59,7 +59,7 @@ resource "juju_application" "keepalived" {
 
 resource "juju_integration" "haproxy_keepalived" {
   count      = local.enable_keepalived ? 1 : 0
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
 
   application {
     name     = juju_application.haproxy[0].name
@@ -73,7 +73,7 @@ resource "juju_integration" "haproxy_keepalived" {
 }
 
 resource "juju_integration" "maas_haproxy_http" {
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
   for_each = toset(
     var.enable_haproxy ?
     ["ingress-tcp", "ingress-tcp-temporal", "ingress-tcp-internal-http-api"] :
@@ -93,7 +93,7 @@ resource "juju_integration" "maas_haproxy_http" {
 
 resource "juju_integration" "maas_haproxy_https" {
   count      = local.enable_tls ? 1 : 0
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
 
   application {
     name     = juju_application.maas_region.name

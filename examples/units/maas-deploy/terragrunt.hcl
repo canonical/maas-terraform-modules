@@ -13,10 +13,9 @@ inputs = {
   # Required input variables
   # --------------------------------------------------------------------------------------------------------------------
 
-  # Description: The Juju cloud name to deploy the charmed MAAS model on
-  # Type: string
-  juju_cloud_name = "" # TODO: fill in value
-
+  # Description: The credentials to use when authenticating to the Juju controller.
+  # Type: object
+  juju_credentials = {} # TODO: fill in value
 
   # --------------------------------------------------------------------------------------------------------------------
   # Optional input variables
@@ -27,9 +26,17 @@ inputs = {
   # Type: string
   # ubuntu_version = "24.04"
 
-  # Description: The Juju cloud region to deploy charmed MAAS model on
+  # Description: Juju cloud name used when the module manages model creation. Required when model_uuid is null.
   # Type: string
-  # juju_cloud_region = "default"
+  # juju_cloud_name = null
+
+  # Description: Juju cloud region used when the module manages model creation. Required when model_uuid is null.
+  # Type: string
+  # juju_cloud_region = null
+
+  # Description: UUID of an existing Juju model to deploy into. When set, the module reuses that model. When null, juju_cloud_name, juju_cloud_region, and lxd_project are required so the module can create and manage a model.
+  # Type: string
+  # model_uuid = null
 
   # Description:
   #       Use the following constraints for the machines
@@ -51,7 +58,7 @@ inputs = {
   # Type: string
   # haproxy_constraints = "cores=1 mem=1G"
 
-  # Constraints for the S3 Integrator machine
+  # Description: Constraints for the S3 Integrator machine
   # Type: string
   # s3_constraints = "cores=1 mem=1G"
 
@@ -76,9 +83,9 @@ inputs = {
   # Type: bool
   # enable_haproxy = false
 
-  # Description: The LXD project in which to create the VMs for Juju
+  # Description: LXD project used when the module manages model creation. Required when model_uuid is null.
   # Type: string
-  # lxd_project = "default"
+  # lxd_project = null
 
   # Description: Map of additional model configuration parameters (e.g., http-proxy, https-proxy, no-proxy, etc.)
   # Type: map

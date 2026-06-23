@@ -37,6 +37,7 @@ dependencies {
 locals {
   optional_inputs = {
     // --- Environment ---
+    model_uuid        = try(values.model_uuid, null)
     juju_cloud_region = try(values.juju_cloud_region, null)
     lxd_project       = try(values.lxd_project, null)
     model_config      = try(values.model_config, null)
