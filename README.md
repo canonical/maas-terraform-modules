@@ -6,14 +6,15 @@ This repository is a collection of Terraform modules, Terragrunt units and Terra
 
 The key modules contained in this catalog are:
 
-- [Juju Bootstrap](./modules/juju-bootstrap) - Bootstraps a Juju controller onto a cloud; optional if you already have an external Juju controller.
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS
 - [MAAS Config](./modules/maas-config) - Performs initial configuration of charmed MAAS
+
+Before MAAS can be deployed, a Juju controller must exist. Bootstrapping that controller is owned by the Juju team and provided by their official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module. Our example stacks consume it directly, so there is nothing to bootstrap by hand. If you already have an external Juju controller, you can point the stacks at it instead.
 
 The deployment of these modules is driven by Terragrunt stacks.
 
 > [!NOTE]
-> The `juju-bootstrap` module and its respective unit are LXD cloud specific, and this catalog is tested on a LXD cloud. However, for the other modules and units, any machine cloud is a valid deployment target, apart from manual clouds which are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
+> This catalog is tested on a LXD cloud, and the example stacks bootstrap the Juju controller onto LXD. For the MAAS modules and units, any machine cloud is a valid deployment target, apart from manual clouds which are unsupported. To read more about Juju supported clouds, please see the [Juju documentation](https://documentation.ubuntu.com/juju/3.6/reference/cloud/list-of-supported-clouds/).
 
 > [!NOTE]
 > The content of this repository is in an early release phase. We recommend testing in a non-production environment first to verify they meet your specific requirements before deploying in production.
@@ -56,6 +57,7 @@ To run the stacks and units in this repository, the following software must be i
 
 - OpenTofu/Terraform
 - Terragrunt
+- Juju - The [official controller module](https://github.com/juju/terraform-juju-controller) that the stacks use to bootstrap a controller expects the `juju` CLI to be available locally (by default at `/snap/juju/current/bin/juju`). Install it with `sudo snap install juju --channel=3.6/stable`.
 - A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md))
 
 If you plan to deploy to a cloud that deploys machines on a private network (for example, OVN on MicroCloud), you must create a LXD container on the cloud first to use as a bastion. On the bastion, install the pre-requisites listed above, and run the relevant stacks or units from there.
@@ -175,7 +177,7 @@ flowchart TB
   end
 
   %% Terraform modules (top level)
-  TF1(["Module: juju-bootstrap"])
+  TF1(["Module: terraform-juju-controller"])
   TF2(["Module: maas-deploy"])
   TF3(["Module: maas-config"])
 

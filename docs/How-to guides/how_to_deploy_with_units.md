@@ -8,7 +8,7 @@ This guide walks through how to deploy individual Terraform modules using Terrag
 
 ## Option 1: Scaffold from the catalog (recommended)
 
-Create a directory structure that mirrors the one below. Populate `root.hcl`, you can use the one found in [examples/root.hcl](../../examples/root.hcl): 
+Create a directory structure that mirrors the one below. Populate `root.hcl`, you can use the one found in [examples/root.hcl](../../examples/root.hcl):
 
 ```bash
 .
@@ -37,7 +37,7 @@ Clone or copy the [example units](../../examples/units/) directory (including `r
 Navigate to the unit you want to deploy and fill in required values marked with `# TODO`:
 
 ```bash
-cd examples/units/juju-bootstrap
+cd examples/units/maas-deploy
 # Edit terragrunt.hcl
 terragrunt run apply
 ```
@@ -45,7 +45,8 @@ terragrunt run apply
 ## Deploying multiple units
 
 Units must be deployed in dependency order:
-1. `juju-bootstrap` (if you don't have an existing controller)
+
+1. A Juju controller. If you don't already have one, bootstrap it with the Juju team's official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) unit.
 2. `maas-deploy`
 3. `maas-config`
 

@@ -1,10 +1,10 @@
 # How to log in to a Juju controller
 
-After running the `juju-bootstrap` module with either units or stacks, you need to log in to the target controller before you are able to run any `juju` CLI commands.
+After bootstrapping a Juju controller with either units or stacks, you need to log in to the target controller before you are able to run any `juju` CLI commands.
 
 ## Prerequisites
 
-- You have already deployed either a unit or a stack that includes the `juju-bootstrap` module.
+- You have already deployed either a unit or a stack that bootstraps a Juju controller (the `juju_bootstrap` unit).
 
 ## Extract credentials
 

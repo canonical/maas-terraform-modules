@@ -45,8 +45,6 @@ inputs = {
   #       We recommend using virtual machines. If you are curious
   #       you can change the constraints to use containers or physical
   #       hosts but this is untested
-  #       NOTE: if you set up the project with juju-bootstrap your
-  #             controller will work with VMs
   #
   # Type: string
   # maas_constraints = "cores=2 mem=4G virt-type=virtual-machine"

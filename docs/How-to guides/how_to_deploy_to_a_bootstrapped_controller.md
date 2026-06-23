@@ -2,11 +2,11 @@
 
 To be able to deploy charmed MAAS with the `maas-deploy` Terraform module, a bootstrapped Juju controller must pre-exist and proper credentials should be provided. The `maas-deploy` Terraform module is using the Juju Terraform provider, that can authenticate to the controller either via local Juju client credentials or by user provided credentials.
 
-## Deploy on controller created by the juju-bootstrap module
+## Deploy on the controller created by the stack's `juju_bootstrap` unit
 
-This is the default path. A Juju snap already exists locally and it is configured with the credentials of the controller created by that module. The configuration with the controller credentials is part of `juju-bootstrap` module and no special care is required by the user.
+This is the default path. When a stack bootstraps a Juju controller through the official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module, a local Juju client is left configured with that controller's credentials. No special care is required by the user.
 
-Based on the Juju Terraform provider [documentation](https://registry.terraform.io/providers/juju/juju/latest/docs#populated-by-the-provider-via-the-juju-cli-client), the credentials are auto-populated and `maas-deploy` is operating on the Juju controller created by the `juju-bootstrap` module.
+Based on the Juju Terraform provider [documentation](https://registry.terraform.io/providers/juju/juju/latest/docs#populated-by-the-provider-via-the-juju-cli-client), the credentials are auto-populated and `maas-deploy` operates on the Juju controller created by the `juju_bootstrap` unit.
 
 ## Deploy on a pre-existing or external controller
 
@@ -39,4 +39,5 @@ In this case, the Juju controller credentials must be provided by the user as en
     +   ca_certificate       = <ca certificate>
     + }
     ```
+
     and apply with the relevant terragrunt apply command.
