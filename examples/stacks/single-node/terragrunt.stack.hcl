@@ -1,13 +1,13 @@
 unit "juju_bootstrap" {
   // This unit comes from the official Juju Terraform controller catalog.
   // You'll typically want to pin this to a particular release of that repo.
-  source = "git::https://github.com/juju/terraform-juju-controller.git//terragrunt/units/juju_bootstrap?ref=v0.0.1-rc4"
+  source = "git::https://github.com/juju/terraform-juju-controller.git//terragrunt/units/juju_bootstrap?ref=v0.0.1-rc6"
 
   path = "juju-bootstrap"
 
   values = {
     // The Terraform Registry version of the juju/juju-controller/juju module to use.
-    version = "0.0.1-rc4"
+    version = "0.0.1-rc6"
 
     // Required variables
     // The name of the Juju controller to bootstrap.
