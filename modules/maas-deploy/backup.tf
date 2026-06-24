@@ -84,6 +84,11 @@ resource "juju_application" "s3_integrator" {
       rm -rf $JUJU_DATA
     EOT
     )
+    environment = {
+      JUJU_CONTROLLER_ADDRESS = var.juju_controller.controller_addresses[0]
+      JUJU_USERNAME           = var.juju_controller.username
+      JUJU_PASSWORD           = var.juju_controller.password
+    }
   }
 }
 
