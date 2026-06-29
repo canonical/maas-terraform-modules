@@ -110,7 +110,7 @@ inputs = {
 
   # Description: Operator channel for MAAS Region Controller deployment
   # Type: string
-  # charm_maas_region_channel = "latest/edge"
+  # charm_maas_region_channel = "3.7/candidate"
 
   # Description: Operator channel revision for MAAS Region Controller deployment
   # Type: number
