@@ -9,7 +9,7 @@ set -ex
 sudo snap install lxd --channel=5.21/stable
 sudo snap install juju --channel=3.6/stable
 sudo snap install terraform --classic
-./install-terragrunt.sh
+sudo snap install terragrunt --classic
 
 lxd init --auto --network-address 0.0.0.0
 
