@@ -45,10 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # To avoid depending on jdx/mise-action@v2 which gruntwork-io/terragrunt-action@v3
-      # depends on, use our own install script
       - name: Install Terragrunt
-        run: ./tests/install-terragrunt.sh
+        run: sudo snap install terragrunt --classic
       - name: terragrunt hcl fmt
         run: terragrunt hcl fmt --diff --check || (echo "Terragrunt HCL files aren't formatted. Run 'terragrunt hcl fmt'"; exit 1)
