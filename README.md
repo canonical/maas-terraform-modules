@@ -9,7 +9,7 @@ The key modules contained in this catalog are:
 - [MAAS Deploy](./modules/maas-deploy) - Deploys charmed MAAS
 - [MAAS Config](./modules/maas-config) - Performs initial configuration of charmed MAAS
 
-Before MAAS can be deployed, a Juju controller must exist. Bootstrapping that controller is owned by the Juju team and provided by their official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module. Our example stacks consume it directly, so there is nothing to bootstrap by hand. If you already have an external Juju controller, you can point the stacks at it instead.
+Our example stacks also depend on the external [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module to bootstrap a Juju controller.
 
 The deployment of these modules is driven by Terragrunt stacks.
 
