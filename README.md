@@ -57,7 +57,7 @@ To run the stacks and units in this repository, the following software must be i
 
 - OpenTofu/Terraform
 - Terragrunt
-- Juju - The [official controller module](https://github.com/juju/terraform-juju-controller) that the stacks use to bootstrap a controller expects the `juju` CLI to be available locally (by default at `/snap/juju/current/bin/juju`). Install it with `sudo snap install juju --channel=3.6/stable`.
+- Juju - The modules expect the `juju` CLI to be available locally (by default at `/snap/juju/current/bin/juju`). Install it with `sudo snap install juju`.
 - A LXD cloud that is initialized and configured (see [How to configure LXD for Juju bootstrap](./docs/How-to%20guides/how_to_configure_lxd_for_juju_bootstrap.md))
 
 If you plan to deploy to a cloud that deploys machines on a private network (for example, OVN on MicroCloud), you must create a LXD container on the cloud first to use as a bastion. On the bastion, install the pre-requisites listed above, and run the relevant stacks or units from there.
