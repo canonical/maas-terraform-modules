@@ -1,32 +1,52 @@
 unit "juju_bootstrap" {
-  // You'll typically want to pin this to a particular version of your catalog repo.
-  // e.g.
-  // source = "git::git@github.com:canonical/maas-terraform-modules.git//units/juju-bootstrap?ref=v0.1.0"
-  source = "../../../units/juju-bootstrap"
+  // This unit comes from the official Juju Terraform controller catalog.
+  // You'll typically want to pin this to a particular release of that repo.
+  source = "git::https://github.com/juju/terraform-juju-controller.git//terragrunt/units/juju_bootstrap?ref=v0.0.1-rc6"
 
   path = "juju-bootstrap"
 
   values = {
-    // This version here is used as the version passed down to the unit
-    // to use when fetching the OpenTofu/Terraform module.
-    version = "main"
-
-    // The Juju snap channel to install on the system, before running juju-bootstrap.
-    juju_channel = "3.6/stable"
+    // The Terraform Registry version of the juju/juju-controller/juju module to use.
+    version = "0.0.1-rc6"
 
     // Required variables
-    // The LXD trust token that Juju should use to authenticate to LXD
-    lxd_trust_token = get_env("LXD_TRUST_TOKEN")
-    // The API endpoint URL that Juju should use to communicate to LXD
-    lxd_address = get_env("LXD_ADDRESS")
+    // The name of the Juju controller to bootstrap.
+    name = "maas-controller"
+    // Number of controller units to deploy. Keep at 1 for a single controller.
+    controller_num_units = 1
+
+    // The cloud to bootstrap the Juju controller onto. This example targets LXD.
+    cloud = {
+      auth_types = ["certificate"]
+      name       = "maascloud"
+      type       = "lxd"
+      // The API endpoint URL that Juju should use to communicate with LXD.
+      endpoint = get_env("LXD_ADDRESS")
+      region = {
+        name     = "default"
+        endpoint = get_env("LXD_ADDRESS")
+      }
+    }
+
+    // The credentials Juju uses to authenticate to the cloud.
+    cloud_credential = {
+      auth_type = "interactive"
+      name      = "maascloud-token"
+      attributes = {
+        // The LXD trust token that Juju should use to authenticate to LXD.
+        trust-token = get_env("LXD_TRUST_TOKEN")
+      }
+    }
 
     // Optional variables
-    // The LXD project that Juju should use for the controller resources
-    // lxd_project = "charmed-maas"
-    // Map of model configuration defaults to pass to juju bootstrap (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
-    // model_defaults = {}
+    // Controller model config. For LXD, set the project for the controller resources.
+    // controller_model_config = {
+    //   project = "charmed-maas"
+    // }
+    // Map of model defaults to set for all models (e.g., http-proxy, https-proxy, no-proxy, apt-http-proxy, etc.)
+    // model_default = {}
     // Example:
-    // model_defaults = {
+    // model_default = {
     //   http-proxy       = "http://squid:3128"
     //   https-proxy      = "http://squid:3128"
     //   no-proxy         = "localhost,127.0.0.1"
@@ -34,18 +54,17 @@ unit "juju_bootstrap" {
     //   apt-https-proxy  = "http://squid:3128"
     //   snap-http-proxy  = "http://squid:3128"
     //   snap-https-proxy = "http://squid:3128"
+    // }
     // Additional flags for destroying the controller
     // destroy_flags = {
     //   destroy_all_models = true
-    //   force              = true
+    //   destroy_storage    = true
     // }
     // Constraints for the controller machine, map of strings
     // bootstrap_constraints = {
     //    "cores" = "1"
     //    "mem"   = "2G"
     // }
-    // The Juju cloud name. Juju will use this name to refer to the Juju cloud you are creating
-    // cloud_name = "maas-cloud"
   }
 }
 
@@ -89,8 +108,6 @@ unit "maas_deploy" {
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
     // If you are curious you can change the constraints to use containers or physical
     // hosts but this is untested
-    // NOTE: if you set up the project with juju-bootstrap your
-    //       controller will work with VMs
     // maas_constraints     = ...
     // Constraints for the PostgreSQL virtual machines
     // postgres_constraints = ...

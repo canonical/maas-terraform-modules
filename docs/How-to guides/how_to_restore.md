@@ -10,7 +10,7 @@ This is a guide on how to restore MAAS from an existing charmed MAAS backup as d
 It's important to understand the following:
 
 - The restore process outlined in this document is for a fresh install of MAAS and PostgreSQL.
-- Following this restore process will result in the modules `juju-bootstrap` and `maas-deploy` being fully managed under Terraform/Terragrunt. Getting `maas-config` under management with Terraform/Terragrunt is left to you, the user, as you will need to backup and restore your Terraform state files for that module.  
+- Following this restore process will result in the Juju controller and the `maas-deploy` module being fully managed under Terraform/Terragrunt. Getting `maas-config` under management with Terraform/Terragrunt is left to you, the user, as you will need to backup and restore your Terraform state files for that module.
 - When restoring, deploy the same MAAS and PostgreSQL channel versions that were used to create the backup. You can see the version of the maas-region charm used for a particular backup in `mybucket/mypath/backup/<backup-id>/backup_metadata.json`, and the version of PostgreSQL used in `mybucket/mypath/backup/<stanza-name>/backup.info`.
 
 ### Prerequisites
@@ -99,7 +99,7 @@ Restore your backup data:
    ```
 
 1. Update the relevant variable in your stack/unit file to the path set in the previous step.
-   
+
 1. Integrate `postgresql` and `maas-region`, wait for all MAAS units to be active:
 
    ```bash
@@ -109,10 +109,10 @@ Restore your backup data:
 1. If you would like to run PostgreSQL as a multi-node deployment (a total of 3 PostgreSQL units); set `enable_postgres_ha=true` in your stack/unit file.
 
 1. If you are using stacks, run `terragrunt stack generate` to update the generated unit values in `.terragrunt-stack`.
-   
+
 1. Finally, re-run the relevant terragrunt apply step, and wait for its completion.
-   
-You should now have a restored MAAS deployment, with `juju-bootstrap` and `maas-deploy` modules managed by Terraform.
+
+You should now have a restored MAAS deployment, with the Juju controller and `maas-deploy` module managed by Terraform.
 
 ### Step 5: Verify restore
 

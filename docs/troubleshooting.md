@@ -70,7 +70,7 @@ You may encounter this error after failing to bootstrap your Juju controller on 
   exit status 1
 
 
-examples/units/juju-bootstrap on  docs/terragrunt-docs [$!] took 2s
+examples/stacks/single-node on  docs/terragrunt-docs [$!] took 2s
 ❯ cat  /tmp/juju-bootstrap-log-3946314546.txt
 ───────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
        │ File: /tmp/juju-bootstrap-log-3946314546.txt
@@ -101,7 +101,6 @@ To resolve this, identify the token fingerprint of the existing token:
 +--------+---------------------------+-------------------------------------+--------------+-------------------------------+-------------------------------+
 | client | maas-charms               | ubuntu@host                         | 2e469f0c6424 | Mar 16, 2026 at 1:58pm (UTC)  | Mar 13, 2036 at 1:58pm (UTC)  |
 ```
-
 
 Remove the client old certificate:
 

@@ -44,8 +44,6 @@ variable "maas_constraints" {
     We recommend using virtual machines. If you are curious
     you can change the constraints to use containers or physical
     hosts but this is untested
-    NOTE: if you set up the project with juju-bootstrap your
-          controller will work with VMs
     EOF
   type        = string
   default     = "cores=2 mem=4G virt-type=virtual-machine"

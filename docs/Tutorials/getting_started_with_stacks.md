@@ -7,6 +7,7 @@ In this tutorial you'll learn how to deploy Charmed MAAS using Terragrunt stacks
 Before starting, ensure you have met all [prerequisites](../../README.md#prerequisites) in the root README. You will need a LXD cloud, so consider using [LXD](https://canonical.com/lxd) or [MicroCloud](https://canonical.com/microcloud).
 
 You'll also need the outputs from your LXD configuration, specifically:
+
 - LXD API endpoint address.
 - LXD trust token for authentication.
 
@@ -24,7 +25,7 @@ A stack deploys all required modules sequentially, handling dependencies automat
 
 This repository is organized into several key directories:
 
-- `/modules/` - Contains Terraform modules that define reusable infrastructure patterns (Juju bootstrap, MAAS deployment, MAAS configuration).
+- `/modules/` - Contains the MAAS Terraform modules that define reusable infrastructure patterns (MAAS deployment and configuration). The Juju controller is bootstrapped by the Juju team's official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module, which the stacks consume.
 - `/units/` - Generic Terragrunt unit definitions that wrap the modules. The stacks use these to deploy the modules.
 - `/examples/stacks/` - Example stack configurations that you can use directly or customize.
 - `/examples/units/` - Concrete example unit implementations for deployment of individual modules.
@@ -42,6 +43,7 @@ ls -la
 ```
 
 You'll see two directories:
+
 - `single-node/` - A minimal deployment with one MAAS region and one PostgreSQL unit.
 - `multi-node/` - A production HA deployment with 3 MAAS regions, 3 PostgreSQL units, and HAProxy.
 
@@ -74,11 +76,12 @@ This tells Terragrunt to store the infrastructure state locally in `.terragrunt-
 
 In the `single-node/` directory, the `terragrunt.stack.hcl` file defines the complete stack. It declares three units:
 
-1. **juju_bootstrap** - Creates the Juju controller.
+1. **juju_bootstrap** - Bootstraps the Juju controller using the official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module.
 2. **maas_deploy** - Deploys the MAAS application.
 3. **maas_config** - Configures MAAS with initial setup.
 
 Each unit has:
+
 - A `source` pointing to the unit definition. This is typically a Git URL, but in these examples you will see a relative path to the generic units.
 - A `path` which is the relative path where this unit should be deployed within Terragrunt's auto-generated stack directory.
 - `values` containing configuration variables.
@@ -99,8 +102,9 @@ export MAAS_ADMIN_PASSWORD="your-secure-password"
 ```
 
 You can also review and customize optional variables in `terragrunt.stack.hcl`, such as:
+
 - `maas_admin_user` - MAAS administrator username (default: "admin").
-- `model_defaults` - Proxy settings or other Juju model defaults.
+- `model_default` - Proxy settings or other Juju model defaults.
 - `path_to_ssh_key` - Path to a local SSH key to allow you to SSH into Juju machines.
 
 ### Generate the stack
@@ -121,7 +125,7 @@ When you're ready, apply the stack:
 terragrunt stack run apply
 ```
 
-And hit `y` when prompted. If prompted, grant sudo privileges to allow installation of the Juju snap.
+And hit `y` when prompted. The stack bootstraps the Juju controller with the Juju team's official [`terraform-juju-controller`](https://github.com/juju/terraform-juju-controller) module, which expects the `juju` CLI to already be installed locally (see the [prerequisites](../../README.md#prerequisites)).
 
 The deployment follows this order:
 
@@ -133,7 +137,7 @@ This can take several minutes depending on your system. You'll see progress as e
 
 ### Log in to the Juju controller
 
-You can check the status of the deployment using the Juju CLI once the `juju-bootstrap` unit completes. Follow the instructions in the [login guide](../How-to%20guides/how_to_login_to_juju_controller.md) to extract credentials and log in to the controller.
+You can check the status of the deployment using the Juju CLI once the `juju_bootstrap` unit completes. Follow the instructions in the [login guide](../How-to%20guides/how_to_login_to_juju_controller.md) to extract credentials and log in to the controller.
 
 ### Verify your deployment
 
@@ -162,6 +166,7 @@ terragrunt stack output maas_deploy.maas_api_url
 ```
 
 Access the URL in your browser and log in with:
+
 - Username: the value from `maas_admin_user` in your stack config.
 - Password: the value you set in `MAAS_ADMIN_PASSWORD`.
 
