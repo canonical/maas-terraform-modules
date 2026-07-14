@@ -9,6 +9,7 @@ on:
 
 jobs:
   run-smoke:
+    environment: testflinger
     permissions:
       contents: read
       statuses: write
@@ -54,11 +55,13 @@ jobs:
           echo "true" > run_smoke_test.txt
 
       - name: Run on Testflinger
-        uses: canonical/testflinger/.github/actions/submit@2204c3c7bd237be5848e048b0f5f9f0fce0a0111
+        uses: canonical/testflinger/.github/actions/submit@545ed69f17a5e639a2299e325f5fb199ca9f98af
         with:
           poll: true
           job-path: ./tests/testflinger.yaml
           attachments-relative-to: ./tests/
+          client-id: maas-ci
+          secret-key: ${{ secrets.TESTFLINGER_SECRET_KEY }}
 
       - name: Report success status
         if: success()
