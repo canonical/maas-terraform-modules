@@ -20,7 +20,7 @@ resource "juju_machine" "haproxy_machines" {
   model_uuid  = juju_model.maas_model.uuid
   base        = "ubuntu@${var.haproxy_ubuntu_version}"
   name        = "haproxy-${count.index}"
-  constraints = var.haproxy_constraints
+  constraints = "arch=${var.arch} ${var.haproxy_constraints}"
   placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
 }
 
@@ -29,6 +29,8 @@ resource "juju_application" "haproxy" {
   name       = "haproxy"
   model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.haproxy_machines : m.machine_id]
+
+  constraints = "arch=${var.arch}"
 
   charm {
     name     = "haproxy"

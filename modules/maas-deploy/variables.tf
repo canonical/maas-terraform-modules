@@ -37,6 +37,12 @@ variable "juju_cloud_region" {
   default     = "default"
 }
 
+variable "arch" {
+  description = "CPU architecture for machines and charm bases (e.g. amd64, arm64)."
+  type        = string
+  default     = "amd64"
+}
+
 variable "maas_constraints" {
   description = <<EOF
     Use the following constraints for the machines

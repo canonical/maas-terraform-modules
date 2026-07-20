@@ -4,7 +4,7 @@ resource "juju_machine" "backup" {
   model_uuid  = juju_model.maas_model.uuid
   base        = startswith(var.charm_s3_integrator_channel, "2/") ? "ubuntu@24.04" : "ubuntu@22.04"
   name        = "backup"
-  constraints = var.s3_constraints
+  constraints = "arch=${var.arch} ${var.s3_constraints}"
 }
 
 resource "juju_secret" "s3_credentials" {
@@ -42,6 +42,8 @@ resource "juju_application" "s3_integrator" {
   name       = "s3-integrator-${each.value}"
   model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.backup : m.machine_id]
+
+  constraints = "arch=${var.arch}"
 
   charm {
     name     = "s3-integrator"

@@ -32,7 +32,7 @@ resource "juju_machine" "postgres_machines" {
   model_uuid  = juju_model.maas_model.uuid
   base        = "ubuntu@${var.postgres_ubuntu_version}"
   name        = "postgres-${count.index}"
-  constraints = var.postgres_constraints
+  constraints = "arch=${var.arch} ${var.postgres_constraints}"
   placement   = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
 }
 
@@ -41,7 +41,7 @@ resource "juju_machine" "maas_machines" {
   model_uuid        = juju_model.maas_model.uuid
   base              = "ubuntu@${var.maas_ubuntu_version}"
   name              = "maas-${count.index}"
-  constraints       = var.maas_constraints
+  constraints       = "arch=${var.arch} ${var.maas_constraints}"
   placement         = length(var.zone_list) > 0 ? "zone=${element(var.zone_list, count.index)}" : null
   wait_for_hostname = true
 }
@@ -50,6 +50,8 @@ resource "juju_application" "postgresql" {
   name       = "postgresql"
   model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.postgres_machines : m.machine_id]
+
+  constraints = "arch=${var.arch}"
 
   charm {
     name     = "postgresql"
@@ -65,6 +67,8 @@ resource "juju_application" "maas_region" {
   name       = "maas-region"
   model_uuid = juju_model.maas_model.uuid
   machines   = [for m in juju_machine.maas_machines : m.machine_id]
+
+  constraints = "arch=${var.arch}"
 
   charm {
     name     = "maas-region"
