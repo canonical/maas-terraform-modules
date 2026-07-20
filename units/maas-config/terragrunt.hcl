@@ -21,7 +21,7 @@ dependency "maas_deploy" {
 
   mock_outputs = {
     maas_api_url = "http://mock-maas"
-    maas_api_key = "mock-password"
+    maas_api_key = "mock:mock:mock"
   }
 }
 
