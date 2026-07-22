@@ -13,6 +13,8 @@ resource "juju_model" "maas_model" {
     region = var.juju_cloud_region
   }
 
+  constraints = "arch=${var.architecture}"
+
   config = merge(
     var.model_config,
     {

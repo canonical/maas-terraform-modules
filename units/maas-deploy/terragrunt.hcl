@@ -43,6 +43,7 @@ locals {
     path_to_ssh_key   = try(values.path_to_ssh_key, null)
 
     // --- Machines and constraints ---
+    architecture            = try(values.architecture, null)
     maas_constraints        = try(values.maas_constraints, null)
     postgres_constraints    = try(values.postgres_constraints, null)
     haproxy_constraints     = try(values.haproxy_constraints, null)

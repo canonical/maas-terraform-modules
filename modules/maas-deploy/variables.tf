@@ -16,6 +16,12 @@ variable "haproxy_ubuntu_version" {
   default     = "24.04"
 }
 
+variable "architecture" {
+  description = "CPU architecture for the MAAS model (e.g. amd64, arm64)."
+  type        = string
+  default     = "amd64"
+}
+
 variable "juju_controller" {
   description = "The credentials to use when authenticating to the Juju controller."
   type = object({
