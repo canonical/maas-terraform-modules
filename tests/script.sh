@@ -45,7 +45,7 @@ STACK_DIRS=(
 for STACK_DIR in "${STACK_DIRS[@]}"; do
   # Initialize LXD and get trust token
   cd modules/lxd-init
-  terraform init && terraform apply -replace=lxd_trust_token.maas_charms -replace=lxd_trust_token.vm_host -auto-approve
+  terraform init && terraform apply -auto-approve
   LXD_TRUST_TOKEN=$(terraform output -raw maas_charms_token)
   LXD_TRUST_TOKEN_VM_HOST=$(terraform output -raw maas_vm_host_token)
   cd $ROOT_DIR
