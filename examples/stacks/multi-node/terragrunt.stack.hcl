@@ -114,6 +114,10 @@ unit "maas_deploy" {
     // path_to_ssh_key = "/home/ubuntu/.ssh/id_ed25519.pub"
 
     // -- Machines and constraints
+    // Map of Juju model constraints to apply to the MAAS model (e.g. to pin the architecture).
+    // model_constraints = {
+    //   arch = "arm64"
+    // }
     // Use the following constraints for the machines. Increase cores and mem for larger MAAS installations. We recommend using virtual machines.
     // If you are curious you can change the constraints to use containers or physical
     // hosts but this is untested

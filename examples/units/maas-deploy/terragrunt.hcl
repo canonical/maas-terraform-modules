@@ -40,6 +40,16 @@ inputs = {
   # juju_cloud_region = "default"
 
   # Description:
+  #       Map of Juju model constraints to apply to the MAAS model.
+  #       Each key/value pair is rendered as a space-separated "key=value"
+  #       constraint string. Useful, for example, to pin the model architecture.
+  #
+  # Type: map
+  # model_constraints = {
+  #   arch = "arm64"
+  # }
+
+  # Description:
   #       Use the following constraints for the machines
   #       Increase cores and mem for larger MAAS installations
   #       We recommend using virtual machines. If you are curious

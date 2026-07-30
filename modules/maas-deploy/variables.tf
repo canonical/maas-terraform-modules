@@ -16,10 +16,10 @@ variable "haproxy_ubuntu_version" {
   default     = "24.04"
 }
 
-variable "architecture" {
-  description = "CPU architecture for the MAAS model (e.g. amd64, arm64)."
-  type        = string
-  default     = "amd64"
+variable "model_constraints" {
+  description = "Map of Juju model constraints to apply to the MAAS model (e.g. { arch = \"arm64\" }). Each key/value pair is rendered as a space-separated \"key=value\" constraint string."
+  type        = map(string)
+  default     = {}
 }
 
 variable "juju_controller" {
