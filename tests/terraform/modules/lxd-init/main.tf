@@ -8,12 +8,26 @@ terraform {
 }
 
 # Create trust tokens
+resource "random_id" "token_suffix" {
+  keepers = {
+    time = timestamp()
+  }
+  byte_length = 4
+}
+
+resource "random_id" "token_suffix_vm_host" {
+  keepers = {
+    time = timestamp()
+  }
+  byte_length = 4
+}
+
 resource "lxd_trust_token" "maas_charms" {
-  name = "maas-charms"
+  name = "maas-charms-${random_id.token_suffix.hex}"
 }
 
 resource "lxd_trust_token" "vm_host" {
-  name = "vm-host"
+  name = "vm-host-${random_id.token_suffix_vm_host.hex}"
 }
 
 # Create the network
