@@ -19,7 +19,7 @@ Before initiating the upgrade process, it is recommended to:
 Note the system ID of machines that have had additional network interfaces applied to them, and any details required to restore it. This is relevant if DHCP has been enabled on a unit when running in region+rack mode. You will have to add this interface back later in the process, as this unit will be torn down. 
 
 ## Destroy MAAS 3.7 units
-1. Navigate to the `maas-deploy` unit directory and plan a destroy. This should show the destruction of the `maas-region`units, it's machines, application, and it's integration whilst leaving `postgresql` and `s3-integrator` units intact:
+ 1. Navigate to the `maas-deploy` unit directory and plan a destroy. This should show the destruction of the `maas-region` units, their machines, application, and integrations whilst leaving `postgresql` and `s3-integrator` units intact:
 ```bash
 ❯ cd .terragrunt-stack/maas-deploy/
 
@@ -194,7 +194,7 @@ Note the system ID of machines that have had additional network interfaces appli
 ```bash
 ❯ cd -
 
-❯ tg apply -target='juju_integration.s3_integration'
+❯ terragrunt apply -target='juju_integration.s3_integration'
 14:10:37.478 STDOUT terraform: juju_model.maas_model: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454]
 14:10:37.546 STDOUT terraform: juju_machine.postgres_machines[0]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:3:postgres-0]
 14:10:37.546 STDOUT terraform: juju_machine.backup[0]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:7:backup]
@@ -577,8 +577,8 @@ restore-status: restore finished
 
 ```
 2. Verify your migrated MAAS installation. It may take a few moments to initialize and sync any images. You can now release and redeploy machines.
-3. Navigate to your stack file, and change any values necessary based on the new machine name and outputs. This may be relevant if you have a DCHP unit.
-4. Plan and apply your stack, there should be no changes to apply. Note that the output below does show some changes due to redeploying a managed machine and editing other resources outside of terraform.
+3. Navigate to your stack file, and change any values necessary based on the new machine name and outputs. This may be relevant if you have a DHCP unit.
+4. Plan and apply your stack, there should be no changes to apply. Note that the output below does show some changes due to redeploying a managed machine and editing other resources outside of Terraform.
 ```bash
 ❯ cd ../..
 
