@@ -466,7 +466,7 @@ Waiting for task 90...
 restore-status: restore finished
 
 ```
-4. Restore the network interfaces previously noted in the 'Pre-destroy' section to the unit with the relevant system id.
+4. Restore the network interfaces previously noted in the [Pre-destroy](#pre-destroy) section to the unit with the relevant system id.
 
 ## Re-integrate `maas-region` and `postgresql` applications
 1. Still within your `maas-deploy` unit, plan and apply the entire unit to re-integrate and restore the unit to a fully deployed state:
