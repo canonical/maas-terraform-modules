@@ -1,6 +1,6 @@
 # How to migrate from 3.7 to 3.8 - out of place base upgrades
 
-This guide describes how to migrate your terragrunt stack from MAAS 3.7 to MAAS 3.8. This involves: 
+This guide describes how to migrate your Terragrunt stack from MAAS 3.7 to MAAS 3.8. This involves: 
 - Creating a full backup of your MAAS.
 - Tearing down the current 3.7 `maas-region` units. 
 - Recreating 3.8 `maas-region` units.
@@ -177,7 +177,7 @@ Note the system ID of machines that have had additional network interfaces appli
 
 ## Re-deploy MAAS 3.8 units
 
-1. In your terragrunt stack file, update the relevant variables to reflect a 3.8 deployment, selecting the relevant 3.8 channel:
+1. In your Terragrunt stack file, update the relevant variables to reflect a 3.8 deployment, selecting the relevant 3.8 channel:
 	- `maas_ubuntu_version = "26.04"`
 	- `charm_maas_region_channel = "3.8/edge"`
 2. Navigate back to your stack directory and regenerate the stack to ensure the new variables propagate to your units:
@@ -466,9 +466,9 @@ Waiting for task 90...
 restore-status: restore finished
 
 ```
-4. Restore the network interfaces previously noted in the 'Pre-destroy' section to the unit with the relevant system id.
+4. Restore the network interfaces previously noted in the [Pre-destroy](#pre-destroy) section to the unit with the relevant system id.
 
-## Re-integrate `maas-region` and `postgresql` units
+## Re-integrate `maas-region` and `postgresql` applications
 1. Still within your `maas-deploy` unit directory, run `terragrunt plan` and `terragrunt apply` to re-integrate the `maas-region` and `postgresql` applications, and restore the Terragrunt unit to a fully deployed state:
 ```bash
 ❯ terragrunt plan
