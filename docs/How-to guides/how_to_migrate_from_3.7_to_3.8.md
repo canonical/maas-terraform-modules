@@ -11,12 +11,12 @@ This is necessary because Juju does not support in-place base upgrade from Juju 
 ## Prerequisites
 Before initiating the upgrade process, it is recommended to:
 * **Create a full backup of your MAAS environment and note the backup id.** The region will be restored as part of the migration, and PostgreSQL is backed up as a precaution.
-* Ensure `maas-deploy` module is deployed with `enable_backup=true`, as this will be required during the restore.
+* Ensure `maas-deploy` module is deployed with `enable_backup=true`, as this will be required during the restore. See [How to backup](./how_to_backup.md) for more information.
 * Ensure minimal activity is currently taking place in MAAS.
 * Upgrade all standalone racks (any racks outside of region+rack units) that aren't managed by Juju. 
 
 ## Pre-destroy
-Note the system ID of machines that have had additional network interfaces applied to them, and any details required to restore it. This is relevant if DHCP has been enabled on a unit when running in region+rack mode. You will have to add this interface back later in the process, as this unit will be torn down. 
+Note the system ID of machines that have had additional network interfaces applied to them, and any details required to restore it. This is relevant if DHCP has been enabled on a unit when running in region+rack mode (see [How to setup MAAS dhcp](./how_to_setup_maas_dhcp.md)). You will have to add this interface back later in the process, as this unit will be torn down. 
 
 ## Destroy MAAS 3.7 units
  1. Navigate to the `maas-deploy` unit directory and plan a destroy. This should show the destruction of the `maas-region` units, their machines, application, and integrations whilst leaving `postgresql` and `s3-integrator` units intact:
@@ -190,7 +190,7 @@ Note the system ID of machines that have had additional network interfaces appli
 	14:10:14.857 INFO   Generating unit maas_config from ./terragrunt.stack.hcl
 	14:10:14.857 INFO   Generating unit juju_bootstrap from ./terragrunt.stack.hcl
 	```
-3. Navigate back to the `maas-deploy` unit directory, plan, and apply to redeploy `maas-region` units, but **excluding** the `maas-region` and `postgresql` integration:
+3. Navigate back to the `maas-deploy` unit directory, plan, and apply to redeploy `maas-region` units, but **excluding** the `maas-region` and `postgresql` integration. In the command below, the `-target` flag will ensure that the S3 integration is recreated, and Terraform will automatically plan to create the dependent resources in order to achieve this, without recreating the `maas-region` and `postgresql` integration:
 ```bash
 ❯ cd -
 
@@ -425,7 +425,7 @@ backups: |-
   ------------------------------------------------------------------------------------------------------------
   2026-08-26T16:40:13Z | full backup | finished | 3.7.3    | 1009.9MiB  | 76ypaf, bbm3kr, hbh46q | /maas-backups/backup/2026-08-26T16:40:13Z
 ```
-2. Restore each region. Note you will need the `force` parameter to bypass version checks in the `restore-backup` action, and `--wait` to avoid the Juju action timing out. Increase this wait time if your backup is large:
+2. Restore each region, using a different controller-id for each new unit. For example, unit 6 replaces the old unit 0 with system_id `bbm3kr` below. Note that the backup you are restoring to your 3.8 deployment is from 3.7, so you you will need the `force` parameter to bypass version checks in the `restore-backup` action which is normally there to prevent restoring an incorrect MAAS version. The `--wait` flag to avoid the Juju action timing out. Increase this wait time if your backup is large:
 ```bash
 ❯ juju run maas-region/6 restore-backup backup-id=2026-08-26T16:40:13Z controller-id=bbm3kr force=true --wait 10m
 Running operation 83 with 1 task
@@ -469,7 +469,7 @@ restore-status: restore finished
 4. Restore the network interfaces previously noted in the 'Pre-destroy' section to the unit with the relevant system id.
 
 ## Re-integrate `maas-region` and `postgresql` units
-1. Still within your `maas-deploy` unit, plan and apply the entire unit to re-integrate and restore the unit to a fully deployed state:
+1. Still within your `maas-deploy` unit directory, run `terragrunt plan` and `terragrunt apply` to re-integrate the `maas-region` and `postgresql` applications, and restore the Terragrunt unit to a fully deployed state:
 ```bash
 ❯ terragrunt plan
 14:28:16.287 STDOUT terraform: juju_model.maas_model: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454]
@@ -577,8 +577,8 @@ restore-status: restore finished
 
 ```
 2. Verify your migrated MAAS installation. It may take a few moments to initialize and sync any images. You can now release and redeploy machines.
-3. Navigate to your stack file, and change any values necessary based on the new machine name and outputs. This may be relevant if you have a DHCP unit.
-4. Plan and apply your stack, there should be no changes to apply. Note that the output below does show some changes due to redeploying a managed machine and editing other resources outside of Terraform.
+3. Open your `terragrunt.stack.hcl` file and change any values necessary based on the new machine name and outputs. This may be relevant if you have a DHCP unit. For example, if you have a variable which hard codes the machine name `juju-abc123-0` in your `terragrunt.stack.hcl` file, you will need to change this to the new machine name `juju-avb123-6` which was created during the migration process. You can find the new machine names in the output of the `terragrunt apply` command above.
+4. Plan and apply your stack, there should be no changes to apply. Note that the output below is truncated for brevity:
 ```bash
 ❯ cd ../..
 
@@ -597,141 +597,12 @@ restore-status: restore finished
 - Unit .terragrunt-stack/maas-config
 - Unit .terragrunt-stack/maas-machine
 
-14:42:45.001 INFO   [.terragrunt-stack/juju-bootstrap] Downloading Terraform configurations from tfr:///juju/controller/juju?version=0.0.1-rc6 into ./.terragrunt-stack/juju-bootstrap/.terragrunt-cache/1C_LZ6VaJTw5GdeNJTf_iw0nFc4/HNznUV3e8tF-4FGhKFzd35jXtDg
-14:42:45.917 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Initializing the backend...
-14:42:45.921 INFO   [.terragrunt-stack/juju-bootstrap] terraform:
-14:42:45.921 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Successfully configured the backend "local"! Terraform will automatically
-14:42:45.921 INFO   [.terragrunt-stack/juju-bootstrap] terraform: use this backend unless the backend configuration changes.
-14:42:45.922 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Initializing provider plugins...
-14:42:45.922 INFO   [.terragrunt-stack/juju-bootstrap] terraform: - terraform.io/builtin/terraform is built in to Terraform
-14:42:45.922 INFO   [.terragrunt-stack/juju-bootstrap] terraform: - Finding juju/juju versions matching "> 1.3.0"...
-14:42:46.044 INFO   [.terragrunt-stack/juju-bootstrap] terraform: - Installing juju/juju v2.2.1...
-14:42:47.644 INFO   [.terragrunt-stack/juju-bootstrap] terraform: - Installed juju/juju v2.2.1 (self-signed, key ID B836F54C10C569E2)
-14:42:47.644 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Partner and community providers are signed by their developers.
-14:42:47.644 INFO   [.terragrunt-stack/juju-bootstrap] terraform: If you'd like to know more about provider signing, you can read about it here:
-14:42:47.644 INFO   [.terragrunt-stack/juju-bootstrap] terraform: https://developer.hashicorp.com/terraform/cli/plugins/signing
-14:42:47.644 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Terraform has created a lock file .terraform.lock.hcl to record the provider
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: selections it made above. Include this file in your version control repository
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: so that Terraform can guarantee to make the same selections by default when
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: you run "terraform init" in the future.
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: Terraform has been successfully initialized!
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform:
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: You may now begin working with Terraform. Try running "terraform plan" to see
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: any changes that are required for your infrastructure. All Terraform commands
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: should now work.
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: If you ever set or change modules or backend configuration for Terraform,
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: rerun this command to reinitialize your working directory. If you forget, other
-14:42:47.645 INFO   [.terragrunt-stack/juju-bootstrap] terraform: commands will detect it and remind you to do so if necessary.
-14:42:48.149 STDOUT [.terragrunt-stack/juju-bootstrap] terraform: juju_controller.controller: Refreshing state... [id=maas-controller]
-14:42:48.203 STDOUT [.terragrunt-stack/juju-bootstrap] terraform: No changes. Your infrastructure matches the configuration.
-14:42:48.203 STDOUT [.terragrunt-stack/juju-bootstrap] terraform: Terraform has compared your real infrastructure against your configuration
-14:42:48.203 STDOUT [.terragrunt-stack/juju-bootstrap] terraform: and found no differences, so no changes are needed.
-14:42:48.726 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_model.maas_model: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454]
-14:42:48.817 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_machine.maas_machines[0]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:12:maas-0]
-14:42:48.818 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_machine.maas_machines[1]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:11:maas-1]
-14:42:48.818 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_machine.maas_machines[2]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:13:maas-2]
-14:42:48.818 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_machine.postgres_machines[0]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:3:postgres-0]
-14:42:48.818 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_machine.backup[0]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:7:backup]
-14:42:48.872 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_application.s3_integrator["maas"]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:s3-integrator-maas]
-14:42:48.872 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_application.postgresql: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:postgresql]
-14:42:48.872 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_application.s3_integrator["postgresql"]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:s3-integrator-postgresql]
-14:42:48.876 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_application.maas_region: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:maas-region]
-14:42:48.964 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_integration.maas_region_postgresql: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:postgresql:database:maas-region:maas-db]
-14:42:48.964 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_integration.s3_integration["maas"]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:s3-integrator-maas:s3-credentials:maas-region:s3-parameters]
-14:42:48.964 STDOUT [.terragrunt-stack/maas-deploy] terraform: juju_integration.s3_integration["postgresql"]: Refreshing state... [id=1191d83c-41f7-4ff3-89f3-350370cce454:s3-integrator-postgresql:s3-credentials:postgresql:s3-parameters]
-14:42:49.005 STDOUT [.terragrunt-stack/maas-deploy] terraform: terraform_data.juju_wait_for_all: Refreshing state... [id=46a9fec5-3d85-e0c2-023d-21b675e876f7]
-14:42:49.006 STDOUT [.terragrunt-stack/maas-deploy] terraform: terraform_data.create_admin: Refreshing state... [id=1b7406a6-a5b9-5071-c1d9-448b6068bb85]
-14:42:49.008 STDOUT [.terragrunt-stack/maas-deploy] terraform: data.external.maas_get_api_url: Reading...
-14:42:49.008 STDOUT [.terragrunt-stack/maas-deploy] terraform: data.external.maas_get_api_key: Reading...
-14:42:50.398 STDOUT [.terragrunt-stack/maas-deploy] terraform: data.external.maas_get_api_url: Read complete after 1s [id=-]
-14:42:56.747 STDOUT [.terragrunt-stack/maas-deploy] terraform: data.external.maas_get_api_key: Read complete after 8s [id=-]
-14:42:56.753 STDOUT [.terragrunt-stack/maas-deploy] terraform: No changes. Your infrastructure matches the configuration.
-14:42:56.753 STDOUT [.terragrunt-stack/maas-deploy] terraform: Terraform has compared your real infrastructure against your configuration
-14:42:56.753 STDOUT [.terragrunt-stack/maas-deploy] terraform: and found no differences, so no changes are needed.
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_boot_source.image_server: Refreshing state... [id=1]
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_package_repository.package_repositories["foo_bar"]: Refreshing state... [id=3]
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_dns_domain.domains["example.maas"]: Refreshing state... [id=1]
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_tag.tags["gpu-node"]: Refreshing state... [id=gpu-node]
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_tag.tags["gpgpu-tesla-vi"]: Refreshing state... [id=gpgpu-tesla-vi]
-14:42:57.133 STDOUT [.terragrunt-stack/maas-config] terraform: maas_node_script.node_scripts["testing-script.sh"]: Refreshing state... [id=terraform-testing-script]
-14:42:57.160 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_rack_controller.dhcp[0]: Reading...
-14:42:57.161 STDOUT [.terragrunt-stack/maas-machine] terraform: maas_subnet.pxe["10.20.0.0/24"]: Refreshing state... [id=5]
-14:42:57.172 STDOUT [.terragrunt-stack/maas-config] terraform: maas_boot_source_selection.images["noble"]: Refreshing state... [id=1]
-14:42:57.172 STDOUT [.terragrunt-stack/maas-config] terraform: maas_boot_source_selection.images["resolute"]: Refreshing state... [id=2]
-14:42:57.177 STDOUT [.terragrunt-stack/maas-config] terraform: maas_dns_record.test_txt["example.maas_web"]: Refreshing state... [id=1]
-14:42:57.200 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_subnet.pxe[0]: Reading...
-14:42:57.215 STDOUT [.terragrunt-stack/maas-config] terraform: maas_configuration.post_image_sync_config["default_osystem"]: Refreshing state... [id=default_osystem]
-14:42:57.231 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_subnet.pxe[0]: Read complete after 0s [id=5]
-14:42:57.233 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_fabric.pxe[0]: Reading...
-14:42:57.233 STDOUT [.terragrunt-stack/maas-machine] terraform: maas_subnet_ip_range.dhcp[0]: Refreshing state... [id=1]
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform: Terraform used the selected providers to generate the following execution
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform: plan. Resource actions are indicated with the following symbols:
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   ~ update in-place
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform: Terraform will perform the following actions:
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   # maas_boot_source.image_server will be updated in-place
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   ~ resource "maas_boot_source" "image_server" {
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:         id               = "1"
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:       ~ url              = "http://images.maas.io/ephemeral-v3/stable" -> "http://images.maas.io/ephemeral-v3/stable/"
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:         # (4 unchanged attributes hidden)
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:     }
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   # maas_boot_source_selection.images["resolute"] will be updated in-place
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   ~ resource "maas_boot_source_selection" "images" {
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:       ~ arches      = [
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:           - "arm64",
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:             # (1 unchanged element hidden)
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:         ]
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:         id          = "2"
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:         # (5 unchanged attributes hidden)
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:     }
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   # maas_tag.tags["gpgpu-tesla-vi"] will be updated in-place
-14:42:57.239 STDOUT [.terragrunt-stack/maas-config] terraform:   ~ resource "maas_tag" "tags" {
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:       ~ comment     = "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel." -> "Example tag for enabling passthrough for Nvidia Tesla V series GPUs on Intel. "
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:         id          = "gpgpu-tesla-vi"
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:         name        = "gpgpu-tesla-vi"
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:         # (2 unchanged attributes hidden)
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:     }
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform: Plan: 0 to add, 3 to change, 0 to destroy.
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform:
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform: ─────────────────────────────────────────────────────────────────────────────
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform: Note: You didn't use the -out option to save this plan, so Terraform can't
-14:42:57.240 STDOUT [.terragrunt-stack/maas-config] terraform: guarantee to take exactly these actions if you run "terraform apply" now.
-14:42:57.280 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_fabric.pxe[0]: Read complete after 0s [id=1]
-14:42:57.426 STDOUT [.terragrunt-stack/maas-machine] terraform: data.maas_rack_controller.dhcp[0]: Read complete after 0s [id=bbm3kr]
-14:42:57.429 STDOUT [.terragrunt-stack/maas-machine] terraform: maas_vlan_dhcp.pxe[0]: Refreshing state... [id=1/0]
-14:42:57.457 STDOUT [.terragrunt-stack/maas-machine] terraform: maas_machine.machine: Refreshing state... [id=ydtdxx]
-14:42:57.571 STDOUT [.terragrunt-stack/maas-machine] terraform: maas_instance.instance: Refreshing state... [id=ydtdxx]
-14:42:57.697 STDOUT [.terragrunt-stack/maas-machine] terraform: Note: Objects have changed outside of Terraform
-14:42:57.697 STDOUT [.terragrunt-stack/maas-machine] terraform:
-14:42:57.697 STDOUT [.terragrunt-stack/maas-machine] terraform: Terraform detected the following changes made outside of Terraform since the
-14:42:57.697 STDOUT [.terragrunt-stack/maas-machine] terraform: last "terraform apply" which may have affected this plan:
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:   # maas_instance.instance has changed
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:   ~ resource "maas_instance" "instance" {
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         id           = "ydtdxx"
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:       ~ ip_addresses = [
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:           - "10.20.0.201",
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:           + "10.20.0.202",
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         ]
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         tags         = [
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:             "virtual",
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         ]
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         # (7 unchanged attributes hidden)
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:         # (2 unchanged blocks hidden)
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:     }
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: Unless you have made equivalent changes to your configuration, or ignored the
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: relevant attributes using ignore_changes, the following plan may include
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: actions to undo or respond to these changes.
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: ─────────────────────────────────────────────────────────────────────────────
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: Changes to Outputs:
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:   ~ ip_addresses = [
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:       ~ "10.20.0.201" -> "10.20.0.202",
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:     ]
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: You can apply this plan to save these new output values to the Terraform
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: state, without changing any real infrastructure.
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform:
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: ─────────────────────────────────────────────────────────────────────────────
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: Note: You didn't use the -out option to save this plan, so Terraform can't
-14:42:57.698 STDOUT [.terragrunt-stack/maas-machine] terraform: guarantee to take exactly these actions if you run "terraform apply" now.
+
+
+... 
+
+
+
 
 ❯❯ Run Summary  4 units  12s
    ────────────────────────────
