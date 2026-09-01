@@ -1,6 +1,6 @@
 # How to migrate from 3.7 to 3.8 - out of place base upgrades
 
-This guide describes how to migrate your terragrunt stack from MAAS 3.7 to MAAS 3.8. This involves: 
+This guide describes how to migrate your Terragrunt stack from MAAS 3.7 to MAAS 3.8. This involves: 
 - Creating a full backup of your MAAS.
 - Tearing down the current 3.7 `maas-region` units. 
 - Recreating 3.8 `maas-region` units.
