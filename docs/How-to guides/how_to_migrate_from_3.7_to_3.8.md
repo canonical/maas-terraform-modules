@@ -177,7 +177,7 @@ Note the system ID of machines that have had additional network interfaces appli
 
 ## Re-deploy MAAS 3.8 units
 
-1. In your terragrunt stack file, update the relevant variables to reflect a 3.8 deployment, selecting the relevant 3.8 channel:
+1. In your Terragrunt stack file, update the relevant variables to reflect a 3.8 deployment, selecting the relevant 3.8 channel:
 	- `maas_ubuntu_version = "26.04"`
 	- `charm_maas_region_channel = "3.8/edge"`
 2. Navigate back to your stack directory and regenerate the stack to ensure the new variables propagate to your units:
