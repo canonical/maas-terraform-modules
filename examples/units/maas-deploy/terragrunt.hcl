@@ -43,11 +43,11 @@ inputs = {
   # Type: string
   # juju_cloud_name = null
 
-  # Description: Juju cloud region used when the module manages model creation. Required when model_uuid is null.
+  # Description: Juju cloud region used when the module manages model creation. Ignored when model_uuid is set.
   # Type: string
-  # juju_cloud_region = null
+  # juju_cloud_region = "default"
 
-  # Description: UUID of an existing Juju model to deploy into. When set, the module reuses that model. When null, juju_cloud_name, juju_cloud_region, and lxd_project are required so the module can create and manage a model.
+  # Description: UUID of an existing Juju model to deploy into. When set, the module reuses that model. When null, juju_cloud_name and lxd_project are required so the module can create and manage a model.
   # Type: string
   # model_uuid = null
 

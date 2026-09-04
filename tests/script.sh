@@ -182,7 +182,8 @@ terragrunt stack run apply \
 cd $ROOT_DIR
 
 # Assert the module did NOT create its own "maas" model (existing-model mode).
-if juju models --format json | jq -e '.models[] | select(.["short-name"] == "maas")' >/dev/null; then
+# Scope to existing-controller so unrelated controllers/models can't false-fail.
+if juju models -c existing-controller --format json | jq -e '.models[] | select(.["short-name"] == "maas")' >/dev/null; then
   echo "ERROR: a 'maas' model was created; existing-model mode should reuse the provided model only" >&2
   exit 1
 fi

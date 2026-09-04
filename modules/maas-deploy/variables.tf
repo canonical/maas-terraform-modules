@@ -50,8 +50,16 @@ variable "model_uuid" {
   default     = null
 
   validation {
-    condition     = var.model_uuid != null || (var.juju_cloud_name != null && var.lxd_project != null)
-    error_message = "In managed model mode (model_uuid unset), juju_cloud_name and lxd_project are required."
+    condition = var.model_uuid != null || (
+      var.juju_cloud_name != null && trimspace(var.juju_cloud_name) != "" &&
+      var.lxd_project != null && trimspace(var.lxd_project) != ""
+    )
+    error_message = "In managed model mode (model_uuid unset), juju_cloud_name and lxd_project are required and must be non-empty."
+  }
+
+  validation {
+    condition     = var.model_uuid == null || can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", var.model_uuid))
+    error_message = "model_uuid must be a valid UUID when set."
   }
 }
 
