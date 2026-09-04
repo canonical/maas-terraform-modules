@@ -35,13 +35,11 @@ dependencies {
 }
 
 locals {
-  // juju_cloud_name is only relevant in managed model mode. In existing model
-  // mode (model_uuid set) it is unused, so don't derive it from the
-  // juju_bootstrap dependency, which would otherwise inject a mock/stale value
-  // and trigger the module's "inputs ignored" warning. Otherwise resolve it
-  // from the unit values or the dependency, tolerating the case where neither
-  // is available instead of failing on coalesce.
-  juju_cloud_name = try(values.model_uuid, null) != null ? null : try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), null)
+  // Existing model mode is selected when model_uuid is provided; in that mode the
+  // model-creation inputs (juju_cloud_name, juju_cloud_region, lxd_project) are
+  // not needed. juju_cloud_name itself is resolved in the inputs block below,
+  // because dependency outputs cannot be referenced from a locals block.
+  existing_model = try(values.model_uuid, null) != null
 
   optional_inputs = {
     // --- Environment ---
@@ -120,12 +118,18 @@ inputs = merge(
     k => v
     if v != null
   },
-  # juju_cloud_name is only needed in managed model mode. Inject it only when it
-  # resolves (from values or the juju_bootstrap dependency); in existing model
-  # mode it may be absent, which is fine.
-  local.juju_cloud_name != null ? { juju_cloud_name = local.juju_cloud_name } : {},
   {
     // --- Dependencies ---
     juju_controller = coalesce(try(values.juju_controller, null), try(dependency.juju_bootstrap.outputs.juju_controller, null))
   },
+  # juju_cloud_name is only used in managed model mode. Resolve it from the unit
+  # values or the juju_bootstrap dependency (dependency outputs may be referenced
+  # here, but not in a locals block). Inject it only when it resolves to a
+  # non-empty value; in existing model mode it is omitted so the module does not
+  # flag it as an ignored input.
+  local.existing_model ? {} : (
+    try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), "") != "" ?
+    { juju_cloud_name = try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), "") } :
+    {}
+  ),
 )
