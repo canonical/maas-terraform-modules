@@ -3,7 +3,7 @@ provider "juju" {
   username             = var.juju_controller.username
   password             = var.juju_controller.password
   ca_certificate       = var.juju_controller.ca_certificate
-  lazy_api_check = var.skip_juju_provider_checks
+  lazy_api_check       = var.juju_controller.lazy_api_check
 }
 
 resource "juju_model" "maas_model" {

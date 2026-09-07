@@ -29,6 +29,7 @@ variable "juju_controller" {
     username             = string
     password             = string
     ca_certificate       = string
+    lazy_api_check       = optional(bool, false)
   })
 }
 
@@ -353,10 +354,4 @@ variable "s3_path_maas" {
   description = "Path in the S3 bucket to store MAAS backups in"
   type        = string
   default     = "/maas"
-}
-
-variable "skip_juju_provider_checks" {
-  description = "Whether to set `lazy_api_checks` in the Juju provider. Used by Terragrunt during the very first plan phase."
-  type        = bool
-  default     = false
 }
