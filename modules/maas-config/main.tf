@@ -1,6 +1,6 @@
 provider "maas" {
-  api_key = var.maas.api_key
-  api_url = var.maas.api_url
+  api_key         = var.maas.api_key
+  api_url         = var.maas.api_url
   skip_api_checks = var.maas.skip_api_checks
 }
 

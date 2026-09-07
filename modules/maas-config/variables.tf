@@ -1,9 +1,9 @@
 variable "maas" {
   description = "The credentials and arguments to pass to the MAAS Terraform provider."
   type = object({
-    api_url           = string
-    api_key       = string
-    skip_api_checks      = optional(bool, false)
+    api_url         = string
+    api_key         = string
+    skip_api_checks = optional(bool, false)
   })
 }
 
