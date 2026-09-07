@@ -20,8 +20,11 @@ dependency "maas_deploy" {
   mock_outputs_merge_strategy_with_state = "shallow"
 
   mock_outputs = {
-    maas_api_url = "http://mock-maas"
-    maas_api_key = local.mock_maas_api_key
+    maas = {
+      api_url = "http://mock-maas"
+      api_key = "mock:mock:mock"
+      skip_api_checks = true
+    }
   }
 }
 
@@ -30,8 +33,6 @@ dependencies {
 }
 
 locals {
-  // Shared with the mock_outputs above, value checked in skip_maas_provider_checks below.
-  mock_maas_api_key = "mock:mock:mock"
 
   optional_inputs = {
     image_server_url      = try(values.image_server_url, null)
@@ -54,12 +55,7 @@ inputs = merge({
   },
   {
     // Dependent variables
-    maas_url = coalesce(try(values.maas_url, null), try(dependency.maas_deploy.outputs.maas_api_url, null))
-    maas_key = coalesce(try(values.maas_key, null), try(dependency.maas_deploy.outputs.maas_api_key, null))
-
-    // If someone hasn't specified the MAAS URL, and the maas_deploy dependency is definitely the mocked one,
-    // then this is the first time someone is running `plan` as part of a stack that doesn't have a deployed MAAS yet.
-    skip_maas_provider_checks = try(values.maas_url, null) == null && try(dependency.maas_deploy.outputs.maas_api_key, null) == local.mock_maas_api_key
+    maas = coalesce(try(values.maas, null), try(dependency.maas_deploy.outputs.maas, null))
 
     // Required variables
     // (none)
