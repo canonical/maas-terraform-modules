@@ -63,9 +63,12 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   echo "Deploying MAAS stack: ${STACK_DIR}"
   echo "=========================================="
 
-  # Deploy the stack. Use --source-map to point to local modules, instead of the remote
+  # Plan then deploy the stack. Use --source-map to point to local modules, instead of the remote
   # git repository defined in the units
   cd "$STACK_DIR"
+  terragrunt stack run plan  \
+  --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR"
+  
   terragrunt stack run apply \
   --source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
   --non-interactive
