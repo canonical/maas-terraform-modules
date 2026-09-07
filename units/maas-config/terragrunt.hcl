@@ -21,8 +21,8 @@ dependency "maas_deploy" {
 
   mock_outputs = {
     maas = {
-      api_url = "http://mock-maas"
-      api_key = "mock:mock:mock"
+      api_url         = "http://mock-maas"
+      api_key         = "mock:mock:mock"
       skip_api_checks = true
     }
   }

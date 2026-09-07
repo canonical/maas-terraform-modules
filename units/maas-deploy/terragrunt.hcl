@@ -22,7 +22,7 @@ dependency "juju_bootstrap" {
   mock_outputs = {
     juju_cloud = "mock-cloud-name"
     juju_controller = {
-      lazy_api_check       = true    # Enables stack run plan only when mocks are used. Relies on mock_outputs_merge_strategy_with_state = "shallow"
+      lazy_api_check       = true # Enables stack run plan only when mocks are used. Relies on mock_outputs_merge_strategy_with_state = "shallow"
       controller_addresses = ["https://mock-controller:17070"]
       username             = "mock-username"
       password             = "mock-password"
