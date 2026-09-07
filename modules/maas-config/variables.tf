@@ -1,11 +1,10 @@
-variable "maas_url" {
-  description = "The MAAS URL in the format of: http://127.0.0.1:5240/MAAS"
-  type        = string
-}
-
-variable "maas_key" {
-  description = "The MAAS API key"
-  type        = string
+variable "maas" {
+  description = "The credentials and arguments to pass to the MAAS Terraform provider."
+  type = object({
+    api_url           = string
+    api_key       = string
+    skip_api_checks      = optional(bool, false)
+  })
 }
 
 ###
@@ -131,10 +130,4 @@ variable "node_scripts_location" {
   type        = string
 
   default = "."
-}
-
-variable "skip_maas_provider_checks" {
-  description = "Whether to set `skip_api_checks` in the MAAS Terraform provider. Used by Terragrunt during the very first plan phase."
-  type        = bool
-  default     = false
 }
