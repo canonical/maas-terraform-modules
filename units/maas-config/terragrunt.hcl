@@ -23,7 +23,7 @@ dependency "maas_deploy" {
     maas = {
       api_url         = "http://mock-maas"
       api_key         = "mock:mock:mock"
-      skip_api_checks = true
+      skip_api_checks = true # Enables `stack run plan` only when mocks are used; real runs get no `skip_api_checks` key from maas-deploy and fall back to the variable's `optional(bool, false)` default. Relies on mock_outputs_merge_strategy_with_state = "shallow"
     }
   }
 }

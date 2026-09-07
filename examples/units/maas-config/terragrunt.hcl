@@ -13,13 +13,12 @@ inputs = {
   # Required input variables
   # --------------------------------------------------------------------------------------------------------------------
 
-  # Description: The MAAS URL in the format of: http://127.0.0.1:5240/MAAS
-  # Type: string
-  maas_url = "" # TODO: fill in value
-
-  # Description: The MAAS API key
-  # Type: string
-  maas_key = "" # TODO: fill in value
+  # Description: The credentials and arguments to pass to the MAAS Terraform provider.
+  # Type: object({ api_url = string, api_key = string, skip_api_checks = optional(bool, false) })
+  maas = {
+    api_url = "" # TODO: fill in value
+    api_key = "" # TODO: fill in value
+  }
 
 
   # --------------------------------------------------------------------------------------------------------------------

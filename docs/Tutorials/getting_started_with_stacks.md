@@ -159,10 +159,10 @@ juju status -m maas
 
 Wait until all applications show "active" status and all units are "idle". This may take a few more minutes after the Terragrunt apply completes.
 
-Get the MAAS URL:
+Get the MAAS connection details (the `api_url` field is the MAAS URL):
 
 ```bash
-terragrunt stack output maas_deploy.maas_api_url
+terragrunt stack output maas_deploy.maas
 ```
 
 Access the URL in your browser and log in with:

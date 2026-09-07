@@ -74,10 +74,10 @@ The deployment can take 20-40 minutes depending on your system.
 
 ## Access MAAS
 
-Get the MAAS URL:
+Get the MAAS connection details (the `api_url` field is the MAAS URL):
 
 ```bash
-terragrunt stack output maas_deploy.maas_api_url
+terragrunt stack output maas_deploy.maas
 ```
 
 Access the URL in your browser and log in with:
