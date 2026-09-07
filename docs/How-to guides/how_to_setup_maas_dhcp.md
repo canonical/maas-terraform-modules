@@ -152,14 +152,16 @@ Because this setup is specific to your infrastructure, DHCP configuration is not
      mock_outputs_merge_strategy_with_state = "shallow"
 
      mock_outputs = {
-       maas_api_url = "http://mock-maas"
-       maas_api_key = "mock-password"
+       maas = {
+         api_url = "http://mock-maas"
+         api_key = "mock-password"
+       }
      }
    }
 
    inputs = {
-     maas_url        = dependency.maas_deploy.outputs.maas_api_url
-     maas_key        = dependency.maas_deploy.outputs.maas_api_key
+     maas_url        = dependency.maas_deploy.outputs.maas.api_url
+     maas_key        = dependency.maas_deploy.outputs.maas.api_key
      rack_controller = values.rack_controller
      pxe_subnet      = values.pxe_subnet
    }
