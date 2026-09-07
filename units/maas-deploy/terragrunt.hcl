@@ -36,9 +36,15 @@ dependencies {
 }
 
 locals {
+  // Existing model mode is selected when model_uuid is provided; in that mode the
+  // model-creation inputs (juju_cloud_name, juju_cloud_region, lxd_project) are
+  // not needed. juju_cloud_name itself is resolved in the inputs block below,
+  // because dependency outputs cannot be referenced from a locals block.
+  existing_model = try(values.model_uuid, null) != null
 
   optional_inputs = {
     // --- Environment ---
+    model_uuid        = try(values.model_uuid, null)
     juju_cloud_region = try(values.juju_cloud_region, null)
     lxd_project       = try(values.lxd_project, null)
     model_config      = try(values.model_config, null)
@@ -115,8 +121,17 @@ inputs = merge(
   },
   {
     // --- Dependencies ---
-    juju_cloud_name = coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null))
     juju_controller = coalesce(try(values.juju_controller, null), try(dependency.juju_bootstrap.outputs.juju_controller, null))
 
   },
+  # juju_cloud_name is only used in managed model mode. Resolve it from the unit
+  # values or the juju_bootstrap dependency (dependency outputs may be referenced
+  # here, but not in a locals block). Inject it only when it resolves to a
+  # non-empty value; in existing model mode it is omitted so the module does not
+  # flag it as an ignored input.
+  local.existing_model ? {} : (
+    try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), "") != "" ?
+    { juju_cloud_name = try(coalesce(try(values.juju_cloud_name, null), try(dependency.juju_bootstrap.outputs.juju_cloud, null)), "") } :
+    {}
+  ),
 )

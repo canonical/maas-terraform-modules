@@ -7,6 +7,8 @@ provider "juju" {
 }
 
 resource "juju_model" "maas_model" {
+  count = var.model_uuid == null ? 1 : 0
+
   name = "maas"
 
   cloud {
@@ -24,15 +26,26 @@ resource "juju_model" "maas_model" {
   )
 }
 
+locals {
+  maas_model_uuid = var.model_uuid != null ? var.model_uuid : juju_model.maas_model[0].uuid
+}
+
+check "model_input_mode" {
+  assert {
+    condition     = var.model_uuid == null || (var.juju_cloud_name == null && var.lxd_project == null)
+    error_message = "model_uuid is set, so juju_cloud_name and lxd_project are ignored. Remove them to avoid confusion."
+  }
+}
+
 resource "juju_ssh_key" "model_ssh_key" {
   count      = var.path_to_ssh_key != null ? 1 : 0
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
   payload    = trimspace(file(var.path_to_ssh_key))
 }
 
 resource "juju_machine" "postgres_machines" {
   count       = var.enable_postgres_ha ? 3 : 1
-  model_uuid  = juju_model.maas_model.uuid
+  model_uuid  = local.maas_model_uuid
   base        = "ubuntu@${var.postgres_ubuntu_version}"
   name        = "postgres-${count.index}"
   constraints = var.postgres_constraints
@@ -41,7 +54,7 @@ resource "juju_machine" "postgres_machines" {
 
 resource "juju_machine" "maas_machines" {
   count             = var.enable_maas_ha ? 3 : 1
-  model_uuid        = juju_model.maas_model.uuid
+  model_uuid        = local.maas_model_uuid
   base              = "ubuntu@${var.maas_ubuntu_version}"
   name              = "maas-${count.index}"
   constraints       = var.maas_constraints
@@ -51,7 +64,7 @@ resource "juju_machine" "maas_machines" {
 
 resource "juju_application" "postgresql" {
   name       = "postgresql"
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
   machines   = [for m in juju_machine.postgres_machines : m.machine_id]
 
   charm {
@@ -66,7 +79,7 @@ resource "juju_application" "postgresql" {
 
 resource "juju_application" "maas_region" {
   name       = "maas-region"
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
   machines   = [for m in juju_machine.maas_machines : m.machine_id]
 
   charm {
@@ -84,7 +97,7 @@ resource "juju_application" "maas_region" {
   })
 }
 resource "juju_integration" "maas_region_postgresql" {
-  model_uuid = juju_model.maas_model.uuid
+  model_uuid = local.maas_model_uuid
 
   application {
     name     = juju_application.maas_region.name

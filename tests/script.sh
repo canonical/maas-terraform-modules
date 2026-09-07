@@ -144,4 +144,61 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   cd $ROOT_DIR
 done
 
+# ============================================================================
+# Existing-model stack
+# ----------------------------------------------------------------------------
+# Deploy charmed MAAS into a PRE-EXISTING Juju model on a PRE-EXISTING
+# controller. This stack has no juju_bootstrap unit, so a prep step bootstraps a
+# controller and creates the model beforehand (representing infrastructure owned
+# outside the stack). The stack must reuse that model without creating a new one.
+#
+# This block is self-contained (it bootstraps its own controller onto the local
+# LXD), so the loop above can be commented out for faster iteration.
+# ============================================================================
+echo "=========================================="
+echo "Deploying MAAS stack: existing-model"
+echo "=========================================="
+
+# --- Prep: bootstrap an external controller and create the target model ---
+# The controller and model are created here, NOT by the stack, so from the
+# stack's point of view they already exist.
+juju bootstrap localhost existing-controller
+juju add-model existing-maas
+
+# Extract the controller credentials and model UUID to feed the stack.
+export JUJU_CONTROLLER_ADDRESSES=$(juju show-controller existing-controller --format json | jq -r '.["existing-controller"].details["api-endpoints"] | join(",")')
+export JUJU_USERNAME=$(juju show-controller existing-controller --show-password --format json | jq -r '.["existing-controller"].account.user')
+export JUJU_PASSWORD=$(juju show-controller existing-controller --show-password --format json | jq -r '.["existing-controller"].account.password')
+export JUJU_CA_CERT=$(juju show-controller existing-controller --format json | jq -r '.["existing-controller"].details["ca-cert"]')
+export MODEL_UUID=$(juju show-model existing-maas --format json | jq -r '.[]."model-uuid"')
+
+echo "Deploying into existing model: $MODEL_UUID"
+
+# --- Deploy the stack into the existing model ---
+cd examples/stacks/existing-model
+terragrunt stack run apply \
+--source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+--non-interactive
+cd $ROOT_DIR
+
+# Assert the module did NOT create its own "maas" model (existing-model mode).
+# Scope to existing-controller so unrelated controllers/models can't false-fail.
+if juju models -c existing-controller --format json | jq -e '.models[] | select(.["short-name"] == "maas")' >/dev/null; then
+  echo "ERROR: a 'maas' model was created; existing-model mode should reuse the provided model only" >&2
+  exit 1
+fi
+
+echo "existing-model MAAS deployment completed successfully (model reused, not created)"
+
+# --- Destroy the stack (leaves the pre-existing controller and model intact) ---
+echo "Destroying MAAS stack: existing-model"
+cd examples/stacks/existing-model
+terragrunt stack run destroy \
+--source-map "git::https://github.com/canonical/maas-terraform-modules.git=$ROOT_DIR" \
+--non-interactive
+cd $ROOT_DIR
+
+# --- Prep teardown: the model and controller are ours to remove here ---
+juju destroy-controller existing-controller --no-prompt --destroy-all-models --force
+
 echo "All stack deployments and tests completed successfully!"
