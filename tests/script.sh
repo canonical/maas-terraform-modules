@@ -74,9 +74,10 @@ for STACK_DIR in "${STACK_DIRS[@]}"; do
   --non-interactive
 
   # Retrieve outputs from the deployed stack
-  MAAS_API_URL=$(terragrunt stack output -raw maas_deploy.maas_api_url)
-  MAAS_API_KEY=$(terragrunt stack output -raw maas_deploy.maas_api_key)
-  RACK_CONTROLLER=$(terragrunt stack output -json maas_deploy | jq -r '.maas_deploy.maas_machines[0]')
+  MAAS_DEPLOY_OUTPUT=$(terragrunt stack output -json maas_deploy)
+  MAAS_API_URL=$(echo "$MAAS_DEPLOY_OUTPUT" | jq -r '.maas_deploy.maas.api_url')
+  MAAS_API_KEY=$(echo "$MAAS_DEPLOY_OUTPUT" | jq -r '.maas_deploy.maas.api_key')
+  RACK_CONTROLLER=$(echo "$MAAS_DEPLOY_OUTPUT" | jq -r '.maas_deploy.maas_machines[0]')
 
   # Return to terraform directory
   cd $ROOT_DIR
