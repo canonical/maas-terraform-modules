@@ -119,13 +119,17 @@ resource "terraform_data" "juju_wait_for_all" {
     )
   }
 
-  # Ensures juju_wait_for_all triggers when any of the following values change
-  # TODO: these trigger values are rough at the moment
-  triggers_replace = {
-    maas_region = sha256(jsonencode(juju_application.maas_region.config))
-    haproxy     = try(juju_application.haproxy[0].config, null)
-    keepalived  = try(juju_application.keepalived[0].config, null)
-    tls_route   = try(juju_integration.maas_haproxy_https[0].id, null)
+  # Examples of why this is needed
+  # If TLS enabled, maas_region.config will change
+  # If ha on postgres or maas_region is changed, number of machines will change
+  # TODO: ensure this runs across all changes, as right now this doesn't cover enable_backups
+  lifecycle {
+    replace_triggered_by = [
+      juju_application.maas_region,
+      juju_application.postgresql,
+      juju_machine.maas_machines,
+      juju_machine.postgres_machines,
+    ]
   }
 
   provisioner "local-exec" {
@@ -159,7 +163,7 @@ resource "terraform_data" "create_admin" {
     model = local.maas_model_uuid
   }
 
-  depends_on = [ terraform_data.juju_wait_for_all ]
+  depends_on = [terraform_data.juju_wait_for_all]
 
   provisioner "local-exec" {
     # We need to set JUJU_DATA to a unique directory to avoid conflicts with other juju commands that might be running in parallel,
@@ -193,7 +197,7 @@ resource "terraform_data" "create_admin" {
 data "external" "maas_get_api_key" {
   program = ["bash", "${path.module}/scripts/get-api-key.sh"]
 
-  depends_on = [ terraform_data.juju_wait_for_all ]
+  depends_on = [terraform_data.juju_wait_for_all]
 
   query = {
     model                   = terraform_data.create_admin.output.model
@@ -207,7 +211,7 @@ data "external" "maas_get_api_key" {
 data "external" "maas_get_api_url" {
   program = ["bash", "${path.module}/scripts/get-api-url.sh"]
 
-  depends_on = [ terraform_data.juju_wait_for_all ]
+  depends_on = [terraform_data.juju_wait_for_all]
   query = {
     model                   = terraform_data.create_admin.output.model
     juju_controller_address = var.juju_controller.controller_addresses[0]
