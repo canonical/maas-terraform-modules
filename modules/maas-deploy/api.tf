@@ -8,7 +8,7 @@ locals {
 
   # MAAS Configuration values
   maas_url = var.maas_url != null ? var.maas_url : (
-    var.virtual_ip != null ? "http://${var.virtual_ip}/MAAS" : null
+    var.virtual_ip != null ? "${local.enable_tls ? "https" : "http"}://${var.virtual_ip}/MAAS" : null
   )
   ssl_cert_content   = var.ssl_cert_path != null ? file(var.ssl_cert_path) : null
   ssl_key_content    = var.ssl_key_path != null ? file(var.ssl_key_path) : null
