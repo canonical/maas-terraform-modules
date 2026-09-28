@@ -117,6 +117,18 @@ terragrunt stack generate
 
 The [generate](https://docs.terragrunt.com/reference/cli/commands/stack/generate) command creates concrete unit configurations in `./.terragrunt-stack/`. This is optional, but useful if you want to explore how Terragrunt is automating the deployment.
 
+### View the deployment plan
+
+Before deploying anything, preview the changes the stack will make:
+
+```bash
+terragrunt stack run plan
+```
+
+This runs a plan for every unit in the stack, in dependency order, without creating any resources.
+
+On a fresh deployment, `maas_deploy` and `maas_config` have nothing to read outputs from yet, since the Juju controller and MAAS they depend on don't exist. To allow them to plan anyway, each unit falls back to placeholder (mock) outputs for its dependencies. You may therefore see placeholder values such as `mock-cloud-name` in the plan output. These are expected, and are replaced with real values once the dependency is applied. On subsequent runs, once the dependencies exist, the plan uses their real outputs.
+
 ### Deploy the stack
 
 When you're ready, apply the stack:

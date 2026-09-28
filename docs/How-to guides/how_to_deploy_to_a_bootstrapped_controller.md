@@ -40,7 +40,7 @@ In this case, the Juju controller credentials must be provided by the user as en
     + }
     ```
 
-    and apply with the relevant terragrunt apply command.
+    and apply with the relevant terragrunt apply command (e.g. `terragrunt stack run apply`). You can preview the changes first with the matching plan command (e.g. `terragrunt stack run plan`).
 
 ### Optional: deploy into an already existing Juju model
 
