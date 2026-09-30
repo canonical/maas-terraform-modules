@@ -40,13 +40,21 @@ cd examples/stacks/single-node
 
 Review the configuration in `terragrunt.stack.hcl` and adjust any optional variables as needed.
 
-## Generate and apply the stack
+## Generate, plan and apply the stack
 
 Generate the stack configuration (optional):
 
 ```bash
 terragrunt stack generate
 ```
+
+Preview the changes (optional):
+
+```bash
+terragrunt stack run plan
+```
+
+On a fresh deployment, units whose dependencies have not been applied yet are planned against placeholder (mock) outputs, so values such as `mock-cloud-name` in the plan are expected.
 
 Apply the stack. If prompted, grant sudo privileges to allow installation of the Juju snap:
 
