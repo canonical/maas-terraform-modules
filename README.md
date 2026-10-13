@@ -84,6 +84,10 @@ Typically, you should create your own repository (e.g. `infrastructure-live`) to
 ## Architecture
 
 ```mermaid
+---
+config:
+  layout: dagre
+---
 flowchart TB
   %% Terraform module colors
   classDef tfBootstrap fill:#4CAF50,stroke:#2E7D32
