@@ -15,8 +15,8 @@ unit "juju_bootstrap" {
   path = "juju-bootstrap"
 
   values = {
-    // The Terraform Registry version of the juju/juju-controller/juju module to use.
-    version = "0.0.1-rc6"
+    // The Terraform Registry reference of the juju/juju-controller/juju module to use.
+    module_ref = "0.0.1-rc6"
 
     // Required variables
     // The name of the Juju controller to bootstrap.
@@ -88,7 +88,7 @@ unit "maas_deploy" {
   values = {
     // This version here is used as the version passed down to the unit
     // to use when fetching the OpenTofu/Terraform module.
-    version = "main"
+    module_ref = "main"
 
     // Dependencies
     juju_bootstrap_path = "../juju-bootstrap"
@@ -179,7 +179,7 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel = "3.7/candidate"
+    charm_maas_region_channel = "3.7/stable"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
@@ -253,7 +253,7 @@ unit "maas_config" {
   values = {
     // This version here is used as the version passed down to the unit
     // to use when fetching the OpenTofu/Terraform module.
-    version = "main"
+    module_ref = "main"
 
     // Dependencies
     maas_deploy_path = "../maas-deploy"
