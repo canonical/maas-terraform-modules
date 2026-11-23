@@ -1,7 +1,7 @@
 variable "maas_ubuntu_version" {
   description = "The Ubuntu operating system version to install on the MAAS region controller machines"
   type        = string
-  default     = "24.04"
+  default     = "26.04"
 }
 
 variable "postgres_ubuntu_version" {
@@ -174,7 +174,7 @@ variable "charm_postgresql_config" {
 variable "charm_maas_region_channel" {
   description = "Operator channel for MAAS Region Controller deployment"
   type        = string
-  default     = "3.7/candidate"
+  default     = "3.8/candidate"
 }
 
 variable "charm_maas_region_revision" {

@@ -140,7 +140,7 @@ unit "maas_deploy" {
     // Set this to true to run MAAS with HAProxy, which will deploy HAProxy
     enable_haproxy = true
     // The Ubuntu operating system version to install on the MAAS region controller machines
-    maas_ubuntu_version = "24.04"
+    maas_ubuntu_version = "26.04"
     // The Ubuntu operating system version to install on the PostgreSQL machines
     postgres_ubuntu_version = "24.04"
     // The Ubuntu operating system version to install on the HAProxy machines
@@ -179,7 +179,7 @@ unit "maas_deploy" {
 
     // -- Workload: MAAS
     // Operator channel for MAAS Region Controller deployment
-    charm_maas_region_channel = "3.7/candidate"
+    charm_maas_region_channel = "3.8/candidate"
     // Operator channel revision for MAAS Region Controller deployment
     // charm_maas_region_revision = ...
     // Operator configuration for MAAS Region Controller deployment
