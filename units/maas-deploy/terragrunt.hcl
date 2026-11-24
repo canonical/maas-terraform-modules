@@ -15,6 +15,9 @@ terraform {
 }
 
 dependency "juju_bootstrap" {
+  // enabled=false when no juju_bootstrap_path is given, since Terragrunt rejects a null
+  // config_path on an enabled dependency.
+  enabled     = try(values.juju_bootstrap_path, null) != null
   config_path = try(values.juju_bootstrap_path, null)
 
   mock_outputs_merge_strategy_with_state = "shallow"
@@ -121,7 +124,10 @@ inputs = merge(
   },
   {
     // --- Dependencies ---
-    juju_controller = coalesce(try(values.juju_controller, null), try(dependency.juju_bootstrap.outputs.juju_controller, null))
+    // coalesce requires both types to match, including the number of fields, 
+    // so have lazy_api_check default to false ensures both these match to prevent
+    // coalesce type error.
+    juju_controller = coalesce(try(merge({ lazy_api_check = false }, values.juju_controller), null), try(dependency.juju_bootstrap.outputs.juju_controller, null))
 
   },
   # juju_cloud_name is only used in managed model mode. Resolve it from the unit
