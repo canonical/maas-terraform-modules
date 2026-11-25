@@ -29,9 +29,10 @@ jobs:
           echo "false" > run_smoke_test.txt
 
       - name: Run on Testflinger
-        uses: canonical/testflinger/.github/actions/submit@545ed69f17a5e639a2299e325f5fb199ca9f98af
+        uses: canonical/testflinger/.github/actions/submit@257ef71c8042a41925d7185d46fc3171ea2112f5 # submit/v1.6.0
         with:
           poll: true
+          retries: 3
           job-path: ./tests/testflinger.yaml
           attachments-relative-to: ./tests/
           client-id: maas-ci
