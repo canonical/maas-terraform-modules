@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Exit if any of the intermediate steps fail
-set -e
+# Exit if any of the intermediate steps fail, including any command in a pipeline
+set -eo pipefail
 
 # Extract "model", "username", "juju_controller_address", "juju_username", and "juju_password" arguments from the input into
 # MODEL, USERNAME, JUJU_CONTROLLER_ADDRESS, JUJU_USERNAME, and JUJU_PASSWORD shell variables.
@@ -19,12 +19,11 @@ eval "$(jq -r '@sh "MODEL=\(.model) USERNAME=\(.username) JUJU_CONTROLLER_ADDRES
 
 # Login to Juju
 export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+# Delete local Juju data on exit (including failures) to logout and clean up any cached credentials
+trap 'rm -rf "$JUJU_DATA"' EXIT
 echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
 
 get_key_cmd=$(/snap/juju/current/bin/juju run -m $MODEL maas-region/leader get-api-key username=$USERNAME --no-color --quiet --format json | jq -r '. | to_entries[].value.results')
-
-# Delete local Juju data to logout and clean up any cached credentials
-rm -rf $JUJU_DATA
 
 # Safely produce a JSON object containing the result value.
 # jq will ensure that the value is properly quoted

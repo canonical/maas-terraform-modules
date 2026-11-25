@@ -70,8 +70,11 @@ resource "juju_application" "s3_integrator" {
     # This is needed since snap packages are using /tmp/snap-private-tmp/snap.<snap-name>/tmp for their temporary files.
     # If we execute the binary by simply calling "juju", Juju will create the JUJU_DATA directory in the snap's temporary directory, and we won't
     # be able to delete it after running the command, which will cause conflicts with other juju commands that might be running in parallel.
+    interpreter = ["/bin/bash", "-c"]
     command = (startswith(var.charm_s3_integrator_channel, "2/") ? "/bin/true" : <<-EOT
+      set -euo pipefail
       export JUJU_DATA=/tmp/juju-$(openssl rand -hex 4)
+      trap 'rm -rf "$JUJU_DATA"' EXIT
       echo "$JUJU_PASSWORD" | /snap/juju/current/bin/juju login -c maas-controller "$JUJU_CONTROLLER_ADDRESS" -u "$JUJU_USERNAME" --trust --no-prompt
 
       /snap/juju/current/bin/juju wait-for application -m ${self.model_uuid} ${self.name} --timeout 3600s \
@@ -80,8 +83,6 @@ resource "juju_application" "s3_integrator" {
       /snap/juju/current/bin/juju run -m ${self.model_uuid} ${self.name}/leader sync-s3-credentials \
         access-key=${var.s3_access_key} \
         secret-key=${var.s3_secret_key}
-
-      rm -rf $JUJU_DATA
     EOT
     )
     environment = {
