@@ -11,7 +11,7 @@ terraform {
   //
   // Assume that a user consuming this unit will exclusively have access
   // to the directory this file is in, and nothing else in this repository.
-  source = "git::https://github.com/canonical/maas-terraform-modules.git//modules/maas-config?ref=${values.version}"
+  source = coalesce(try(values.module_source, null), try("git::https://github.com/canonical/maas-terraform-modules.git//modules/maas-config?ref=${values.module_ref}", null))
 }
 
 dependency "maas_deploy" {
@@ -32,9 +32,14 @@ dependencies {
   paths = try(values.dependencies, [])
 }
 
-locals {
+exclude {
+  if      = coalesce(try(values.exclude, null), false)
+  actions = ["all"]
+}
 
-  optional_inputs = {
+inputs = merge({
+  // Optional inputs (only passed if defined in the stacks config)
+  for k, v in {
     image_server_url      = try(values.image_server_url, null)
     boot_selections       = try(values.boot_selections, null)
     maas_config           = try(values.maas_config, null)
@@ -44,13 +49,7 @@ locals {
     domain_records        = try(values.domain_records, null)
     node_scripts          = try(values.node_scripts, null)
     node_scripts_location = try(values.node_scripts_location, null)
-  }
-}
-
-inputs = merge({
-  // Optional inputs (only passed if defined in the stacks config)
-  for k, v in local.optional_inputs :
-  k => v
+  } : k => v
   if v != null
   },
   {

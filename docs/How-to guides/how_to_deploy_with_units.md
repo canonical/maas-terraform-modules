@@ -32,12 +32,12 @@ terragrunt run apply
 
 ## Option 2: Use example units directly
 
-Clone or copy the [example units](../../examples/units/) directory (including `root.hcl` one level up).
+Clone or copy the [example units](../../units/) directory. Populate `root.hcl` , you can use the one found in [examples/root.hcl](../../examples/root.hcl):
 
 Navigate to the unit you want to deploy and fill in required values marked with `# TODO`:
 
 ```bash
-cd examples/units/maas-deploy
+cd units/maas-deploy
 # Edit terragrunt.hcl
 terragrunt run apply
 ```

@@ -30,7 +30,7 @@ unit "maas_deploy" {
   values = {
     // This version here is used as the version passed down to the unit
     // to use when fetching the OpenTofu/Terraform module.
-    version = "main"
+    module_ref = "main"
 
     // Existing controller: provide credentials directly instead of a
     // juju_bootstrap_path dependency, since the controller is not managed here.
@@ -47,7 +47,7 @@ unit "maas_deploy" {
     model_uuid = get_env("MODEL_UUID")
 
     // -- Workload: MAAS
-    charm_maas_region_channel = "3.7/candidate"
+    charm_maas_region_channel = "3.7/stable"
 
     // -- MAAS Admin configuration
     admin_username = "admin"
