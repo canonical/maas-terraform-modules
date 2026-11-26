@@ -29,7 +29,7 @@ inputs = {
 
   # Description: The Ubuntu operating system version to install on the MAAS region controller machines
   # Type: string
-  # maas_ubuntu_version = "24.04"
+  # maas_ubuntu_version = "26.04"
 
   # Description: The Ubuntu operating system version to install on the PostgreSQL machines
   # Type: string
@@ -130,7 +130,7 @@ inputs = {
 
   # Description: Operator channel for MAAS Region Controller deployment
   # Type: string
-  # charm_maas_region_channel = "3.7/candidate"
+  # charm_maas_region_channel = "3.8/candidate"
 
   # Description: Operator channel revision for MAAS Region Controller deployment
   # Type: number

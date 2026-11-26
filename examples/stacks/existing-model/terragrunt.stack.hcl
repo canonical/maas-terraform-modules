@@ -47,7 +47,7 @@ unit "maas_deploy" {
     model_uuid = get_env("MODEL_UUID")
 
     // -- Workload: MAAS
-    charm_maas_region_channel = "3.7/candidate"
+    charm_maas_region_channel = "3.8/candidate"
 
     // -- MAAS Admin configuration
     admin_username = "admin"
